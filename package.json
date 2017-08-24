@@ -1,0 +1,14 @@
+{
+  "name": "insteon_hub",
+  "version": "1.0.0",
+  "description": "Node.js on Docker",
+  "author": "Marc Lennox <marc.lennox@gmail.com>",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "",
+    "home-controller": ""
+  }
+}
