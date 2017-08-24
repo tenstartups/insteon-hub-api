@@ -33,6 +33,7 @@ app.get('/api/devices/:id/info', (req, res) => {
   console.log(`Retrieving info for ${id}`)
   hub.info()
   .then((info) => {
+    console.log(info)
     if(info == undefined) {
       res.status(404).send(JSON.stringify({ error: 'Not found!' }));
     } else {
@@ -65,9 +66,9 @@ app.get('/api/lights/:id/turn_on', (req, res) => {
   var light = hub.light(id);
   light.turnOn()
   .then((status) => {
+    console.log(status)
     if(status.response) {
-      console.log(status)
-      res.status(200).send(JSON.stringify({ device_id: id, action: 'tuned_on' }));
+      res.status(200).send(JSON.stringify({ device_id: id, action: 'turned_on' }));
     } else {
       res.status(404).send(JSON.stringify({ error: 'Not found!' }));
     }
@@ -82,9 +83,9 @@ app.get('/api/lights/:id/turn_off', (req, res) => {
   var light = hub.light(id);
   light.turnOff()
   .then((status) => {
+    console.log(status)
     if(status.response) {
-      console.log(status)
-      res.status(200).send(JSON.stringify({ device_id: id, action: 'tuned_off' }));
+      res.status(200).send(JSON.stringify({ device_id: id, action: 'turned_off' }));
     } else {
       res.status(404).send(JSON.stringify({ error: 'Not found!' }));
     }
