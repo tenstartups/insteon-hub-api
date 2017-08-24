@@ -30,14 +30,15 @@ var app = express();
 app.get('/api/devices/:id/info', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   var id = req.params.id;
-  console.log(`Retrieving info for ${id}`)
+  console.log(`[${id}] Retrieving device info...`)
   hub.info()
-  .then((info) => {
-    console.log(info)
-    if(info == undefined) {
-      res.status(404).send(JSON.stringify({ error: 'Not found!' }));
+  .then((result) => {
+    if(result == undefined) {
+      console.log(`[${id}] Device not found`)
+      res.status(404).send(JSON.stringify({ error: 'Device not found!' }));
     } else {
-      res.status(200).send(JSON.stringify(info));
+      console.log(`[${id}] Device info: ${JSON.stringify(result)}`)
+      res.status(200).send(JSON.stringify(result));
     }
   });
 });
@@ -46,14 +47,16 @@ app.get('/api/devices/:id/info', (req, res) => {
 app.get('/api/lights/:id/get_status', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   var id = req.params.id;
-  console.log(`Retrieving status for light ${id}`)
+  console.log(`[${id} ] Retrieving light status...`)
   var light = hub.light(id);
   light.level()
-  .then((level) => {
-    if(level == undefined) {
-      res.status(404).send(JSON.stringify({ error: 'Not found!' }));
+  .then((result) => {
+    if(result == undefined) {
+      console.log(`[${id}] Device not found`)
+      res.status(404).send(JSON.stringify({ error: 'Device not found!' }));
     } else {
-      res.status(200).send(JSON.stringify({ device_id: id, level: level }));
+      console.log(`[${id}] Light level is ${result}`)
+      res.status(200).send(JSON.stringify({ device_id: id, level: result }));
     }
   });
 });
@@ -62,15 +65,16 @@ app.get('/api/lights/:id/get_status', (req, res) => {
 app.get('/api/lights/:id/turn_on', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   var id = req.params.id;
-  console.log(`Turning on light ${id}`)
+  console.log(`[${id}] Turning light ON...`)
   var light = hub.light(id);
   light.turnOn()
-  .then((status) => {
-    console.log(status)
-    if(status.response) {
-      res.status(200).send(JSON.stringify({ device_id: id, action: 'turned_on' }));
+  .then((result) => {
+    if(result.response) {
+      console.log(`[${id}] Response: ${JSON.stringify(result.response)}`)
+      res.status(200).send(JSON.stringify(result.response));
     } else {
-      res.status(404).send(JSON.stringify({ error: 'Not found!' }));
+      console.log(`[${id}] Device not found: ${JSON.stringify(result)}`)
+      res.status(404).send(JSON.stringify({ error: 'Device not found!' }));
     }
   });
 });
@@ -79,15 +83,16 @@ app.get('/api/lights/:id/turn_on', (req, res) => {
 app.get('/api/lights/:id/turn_off', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   var id = req.params.id;
-  console.log(`Turning off light ${id}`)
+  console.log(`[${id}] Turning Light OFF...`)
   var light = hub.light(id);
   light.turnOff()
-  .then((status) => {
-    console.log(status)
-    if(status.response) {
-      res.status(200).send(JSON.stringify({ device_id: id, action: 'turned_off' }));
+  .then((result) => {
+    if(result.response) {
+      console.log(`[${id}] Response: ${JSON.stringify(result.response)}`)
+      res.status(200).send(JSON.stringify(result.response));
     } else {
-      res.status(404).send(JSON.stringify({ error: 'Not found!' }));
+      console.log(`[${id}] Device not found: ${JSON.stringify(result)}`)
+      res.status(404).send(JSON.stringify({ error: 'Device not found!' }));
     }
   });
 });
@@ -96,20 +101,20 @@ app.get('/api/lights/:id/turn_off', (req, res) => {
 app.get('/api/lights/:id/subscribe', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   var id = req.params.id;
-  console.log(`Subscribing to events for light ${id}`)
+  console.log(`${id}] Subscribing to light events...`)
   var light = hub.light(id);
   light.on('turnOn', () => {
-    console.log(`Turned on ${id}`)
+    console.log(`[${id}] Light turned ON`)
   });
   light.on('turnOff', () => {
-    console.log(`Turned off ${id}`)
+    console.log(`[${id}] Light turned OFF`)
   });
-  res.status(200).send(JSON.stringify({ device_id: id, action: 'subscribed' }));
+  res.status(200).send(JSON.stringify({ device_id: id }));
 });
 
 // 404 catchall route
 app.use((req, res, next) => {
-  res.status(404).send(JSON.stringify({ error: 'Not found!' }));
+  res.status(404).send(JSON.stringify({ error: 'Invalid endpoint!' }));
 })
 
 // 500 catchall route
