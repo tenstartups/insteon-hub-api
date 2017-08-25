@@ -47,7 +47,7 @@ app.get('/api/devices/:id/info', (req, res) => {
 app.get('/api/lights/:id/get_status', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   var id = req.params.id;
-  console.log(`[${id} ] Retrieving light status...`)
+  console.log(`[${id}] Retrieving light status...`)
   var light = hub.light(id);
   light.level()
   .then((result) => {
