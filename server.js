@@ -23,6 +23,19 @@ hub.httpClient(config, () => {
   console.log(`Connected to Insteon Hub at ${INSTEON_HUB_ADDRESS}:${INSTEON_HUB_PORT}`);
 });
 
+// Subscribe for device events
+var lights = process.env.LIGHT_SWITCH_DEVICES.split(',');
+lights.forEach((id) => {
+  console.log(`[${id}] Subscribing to light events...`)
+  var light = hub.light(id);
+  light.on('turnOn', () => {
+    console.log(`[${id}] Light turned ON`)
+  });
+  light.on('turnOff', () => {
+    console.log(`[${id}] Light turned OFF`)
+  });
+});
+
 // App
 var app = express();
 
@@ -95,21 +108,6 @@ app.get('/api/lights/:id/turn_off', (req, res) => {
       res.status(404).send(JSON.stringify({ error: 'Device not found!' }));
     }
   });
-});
-
-// Light event route
-app.get('/api/lights/:id/subscribe', (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  var id = req.params.id;
-  console.log(`${id}] Subscribing to light events...`)
-  var light = hub.light(id);
-  light.on('turnOn', () => {
-    console.log(`[${id}] Light turned ON`)
-  });
-  light.on('turnOff', () => {
-    console.log(`[${id}] Light turned OFF`)
-  });
-  res.status(200).send(JSON.stringify({ device_id: id }));
 });
 
 // 404 catchall route
