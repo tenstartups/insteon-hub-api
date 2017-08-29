@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "express": "",
-    "home-controller": ""
+    "home-controller": "",
+    "node-ssdp": ""
   }
 }
