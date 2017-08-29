@@ -16,10 +16,7 @@ const LIGHT_SWITCH_DEVICES = process.env.LIGHT_SWITCH_DEVICES.split(',');
 // Start SSDP advertisement
 var ssdpServer = new SSDPServer();
 
-ssdpServer.addUSN('upnp:rootdevice');
-ssdpServer.addUSN('urn:schemas-upnp-org:device:MediaServer:1');
-ssdpServer.addUSN('urn:schemas-upnp-org:service:ContentDirectory:1');
-ssdpServer.addUSN('urn:schemas-upnp-org:service:ConnectionManager:1');
+ssdpServer.addUSN('urn:schemas-upnp-org:device:InsteonHubAPI:1');
 
 ssdpServer.on('advertise-alive', (headers) => {
   // Expire old devices from your cache.
@@ -53,7 +50,6 @@ hub.httpClient(config, () => {
 LIGHT_SWITCH_DEVICES.forEach((id) => {
   console.log(`[${id}] Subscribing to light events...`)
   var light = hub.light(id);
-  console.log(light);
   light.on('turnOn', () => {
     console.log(`[${id}] Light turned ON`)
   });
