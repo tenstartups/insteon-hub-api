@@ -10,6 +10,6 @@
   "dependencies": {
     "express": "",
     "home-controller": "",
-    "node-ssdp": ""
+    "node-ssdp-lite": ""
   }
 }
