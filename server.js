@@ -2,7 +2,18 @@
 
 var express = require('express'),
     Insteon = require('home-controller').Insteon,
-    SSDP = require('node-ssdp-lite');
+    SSDP = require('node-ssdp').Server;
+
+const ifaces = require('os').networkInterfaces();
+let address;
+
+Object.keys(ifaces).forEach(dev => {
+  ifaces[dev].filter(details => {
+    if (details.family === 'IPv4' && details.internal === false) {
+      address = details.address;
+    }
+  });
+});
 
 // Constants
 const LISTENER_ADDRESS = '0.0.0.0';
@@ -14,11 +25,20 @@ const INSTEON_HUB_PASSWORD = process.env.INSTEON_HUB_PASSWORD;
 const LIGHT_SWITCH_DEVICES = process.env.LIGHT_SWITCH_DEVICES.split(',');
 
 // Start SSDP advertisement
-var ssdp = new SSDP();
+var ssdp = new SSDP({location: address, udn: 'Insteon Hub API'});
 ssdp.addUSN('urn:schemas-upnp-org:device:InsteonHubAPI:1');
-require('dns').lookup(require('os').hostname(), (err, add) => {
-  ssdp.server(add);
+ssdp.on('advertise-alive', (headers) => {
+  // Expire old devices from your cache.
+  // Register advertising device somewhere (as designated in http headers heads)
 });
+ssdp.on('advertise-bye', (headers) => {
+  // Remove specified device from cache.
+});
+ssdp.start();
+process.on('exit', () => {
+  // Advertise shutting down and stop listening
+  ssdp.stop()
+})
 
 // Insteon connector
 var hub = new Insteon();

@@ -13,6 +13,7 @@ clean_build: Dockerfile.$(DOCKER_ARCH)
 
 run: build
 	docker run -it --rm \
+		-e DEBUG=node-ssdp* \
 		-e VIRTUAL_HOST=insteon-hub-api.docker \
 		-e VIRTUAL_PORT=8080 \
 		-e LISTENER_PORT=8080 \
