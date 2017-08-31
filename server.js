@@ -76,8 +76,8 @@ var app = express();
 
 // UPNP description route
 app.get('/upnp/desc', (req, res) => {
+  console.log(`UPnP description request from ${req.headers['user-agent']}...`)
   res.setHeader('Content-Type', 'application/json');
-  console.log(`Returning UPnP information...`)
 });
 
 // Light status route
