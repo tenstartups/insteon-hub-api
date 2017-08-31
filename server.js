@@ -76,8 +76,11 @@ var app = express();
 
 // UPNP description route
 app.get('/upnp/desc', (req, res) => {
-  console.log(`UPnP description request from ${req.headers['user-agent']}...`)
+  var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  var agent = req.headers['user-agent'];
+  console.log(`UPnP description request from ${ip}[${agent}]...`)
   res.setHeader('Content-Type', 'application/json');
+  res.status(200).send(JSON.stringify({ status: 'OK' }));
 });
 
 // Light status route
