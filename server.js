@@ -8,6 +8,7 @@ var express = require('express'),
     yaml = require('js-yaml');
 
 // Define constants
+const LISTEN_INTERFACE = process.env.LISTEN_INTERFACE || 'eth0';
 const LISTEN_ADDRESS = '0.0.0.0';
 const LISTEN_PORT = process.env.LISTEN_PORT;
 
@@ -20,9 +21,20 @@ try {
   console.log(e);
 }
 
+// Get the listen interface
+const ifaces = require('os').networkInterfaces();
+let address;
+Object.keys(ifaces).forEach(dev => {
+  ifaces[dev].filter(details => {
+    if (dev === LISTEN_INTERFACE && details.family === 'IPv4' && details.internal === false) {
+      address = details.address;
+    }
+  });
+});
+
 // Start SSDP advertisement
 console.log(`Starting SSDP server...`)
-var ssdp = new SSDP({});
+var ssdp = new SSDP({location: `http://${address}:${LISTEN_PORT}/upnp/desc`});
 ssdp.addUSN('urn:schemas-upnp-org:device:InsteonHubAPI:1');
 ssdp.on('advertise-alive', (headers) => {
   // Expire old devices from your cache.
@@ -61,6 +73,12 @@ hub.httpClient(config.insteon_hub, () => {
 
 // App
 var app = express();
+
+// UPNP description route
+app.get('/upnp/desc', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  console.log(`Returning UPnP information...`)
+});
 
 // Light status route
 app.get('/api/devices/:id/info', (req, res) => {
