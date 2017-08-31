@@ -10,6 +10,7 @@
   "dependencies": {
     "express": "",
     "home-controller": "",
-    "node-ssdp": ""
+    "node-ssdp": "",
+    "js-yaml": ""
   }
 }

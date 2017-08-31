@@ -1,31 +1,28 @@
 'use strict';
 
+// Load libraries
 var express = require('express'),
     Insteon = require('home-controller').Insteon,
-    SSDP = require('node-ssdp').Server;
+    SSDP = require('node-ssdp').Server,
+    fs = require('fs'),
+    yaml = require('js-yaml');
 
-const ifaces = require('os').networkInterfaces();
-let address;
+// Define constants
+const LISTEN_ADDRESS = '0.0.0.0';
+const LISTEN_PORT = process.env.LISTEN_PORT;
 
-Object.keys(ifaces).forEach(dev => {
-  ifaces[dev].filter(details => {
-    if (details.family === 'IPv4' && details.internal === false) {
-      address = details.address;
-    }
-  });
-});
-
-// Constants
-const LISTENER_ADDRESS = '0.0.0.0';
-const LISTENER_PORT = process.env.LISTENER_PORT;
-const INSTEON_HUB_ADDRESS = process.env.INSTEON_HUB_ADDRESS;
-const INSTEON_HUB_PORT = process.env.INSTEON_HUB_PORT;
-const INSTEON_HUB_USERNAME = process.env.INSTEON_HUB_USERNAME;
-const INSTEON_HUB_PASSWORD = process.env.INSTEON_HUB_PASSWORD;
-const LIGHT_SWITCH_DEVICES = process.env.LIGHT_SWITCH_DEVICES.split(',');
+// Load configuration
+console.log(`Loading configuration from ${process.env.CONFIG_FILE}...`)
+try {
+  var config = yaml.safeLoad(fs.readFileSync(process.env.CONFIG_FILE, 'utf8'));
+  console.log(`Loaded configuration from ${process.env.CONFIG_FILE}`)
+} catch (e) {
+  console.log(e);
+}
 
 // Start SSDP advertisement
-var ssdp = new SSDP({location: address, udn: 'Insteon Hub API'});
+console.log(`Starting SSDP server...`)
+var ssdp = new SSDP({});
 ssdp.addUSN('urn:schemas-upnp-org:device:InsteonHubAPI:1');
 ssdp.on('advertise-alive', (headers) => {
   // Expire old devices from your cache.
@@ -39,29 +36,27 @@ process.on('exit', () => {
   // Advertise shutting down and stop listening
   ssdp.stop()
 })
+console.log(`Started SSDP server`)
 
 // Insteon connector
+console.log(`Connecting to Insteon Hub at ${config.insteon_hub.host}:${config.insteon_hub.port}...`);
 var hub = new Insteon();
-var config = {
-  host: INSTEON_HUB_ADDRESS,
-  port: INSTEON_HUB_PORT,
-  user: INSTEON_HUB_USERNAME,
-  password: INSTEON_HUB_PASSWORD
-};
-hub.httpClient(config, () => {
-  console.log(`Connected to Insteon Hub at ${INSTEON_HUB_ADDRESS}:${INSTEON_HUB_PORT}`);
-});
+hub.httpClient(config.insteon_hub, () => {
+  console.log(`Connected to Insteon Hub at ${config.insteon_hub.host}:${config.insteon_hub.port}`);
 
-// Subscribe for device events
-LIGHT_SWITCH_DEVICES.forEach((id) => {
-  console.log(`[${id}] Subscribing to light events...`)
-  var light = hub.light(id);
-  light.on('turnOn', () => {
-    console.log(`[${id}] Light turned ON`)
+  // Subscribe for device events
+  config.light_switches.forEach(attrs => {
+    console.log(`[${attrs.insteon_id}] Subscribing to light switch events...`);
+    var light = hub.light(attrs.insteon_id);
+    light.on('turnOn', () => {
+      console.log(`[${attrs.insteon_id}] Light turned ON`)
+    });
+    light.on('turnOff', () => {
+      console.log(`[${attrs.insteon_id}] Light turned OFF`)
+    });
+    console.log(`[${attrs.insteon_id}] Subscribed to light switch events`)
   });
-  light.on('turnOff', () => {
-    console.log(`[${id}] Light turned OFF`)
-  });
+
 });
 
 // App
@@ -150,5 +145,6 @@ app.use((err, req, res, next) => {
 })
 
 // Start listener loop
-app.listen(LISTENER_PORT, LISTENER_ADDRESS);
-console.log(`Listening on http://${LISTENER_ADDRESS}:${LISTENER_PORT}`);
+console.log(`Starting HTTP API server...`);
+app.listen(LISTEN_PORT, LISTEN_ADDRESS);
+console.log(`Listening on http://${LISTEN_ADDRESS}:${LISTEN_PORT}`);

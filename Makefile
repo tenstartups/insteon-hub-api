@@ -13,15 +13,12 @@ clean_build: Dockerfile.$(DOCKER_ARCH)
 
 run: build
 	docker run -it --rm \
-		-e DEBUG=node-ssdp* \
+		-e CONFIG_FILE=/etc/insteon-hub-api/config.yml \
 		-e VIRTUAL_HOST=insteon-hub-api.docker \
 		-e VIRTUAL_PORT=8080 \
-		-e LISTENER_PORT=8080 \
-		-e INSTEON_HUB_ADDRESS=$(INSTEON_HUB_ADDRESS) \
-		-e INSTEON_HUB_PORT=$(INSTEON_HUB_PORT) \
-		-e INSTEON_HUB_USERNAME=$(INSTEON_HUB_USERNAME) \
-		-e INSTEON_HUB_PASSWORD=$(INSTEON_HUB_PASSWORD) \
-		-e LIGHT_SWITCH_DEVICES=$(LIGHT_SWITCH_DEVICES) \
+		-e LISTEN_PORT=8080 \
+		-v "$(PWD)/test":/etc/insteon-hub-api:ro \
+		--net host \
 		--name insteon-hub-api \
 		$(DOCKER_IMAGE_NAME) $(ARGS)
 
