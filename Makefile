@@ -19,6 +19,7 @@ run: build
 		-e VIRTUAL_PORT=8080 \
 		-e LISTEN_PORT=8080 \
 		-v "$(PWD)/test":/etc/insteon-hub-api:ro \
+		--net host \
 		--name insteon-hub-api \
 		$(DOCKER_IMAGE_NAME) $(ARGS)
 
