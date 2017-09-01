@@ -38,8 +38,7 @@ Object.keys(ifaces).forEach(dev => {
 console.log(`Starting SSDP server...`)
 var udn = uuidv4();
 console.log(`Generated new udn ${udn}`);
-var ssdp = new SSDP({location: `http://${address}:${LISTEN_PORT}/upnp/desc`, udn: `uuid:${udn}`});
-ssdp.addUSN('upnp:rootdevice');
+var ssdp = new SSDP({location: `http://${address}:${LISTEN_PORT}/upnp/desc`, udn: `uuid:${udn}`, sourcePort: 1900});
 ssdp.addUSN(DEVICE_USN);
 ssdp.on('advertise-alive', (headers) => {
   // Expire old devices from your cache.
