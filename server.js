@@ -5,12 +5,14 @@ var express = require('express'),
     Insteon = require('home-controller').Insteon,
     SSDP = require('node-ssdp').Server,
     fs = require('fs'),
+    uuidv4 = require('uuid/v4'),
     yaml = require('js-yaml');
 
 // Define constants
 const LISTEN_INTERFACE = process.env.LISTEN_INTERFACE || 'eth0';
 const LISTEN_ADDRESS = '0.0.0.0';
 const LISTEN_PORT = process.env.LISTEN_PORT;
+const DEVICE_USN = 'urn:schemas-upnp-org:device:InsteonHubAPI:1';
 
 // Load configuration
 console.log(`Loading configuration from ${process.env.CONFIG_FILE}...`)
@@ -34,8 +36,11 @@ Object.keys(ifaces).forEach(dev => {
 
 // Start SSDP advertisement
 console.log(`Starting SSDP server...`)
-var ssdp = new SSDP({location: `http://${address}:${LISTEN_PORT}/upnp/desc`});
-ssdp.addUSN('urn:schemas-upnp-org:device:InsteonHubAPI:1');
+var udn = uuidv4();
+console.log(`Generated new udn ${udn}`);
+var ssdp = new SSDP({location: `http://${address}:${LISTEN_PORT}/upnp/desc`, udn: udn});
+ssdp.addUSN('upnp:rootdevice');
+ssdp.addUSN(DEVICE_USN);
 ssdp.on('advertise-alive', (headers) => {
   // Expire old devices from your cache.
   // Register advertising device somewhere (as designated in http headers heads)
@@ -79,7 +84,7 @@ app.get('/upnp/desc', (req, res) => {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   var agent = req.headers['user-agent'];
   console.log(`UPnP description request from ${ip}[${agent}]...`)
-  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Content-Type', 'application/xml');
   res.status(200).send(JSON.stringify({ status: 'OK' }));
 });
 
