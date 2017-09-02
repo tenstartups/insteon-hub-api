@@ -11,6 +11,7 @@
     "express": "",
     "home-controller": "",
     "js-yaml": "",
+    "node-json-db": "",
     "node-ssdp": "",
     "uuid": ""
   }

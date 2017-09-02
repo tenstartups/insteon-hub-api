@@ -1,12 +1,12 @@
 'use strict';
 
 // Load libraries
-var express = require('express'),
-    Insteon = require('home-controller').Insteon,
-    SSDP = require('node-ssdp').Server,
-    fs = require('fs'),
-    uuidv4 = require('uuid/v4'),
-    yaml = require('js-yaml');
+var
+  express = require('express'),
+  Insteon = require('home-controller').Insteon,
+  JsonDB = require('node-json-db'),
+  SSDP = require('node-ssdp').Server,
+  uuidv4 = require('uuid/v4');
 
 // Define constants
 const LISTEN_INTERFACE = process.env.LISTEN_INTERFACE || 'eth0';
@@ -17,13 +17,18 @@ const DEVICE_USN = 'urn:schemas-upnp-org:device:InsteonHubAPI:1';
 // Load configuration
 console.log(`Loading configuration from ${process.env.CONFIG_FILE}...`)
 try {
-  var config = yaml.safeLoad(fs.readFileSync(process.env.CONFIG_FILE, 'utf8'));
+  var config = require('js-yaml').safeLoad(require('fs').readFileSync(process.env.CONFIG_FILE, 'utf8'));
   console.log(`Loaded configuration from ${process.env.CONFIG_FILE}`)
 } catch (e) {
   console.log(e);
 }
 
-// Get the listen interface
+// Initializing database
+console.log(`Loading database from ${process.env.DATABASE_FILE}...`)
+var db = new JsonDB(process.env.DATABASE_FILE, true, true);
+console.log(`Loaded database from ${process.env.DATABASE_FILE}`)
+
+// Determine the listen interface
 const ifaces = require('os').networkInterfaces();
 let address;
 Object.keys(ifaces).forEach(dev => {
@@ -33,12 +38,27 @@ Object.keys(ifaces).forEach(dev => {
     }
   });
 });
+address = address || require('ip').address();
+
+// Get or generate a unique ID for the Hub
+let udn;
+try {
+  udn = db.getData('/hub/udn');
+} catch(error) {
+  udn = uuidv4();
+  console.log(`Generated new udn ${udn}`);
+  db.push('/hub/udn', udn);
+};
 
 // Start SSDP advertisement
 console.log(`Starting SSDP server...`)
-var udn = uuidv4();
-console.log(`Generated new udn ${udn}`);
-var ssdp = new SSDP({location: `http://${address}:${LISTEN_PORT}/upnp/desc`, udn: `uuid:${udn}`, sourcePort: 1900});
+var ssdp = new SSDP(
+  {
+    location: `http://${address}:${LISTEN_PORT}/api/discovery`,
+    udn: udn,
+    sourcePort: 1900
+  }
+);
 ssdp.addUSN(DEVICE_USN);
 ssdp.on('advertise-alive', (headers) => {
   // Expire old devices from your cache.
@@ -55,13 +75,13 @@ process.on('exit', () => {
 console.log(`Started SSDP server`)
 
 // Insteon connector
-console.log(`Connecting to Insteon Hub at ${config.insteon_hub.host}:${config.insteon_hub.port}...`);
+console.log(`Connecting to Insteon Hub at ${config.hub.host}:${config.hub.port}...`);
 var hub = new Insteon();
-hub.httpClient(config.insteon_hub, () => {
-  console.log(`Connected to Insteon Hub at ${config.insteon_hub.host}:${config.insteon_hub.port}`);
+hub.httpClient(config.hub, () => {
+  console.log(`Connected to Insteon Hub at ${config.hub.host}:${config.hub.port}`);
 
-  // Subscribe for device events
-  config.light_switches.forEach(attrs => {
+  // Subscribe for switch events
+  config.devices.switch.forEach(attrs => {
     console.log(`[${attrs.insteon_id}] Subscribing to light switch events...`);
     var light = hub.light(attrs.insteon_id);
     light.on('turnOn', () => {
@@ -78,13 +98,12 @@ hub.httpClient(config.insteon_hub, () => {
 // App
 var app = express();
 
-// UPNP description route
-app.get('/upnp/desc', (req, res) => {
+// Device discovery route
+app.get('/api/discovery', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  var agent = req.headers['user-agent'];
-  console.log(`UPnP description request from ${ip}[${agent}]...`)
-  res.setHeader('Content-Type', 'application/xml');
-  res.status(200).send(JSON.stringify({ status: 'OK' }));
+  console.log(`Device discovery request from ${ip}...`);
+  res.status(200).send(JSON.stringify(config.devices));
 });
 
 // Light status route
