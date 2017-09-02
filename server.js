@@ -103,7 +103,9 @@ app.get('/api/discovery', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   console.log(`Device discovery request from ${ip}...`);
-  res.status(200).send(JSON.stringify(config.devices));
+  var discovery_response = JSON.parse(JSON.stringify(config.devices));
+  discovery_response.forEach((device) => { device.udn = `${udn}:${device.insteon_id}`; });
+  res.status(200).send(JSON.stringify(discovery_response));
 });
 
 // Light status route
