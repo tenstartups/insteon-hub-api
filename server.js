@@ -12,7 +12,7 @@ var
 const LISTEN_INTERFACE = process.env.LISTEN_INTERFACE || 'eth0';
 const LISTEN_ADDRESS = '0.0.0.0';
 const LISTEN_PORT = process.env.LISTEN_PORT;
-const DEVICE_USN = 'urn:schemas-upnp-org:device:InsteonHubAPI:1';
+const DEVICE_USN = 'urn:schemas-upnp-org:device:InsteonServer:1';
 
 // Load configuration
 console.log(`Loading configuration from ${process.env.CONFIG_FILE}...`)
@@ -81,7 +81,7 @@ hub.httpClient(config.hub, () => {
   console.log(`Connected to Insteon Hub at ${config.hub.host}:${config.hub.port}`);
 
   // Subscribe for switch events
-  config.devices.switch.forEach(attrs => {
+  config.devices.forEach(attrs => {
     console.log(`[${attrs.insteon_id}] Subscribing to light switch events...`);
     var light = hub.light(attrs.insteon_id);
     light.on('turnOn', () => {
@@ -104,8 +104,19 @@ app.get('/api/discovery', (req, res) => {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   console.log(`Device discovery request from ${ip}...`);
   var discovery_response = JSON.parse(JSON.stringify(config.devices));
-  discovery_response.forEach((device) => { device.udn = `${udn}:${device.insteon_id}`; });
+  discovery_response.forEach((device) => { device.UDN = `${udn}:${device.insteon_id}`; });
   res.status(200).send(JSON.stringify(discovery_response));
+});
+
+// Hub status route
+app.get('/api/hub/info', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  console.log(`Retrieving hub info...`)
+  hub.info()
+  .then((result) => {
+    console.log(`Hub info: ${JSON.stringify(result)}`)
+    res.status(200).send(JSON.stringify(result));
+  });
 });
 
 // Light status route
@@ -113,7 +124,7 @@ app.get('/api/devices/:id/info', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   var id = req.params.id;
   console.log(`[${id}] Retrieving device info...`)
-  hub.info()
+  hub.info(id)
   .then((result) => {
     if(result == undefined) {
       console.log(`[${id}] Device not found`)
@@ -126,7 +137,7 @@ app.get('/api/devices/:id/info', (req, res) => {
 });
 
 // Light status route
-app.get('/api/lights/:id/get_status', (req, res) => {
+app.get('/api/lights/:id/status', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
   var id = req.params.id;
   console.log(`[${id}] Retrieving light status...`)

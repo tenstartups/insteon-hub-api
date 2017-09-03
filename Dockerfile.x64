@@ -1,7 +1,7 @@
 #
-# Insteon Hub (2245) API server
+# Insteon Server
 #
-# http://github.com/tenstartups/insteon-hub-api
+# http://github.com/tenstartups/insteon-server
 #
 
 FROM node:alpine
