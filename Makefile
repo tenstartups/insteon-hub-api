@@ -13,14 +13,14 @@ clean_build: Dockerfile.$(DOCKER_ARCH)
 
 run: build
 	docker run -it --rm \
+		-p 8080 \
 		-v "$(PWD)/test":/etc/insteon-server:ro \
 		-v "$(PWD)/test":/var/lib/insteon-server \
-		-e VIRTUAL_HOST=insteon-server.docker \
-		-e VIRTUAL_PORT=8080 \
+		-e DEBUG=node-ssdp* \
 		-e CONFIG_FILE=/etc/insteon-server/config.yml \
 		-e DATABASE_FILE=/var/lib/insteon-server/db.json \
 		-e LISTEN_PORT=8080 \
-		--net host \
+		-e VIRTUAL_HOST=insteon-server.docker \
 		--name insteon-server \
 		$(DOCKER_IMAGE_NAME) $(ARGS)
 

@@ -15,8 +15,10 @@ COPY package.json .
 # Install node application.
 RUN npm install
 
-# Bundle app source
-COPY ./*.js .
+# Install app source
+COPY server.js .
+ADD config ./config
+ADD routes ./routes
 
 EXPOSE 8080
 CMD [ "npm", "start" ]

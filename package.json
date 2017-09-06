@@ -1,7 +1,7 @@
 {
-  "name": "insteon_hub",
+  "name": "insteon-server",
   "version": "1.0.0",
-  "description": "Node.js on Docker",
+  "description": "Insteon Hub (2245) API server for integration with a SmartThing controller",
   "author": "Marc Lennox <marc.lennox@gmail.com>",
   "main": "server.js",
   "scripts": {
@@ -12,7 +12,6 @@
     "home-controller": "",
     "js-yaml": "",
     "node-json-db": "",
-    "node-ssdp": "",
-    "uuid": ""
+    "node-ssdp": ""
   }
 }
