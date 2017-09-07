@@ -14,21 +14,21 @@ clean_build: Dockerfile.$(DOCKER_ARCH)
 run: build
 	docker run -it --rm \
 		-p 8080 \
-		-v "$(PWD)/test":/etc/insteon-server:ro \
-		-v "$(PWD)/test":/var/lib/insteon-server \
-		-e DEBUG=node-ssdp* \
-		-e CONFIG_FILE=/etc/insteon-server/config.yml \
-		-e DATABASE_FILE=/var/lib/insteon-server/db.json \
-		-e LISTEN_PORT=8080 \
+		-v "$(PWD)/tmp":/etc/insteon-server:ro \
+		-v "$(PWD)/tmp":/var/lib/insteon-server \
+		-e CONFIG_FILE=/etc/insteon-server/settings.yml \
+		-e DATABASE_DIRECTORY=/var/lib/insteon-server \
+		-e PORT=8080 \
 		-e VIRTUAL_HOST=insteon-server.docker \
 		--name insteon-server \
 		$(DOCKER_IMAGE_NAME) $(ARGS)
 
 run_local: build
 	npm install && \
-		CONFIG_FILE=./test/config.yml \
-		DATABASE_FILE=./test/db.json \
-		LISTEN_PORT=8080 \
+		DEBUG=node-ssdp* \
+		CONFIG_FILE=./tmp/settings.yml \
+		DATABASE_DIRECTORY=./tmp \
+		PORT=8080 \
 		npm start
 
 push: build

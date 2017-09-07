@@ -10,15 +10,20 @@ FROM resin/raspberrypi3-alpine-node:latest
 WORKDIR /usr/src/app
 
 # Install app dependencies.
+COPY Gruntfile.js .
 COPY package.json .
 
 # Install node application.
 RUN npm install
 
 # Install app source
-COPY server.js .
-ADD config ./config
-ADD routes ./routes
+COPY app.js .
+ADD api api
+ADD assets assets
+ADD config config
+ADD tasks tasks
+ADD api api
+ADD api api
 
 EXPOSE 8080
 CMD [ "npm", "start" ]
