@@ -5,7 +5,8 @@
   "author": "Marc Lennox <marc.lennox@gmail.com>",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "debug": "node inspect server.js"
   },
   "dependencies": {
     "express": "",

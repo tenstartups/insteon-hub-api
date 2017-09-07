@@ -16,30 +16,30 @@ Object.keys(ifaces).forEach(dev => {
   })
 })
 
-insteon.then(hub => {
+let hub
+insteon.hub().then(result => { console.log(result); hub = result })
+console.log(hub)
 
-  var location = `http://${advertise_address}:${LISTEN_PORT}/api/devices`
-  var udn = `insteon:${hub.id}`
-  var ssdp = new SSDP({ location: location, udn: udn, sourcePort: 1900 })
+var location = `http://${advertise_address}:${LISTEN_PORT}/api/devices`
+var udn = `insteon:${insteon.hub().id}`
+var ssdp = new SSDP({ location: location, udn: udn, sourcePort: 1900 })
 
-  ssdp.addUSN(DEVICE_USN)
+ssdp.addUSN(DEVICE_USN)
 
-  ssdp.on('advertise-alive', (headers) => {
-    // Expire old devices from your cache.
-    // Register advertising device somewhere (as designated in http headers heads)
-  })
-
-  ssdp.on('advertise-bye', (headers) => {
-    // Remove specified device from cache.
-  })
-
-  ssdp.start()
-
-  process.on('exit', () => {
-    // Advertise shutting down and stop listening
-    ssdp.stop()
-  })
-
-  console.log(`SSDP server advertising for UDN ${udn} at ${location}`)
-
+ssdp.on('advertise-alive', (headers) => {
+  // Expire old devices from your cache.
+  // Register advertising device somewhere (as designated in http headers heads)
 })
+
+ssdp.on('advertise-bye', (headers) => {
+  // Remove specified device from cache.
+})
+
+ssdp.start()
+
+process.on('exit', () => {
+  // Advertise shutting down and stop listening
+  ssdp.stop()
+})
+
+console.log(`SSDP server advertising for UDN ${udn} at ${location}`)
