@@ -25,8 +25,8 @@ module.exports = (sails) => {
         console.log(`Retrieving Insteon Hub (2245) information...`)
         client.info()
         .then(hubInfo => {
-          client.insteon_id = hubInfo.id
-          console.log(`Retrieved Insteon Hub (2245) information`)
+          client.insteonId = hubInfo.id
+          console.log(`Retrieved Insteon Hub (2245) information [${client.insteonId}]`)
           return cb()
         })
       })

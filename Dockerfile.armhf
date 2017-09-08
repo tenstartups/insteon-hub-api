@@ -17,13 +17,11 @@ COPY package.json .
 RUN npm install
 
 # Install app source
-COPY app.js .
-ADD api api
-ADD assets assets
-ADD config config
 ADD tasks tasks
+ADD config config
+ADD assets assets
 ADD api api
-ADD api api
+COPY app.js .
 
 EXPOSE 8080
 CMD [ "npm", "start" ]
