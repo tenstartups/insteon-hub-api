@@ -23,7 +23,7 @@ run: build
 		--name insteon-server \
 		$(DOCKER_IMAGE_NAME) $(ARGS)
 
-run_local: build
+run_local:
 	npm install && \
 		DEBUG=node-ssdp* \
 		CONFIG_FILE=./tmp/settings.yml \
