@@ -1,34 +1,25 @@
-/**
- * DeviceController
- *
- * @description :: Server-side logic for managing devices
- * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- */
-
 module.exports = {
 
-  /**
-   * `DeviceController.index()`
-   */
-  index: function (req, res) {
-    return res.json({
-      todo: 'index() is not implemented yet!'
+  index: (req, res) => {
+    Device.find().exec((err, records) => {
+      if (err) {
+        return res.serverError(err)
+      }
+      return res.json(records)
     })
   },
 
-  /**
-   * `DeviceController.show()`
-   */
-  show: function (req, res) {
-    return res.json({
-      todo: 'show() is not implemented yet!'
+  show: (req, res) => {
+    var insteonId = req.params.insteon_id
+    Device.findOne({ insteon_id: insteonId }).exec((err, record) => {
+      if (err) {
+        return res.serverError(err)
+      }
+      return res.json(record)
     })
   },
 
-  /**
-   * `DeviceController.create()`
-   */
-  create: function (req, res) {
+  create: (req, res) => {
     var insteonId = req.params.insteon_id
     var hub = sails.hooks.insteon_hub.client()
     hub.info(insteonId)
@@ -48,21 +39,27 @@ module.exports = {
     })
   },
 
-  /**
-   * `DeviceController.update()`
-   */
-  update: function (req, res) {
-    return res.json({
-      todo: 'update() is not implemented yet!'
+  update: (req, res) => {
+    var insteonId = req.params.insteon_id
+    Device.findOne({ insteon_id: insteonId }).exec((err, record) => {
+      if (err) {
+        return res.serverError(err)
+      }
+      return res.json(record)
     })
   },
 
-  /**
-   * `DeviceController.destroy()`
-   */
-  destroy: function (req, res) {
-    return res.json({
-      todo: 'destroy() is not implemented yet!'
+  destroy: (req, res) => {
+    var insteonId = req.params.insteon_id
+    Device.findOne({ insteon_id: insteonId }).exec((err, record) => {
+      if (err) {
+        return res.serverError(err)
+      }
+      return res.json(record)
     })
   }
+}
+
+function unknownDevice (res, insteonId) {
+  return res.notFound({ error: `Device with Insteon ID ${insteonId} unknown to Hub` })
 }

@@ -1,51 +1,30 @@
-/**
- * FanController
- *
- * @description :: Server-side logic for managing fans
- * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- */
-
 module.exports = {
-	
 
-
-  /**
-   * `FanController.off()`
-   */
-  off: function (req, res) {
+  off: (req, res) => {
     return res.json({
       todo: 'off() is not implemented yet!'
-    });
+    })
   },
 
-
-  /**
-   * `FanController.low()`
-   */
-  low: function (req, res) {
+  low: (req, res) => {
     return res.json({
       todo: 'low() is not implemented yet!'
-    });
+    })
   },
 
-
-  /**
-   * `FanController.medium()`
-   */
-  medium: function (req, res) {
+  medium: (req, res) => {
     return res.json({
       todo: 'medium() is not implemented yet!'
-    });
+    })
   },
 
-
-  /**
-   * `FanController.high()`
-   */
-  high: function (req, res) {
+  high: (req, res) => {
     return res.json({
       todo: 'high() is not implemented yet!'
-    });
+    })
   }
-};
+}
 
+function unknownDevice (res, insteonId) {
+  return res.notFound({ error: `Device with Insteon ID ${insteonId} unknown to Hub` })
+}

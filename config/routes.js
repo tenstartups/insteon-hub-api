@@ -47,7 +47,11 @@ module.exports.routes = {
   ***************************************************************************/
 
   // Device controller actions
+  'get /api/devices': 'DeviceController.index',
+  'get /api/device/:insteon_id': 'DeviceController.show',
   'post /api/device/:insteon_id': 'DeviceController.create',
+  'patch /api/device/:insteon_id': 'DeviceController.update',
+  'delete /api/device/:insteon_id': 'DeviceController.destroy',
 
   // Light controller actions
   'post /api/light/:insteon_id/on': 'LightController.on',
@@ -55,5 +59,11 @@ module.exports.routes = {
   'post /api/light/:insteon_id/level/:level': 'LightController.level',
   'post /api/light/:insteon_id/brighten': 'LightController.brighten',
   'post /api/light/:insteon_id/dim': 'LightController.dim',
-  'post /api/light/:insteon_id/status': 'LightController.status'
+  'post /api/light/:insteon_id/status': 'LightController.status',
+
+  // Fan controller actions
+  'post /api/fan/:insteon_id/off': 'FanController.off',
+  'post /api/fan/:insteon_id/low': 'FanController.low',
+  'post /api/fan/:insteon_id/medium': 'FanController.medium',
+  'post /api/fan/:insteon_id/high': 'FanController.high'
 }

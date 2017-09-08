@@ -1,11 +1,5 @@
-/**
- * LightController
- *
- * @description :: Server-side logic for managing lights
- * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- */
-
 module.exports = {
+
   status: (req, res) => {
     var insteonId = req.params.insteon_id
     var hub = sails.hooks.insteon_hub.client()
