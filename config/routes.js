@@ -53,15 +53,21 @@ module.exports.routes = {
   'patch /api/device/:insteon_id': 'DeviceController.update',
   'delete /api/device/:insteon_id': 'DeviceController.destroy',
 
-  // Light controller actions
-  'post /api/light/:insteon_id/on': 'LightController.on',
-  'post /api/light/:insteon_id/off': 'LightController.off',
-  'post /api/light/:insteon_id/level/:level': 'LightController.level',
-  'post /api/light/:insteon_id/brighten': 'LightController.brighten',
-  'post /api/light/:insteon_id/dim': 'LightController.dim',
-  'post /api/light/:insteon_id/status': 'LightController.status',
+  // Switch controller actions
+  'post /api/switch/:insteon_id/on': 'SwitchController.on',
+  'post /api/switch/:insteon_id/off': 'SwitchController.off',
+  'post /api/switch/:insteon_id/status': 'SwitchController.status',
+
+  // Dimmer controller actions
+  'post /api/dimmer/:insteon_id/on': 'DimmerController.on',
+  'post /api/dimmer/:insteon_id/off': 'DimmerController.off',
+  'post /api/dimmer/:insteon_id/level/:level': 'DimmerController.level',
+  'post /api/dimmer/:insteon_id/brighten': 'DimmerController.brighten',
+  'post /api/dimmer/:insteon_id/dim': 'DimmerController.dim',
+  'post /api/dimmer/:insteon_id/status': 'DimmerController.status',
 
   // Fan controller actions
+  'post /api/fan/:insteon_id/status': 'FanController.status',
   'post /api/fan/:insteon_id/off': 'FanController.off',
   'post /api/fan/:insteon_id/low': 'FanController.low',
   'post /api/fan/:insteon_id/medium': 'FanController.medium',

@@ -1,3 +1,5 @@
+const uuidv4 = require('uuid/v4')
+
 module.exports = {
 
   index: (req, res) => {
@@ -27,14 +29,20 @@ module.exports = {
       if (deviceInfo === undefined) {
         return res.notFound({ error: `Device with Insteon ID ${insteonId} unknown to Hub` })
       } else {
-        var result = Device.create(
-          {
-            udn: `${hub.insteon_id}:${insteonId}`,
-            name: insteonId || `Insteon Device ${insteonId}`
+        var deviceAttrs = {
+          id: uuidv4(),
+          insteon_id: insteonId,
+          type: 'dimmer',
+          udn: `insteon:${hub.insteon_id}:${insteonId}`,
+          name: insteonId || `Insteon Device ${insteonId}`
+        }
+        Device.create(deviceAttrs).exec((err, device) => {
+          if (err) {
+            return res.serverError(err)
           }
-        )
-        console.log(result)
-        return res.json(result)
+          deviceAttrs.id = device.id
+          return res.json(deviceAttrs)
+        })
       }
     })
   },

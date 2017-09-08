@@ -31,7 +31,7 @@ module.exports = (sails) => {
     initialize: (cb) => {
       sails.after('hook:insteon_hub:loaded', () => {
         var location = `http://${advertiseIP}:${sails.config.port}/api/devices`
-        var udn = `insteon_hub:${sails.hooks.insteon_hub.client().info.id}`
+        var udn = `insteon::${sails.hooks.insteon_hub.client().info.id}`
 
         console.log(`Starting SSDP server advertising ${udn} at ${location}...`)
 

@@ -8,9 +8,11 @@
 module.exports = {
 
   attributes: {
-    insteon_id: { type: 'string,' },
-    name: { type: 'string,' },
-    description: { type: 'text,' },
-    udn: { type: 'string' }
+    id: { type: 'string', primaryKey: true, required: true },
+    insteon_id: { type: 'string', required: true, unique: true },
+    type: { type: 'string', required: true },
+    name: { type: 'string', required: true },
+    description: { type: 'text' },
+    udn: { type: 'string', required: true, unique: true }
   }
 }

@@ -1,5 +1,11 @@
 module.exports = {
 
+  status: (req, res) => {
+    return res.json({
+      todo: 'status() is not implemented yet!'
+    })
+  },
+
   off: (req, res) => {
     return res.json({
       todo: 'off() is not implemented yet!'

@@ -3,14 +3,14 @@ module.exports = {
   status: (req, res) => {
     var insteonId = req.params.insteon_id
     var hub = sails.hooks.insteon_hub.client()
-    console.log(`[${insteonId}] Retrieving light level...`)
-    var light = hub.light(insteonId)
-    light.level()
+    console.log(`[${insteonId}] Retrieving dimmer level...`)
+    var dimmer = hub.light(insteonId)
+    dimmer.level()
     .then((result) => {
       if (result === undefined) {
         return unknownDevice(res, insteonId)
       } else {
-        console.log(`[${insteonId}] Light level is ${result}`)
+        console.log(`[${insteonId}] Dimmer level is ${result}`)
         return res.json({ insteon_id: insteonId, level: result })
       }
     })
@@ -19,9 +19,9 @@ module.exports = {
   on: (req, res) => {
     var insteonId = req.params.insteon_id
     var hub = sails.hooks.insteon_hub.client()
-    console.log(`[${insteonId}] Turning light ON...`)
-    var light = hub.light(insteonId)
-    light.turnOn()
+    console.log(`[${insteonId}] Setting dimmer level to 100%...`)
+    var dimmer = hub.light(insteonId)
+    dimmer.turnOn()
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
@@ -35,9 +35,9 @@ module.exports = {
   off: (req, res) => {
     var insteonId = req.params.insteon_id
     var hub = sails.hooks.insteon_hub.client()
-    console.log(`[${insteonId}] Turning light OFF...`)
-    var light = hub.light(insteonId)
-    light.turnOff()
+    console.log(`[${insteonId}] Setting dimmer level to 0%...`)
+    var dimmer = hub.light(insteonId)
+    dimmer.turnOff()
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
@@ -52,9 +52,9 @@ module.exports = {
     var insteonId = req.params.insteon_id
     var level = req.params.level
     var hub = sails.hooks.insteon_hub.client()
-    console.log(`[${insteonId}] Setting light level to ${level}...`)
-    var light = hub.light(insteonId)
-    light.level(level)
+    console.log(`[${insteonId}] Setting dimnmer level to ${level}%...`)
+    var dimmer = hub.light(insteonId)
+    dimmer.level(level)
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
@@ -68,9 +68,9 @@ module.exports = {
   brighten: (req, res) => {
     var insteonId = req.params.insteon_id
     var hub = sails.hooks.insteon_hub.client()
-    console.log(`[${insteonId}] Brightening light...`)
-    var light = hub.light(insteonId)
-    light.brighten()
+    console.log(`[${insteonId}] Increasing dimmer level...`)
+    var dimmer = hub.light(insteonId)
+    dimmer.brighten()
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
@@ -84,9 +84,9 @@ module.exports = {
   dim: (req, res) => {
     var insteonId = req.params.insteon_id
     var hub = sails.hooks.insteon_hub.client()
-    console.log(`[${insteonId}] Dimming light...`)
-    var light = hub.light(insteonId)
-    light.dim()
+    console.log(`[${insteonId}] Reducing dimmer level...`)
+    var dimmer = hub.light(insteonId)
+    dimmer.dim()
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
