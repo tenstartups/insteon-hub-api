@@ -18,7 +18,7 @@ run: build
 		-v "$(PWD)/tmp":/etc/insteon-server:ro \
 		-v "$(PWD)/tmp":/var/lib/insteon-server \
 		-e DEBUG=node-ssdp* \
-		-e CONFIG_FILE=/etc/insteon-server/settings.yml \
+		-e SETTINGS_FILE=/etc/insteon-server/settings.yml \
 		-e DATABASE_DIRECTORY=/var/lib/insteon-server \
 		-e PORT=8080 \
 		-e SSDP_LOCATION_ADDRESS=$(IP_ADDRESS) \
@@ -31,7 +31,7 @@ run: build
 run_local:
 	npm install && \
 		DEBUG=node-ssdp* \
-		CONFIG_FILE=./tmp/settings.yml \
+		SETTINGS_FILE=./tmp/settings.yml \
 		DATABASE_DIRECTORY=./tmp \
 		PORT=8080 \
 		npm start

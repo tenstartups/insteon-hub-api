@@ -10,7 +10,7 @@ module.exports = (sails) => {
     configure: () => {
       settings = require('js-yaml')
                  .safeLoad(require('fs')
-                 .readFileSync(process.env.CONFIG_FILE, 'utf8'))
+                 .readFileSync(process.env.SETTINGS_FILE, 'utf8'))
                  .hub
     },
 
