@@ -1,21 +1,21 @@
 module.exports = {
 
   index: (req, res) => {
-    Device.find().exec((err, records) => {
+    Device.find().exec((err, devices) => {
       if (err) {
         return res.serverError(err)
       }
-      return res.json(records)
+      return res.json({ device: devices })
     })
   },
 
   show: (req, res) => {
     var insteonId = req.params.insteon_id
-    Device.findOne({ insteon_id: insteonId }).exec((err, record) => {
+    Device.findOne({ insteon_id: insteonId }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
-      return res.json(record)
+      return res.json({ device: device })
     })
   },
 
@@ -28,18 +28,17 @@ module.exports = {
       if (deviceInfo === undefined) {
         return res.notFound({ error: `Device with Insteon ID ${insteonId} unknown to Hub` })
       } else {
-        var deviceAttrs = {
+        var attrs = {
           insteon_id: insteonId,
           type: 'dimmer',
           udn: `insteon:${hub.insteon_id}:${insteonId}`,
           name: req.params.name || `Insteon Device ${insteonId}`
         }
-        Device.create(deviceAttrs).exec((err, device) => {
+        Device.create(attrs).exec((err, device) => {
           if (err) {
-            return res.serverError(err)
+            return res.serverError({ error: err })
           }
-          deviceAttrs.id = device.id
-          return res.json(deviceAttrs)
+          return res.json({ device: device })
         })
       }
     })
@@ -47,21 +46,21 @@ module.exports = {
 
   update: (req, res) => {
     var insteonId = req.params.insteon_id
-    Device.findOne({ insteon_id: insteonId }).exec((err, record) => {
+    Device.findOne({ insteon_id: insteonId }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
-      return res.json(record)
+      return res.json({ device: device })
     })
   },
 
   destroy: (req, res) => {
     var insteonId = req.params.insteon_id
-    Device.findOne({ insteon_id: insteonId }).exec((err, record) => {
+    Device.findOne({ insteon_id: insteonId }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
-      return res.json(record)
+      return res.json({ device: device })
     })
   }
 }
