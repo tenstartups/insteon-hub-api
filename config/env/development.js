@@ -21,5 +21,4 @@ module.exports = {
   //   connection: 'someMongodbServer'
   // }
 
-  explicitHost: process.env.HOST || '0.0.0.0'
 };
