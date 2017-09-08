@@ -1,5 +1,3 @@
-const uuidv4 = require('uuid/v4')
-
 module.exports = {
 
   index: (req, res) => {
@@ -26,15 +24,15 @@ module.exports = {
     var hub = sails.hooks.insteon_hub.client()
     hub.info(insteonId)
     .then(deviceInfo => {
+      console.log(deviceInfo)
       if (deviceInfo === undefined) {
         return res.notFound({ error: `Device with Insteon ID ${insteonId} unknown to Hub` })
       } else {
         var deviceAttrs = {
-          id: uuidv4(),
           insteon_id: insteonId,
           type: 'dimmer',
           udn: `insteon:${hub.insteon_id}:${insteonId}`,
-          name: insteonId || `Insteon Device ${insteonId}`
+          name: req.params.name || `Insteon Device ${insteonId}`
         }
         Device.create(deviceAttrs).exec((err, device) => {
           if (err) {
