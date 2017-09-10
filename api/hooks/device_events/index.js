@@ -12,13 +12,13 @@ module.exports = (sails) => {
 
         console.log(`Subscribing to Insteon device events...`)
 
-        Device.find().exec((err, records) => {
+        Device.find().exec((err, devices) => {
           if (err) {
-            console.log(`Error subscribing to light switch events...`)
+            console.log(`Error loading devices for event subscription`)
             console.log(err)
             return
           }
-          records.forEach(device => {
+          devices.forEach(device => {
             console.log(`[${device.insteon_id}] Subscribing to light switch events...`)
             var light = hub.light(device.insteon_id)
 

@@ -51,6 +51,7 @@ module.exports = {
           }
           return res.json({ device: device })
         })
+        sails.hooks.ssdp_server.client().startServer(insteonId)
       }
     })
   },

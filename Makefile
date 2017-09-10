@@ -24,7 +24,6 @@ run: build
 		-e SSDP_LOCATION_ADDRESS=$(IP_ADDRESS) \
 		-e SSDP_LOCATION_PORT=8080 \
 		-e VIRTUAL_HOST=insteon-server.docker \
-		--net host \
 		--name insteon-server \
 		$(DOCKER_IMAGE_NAME) $(ARGS)
 

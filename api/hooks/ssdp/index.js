@@ -1,16 +1,47 @@
 var SSDP = require('node-ssdp').Server
 
-const DEVICE_USN = 'urn:schemas-upnp-org:device:InsteonServer:1'
+const DEVICE_USN = 'urn:schemas-upnp-org:device:Insteon:1'
 const LISTEN_INTERFACE = process.env.LISTEN_INTERFACE || 'eth0'
 
-module.exports = (sails) => {
-  var locationAddress
-  var locationPort
-  var ssdp
+var locationAddress
+var locationPort
+var ssdpServers = {}
 
+function startServer (insteonId) {
+  var hubId = `${sails.hooks.insteon_hub.client().insteonId}`
+  var location = `http://${locationAddress}:${locationPort}/api/device/${insteonId}`
+  var udn = `insteon:${hubId}:${insteonId}`
+
+  console.log(`Starting SSDP server advertising for UDN ${udn} at ${location}...`)
+
+  var ssdp = new SSDP({ location: location, udn: udn, sourcePort: 1900 })
+  ssdpServers[insteonId] = ssdp
+
+  ssdp.addUSN(DEVICE_USN)
+
+  ssdp.on('advertise-alive', (headers) => {
+    // Expire old devices from your cache.
+    // Register advertising device somewhere (as designated in http headers heads)
+  })
+
+  ssdp.on('advertise-bye', (headers) => {
+    // Remove specified device from cache.
+  })
+
+  ssdp.start()
+
+  process.on('exit', () => {
+    // Advertise shutting down and stop listening
+    ssdp.stop()
+  })
+
+  console.log(`Started SSDP server advertising for UDN ${udn} at ${location}`)
+}
+
+module.exports = (sails) => {
   return {
-    server: () => {
-      return ssdp
+    servers: () => {
+      return ssdpServers
     },
 
     configure: () => {
@@ -36,34 +67,24 @@ module.exports = (sails) => {
     defaults: () => {
     },
 
+    startServer (insteonId) {
+      startServer(insteonId)
+    },
+
     initialize: (cb) => {
       sails.after('hook:insteon_hub:loaded', () => {
-        var location = `http://${locationAddress}:${locationPort}/api/devices`
-        var udn = `insteon:${sails.hooks.insteon_hub.client().insteonId}`
+        console.log(`Starting SSDP advertisement for all devices...`)
 
-        console.log(`Starting SSDP server advertising for UDN ${udn} at ${location}...`)
-
-        ssdp = new SSDP({ location: location, udn: udn, sourcePort: 1900 })
-
-        ssdp.addUSN(DEVICE_USN)
-
-        ssdp.on('advertise-alive', (headers) => {
-          // Expire old devices from your cache.
-          // Register advertising device somewhere (as designated in http headers heads)
+        Device.find().exec((err, devices) => {
+          if (err) {
+            console.log(`Error loading devices for SSDP advertisement`)
+            console.log(err)
+            return
+          }
+          devices.forEach(device => { startServer(device.insteon_id) })
         })
 
-        ssdp.on('advertise-bye', (headers) => {
-          // Remove specified device from cache.
-        })
-
-        ssdp.start()
-
-        process.on('exit', () => {
-          // Advertise shutting down and stop listening
-          ssdp.stop()
-        })
-
-        console.log(`Started SSDP server advertising for UDN ${udn} at ${location}`)
+        console.log(`Started SSDP advertisement for all devices`)
 
         // Finish initializing custom hook
         // Then call cb()
