@@ -15,46 +15,21 @@ module.exports = {
       if (err) {
         return res.serverError(err)
       }
-      var result = { device: device }
-      result['hardware_address'] = `${sails.hooks.insteon_hub.client().insteonId}${device.insteon_id}`
-      return res.json(result)
+      return res.json({ device: device })
     })
   },
 
   create: (req, res) => {
-    var insteonId = req.params.insteon_id
-    var hub = sails.hooks.insteon_hub.client()
-    hub.info(insteonId)
-    .then(deviceInfo => {
-      if (deviceInfo === undefined) {
-        return res.notFound({ error: `Device with Insteon ID ${insteonId} unknown to Hub` })
-      } else {
-        var type
-        if (deviceInfo.isLighting) {
-          if (deviceInfo.isDimmable) {
-            type = 'dimmer'
-          } else {
-            type = 'switch'
-          }
-        } else if (deviceInfo.isFan) {
-          type = 'fan'
-        } else {
-          return res.badRequest({ error: `Unknown/unsupported device type ${deviceInfo}` })
-        }
-        var attrs = {
-          insteon_id: insteonId,
-          type: type,
-          udn: `insteon:${hub.insteonId}:${insteonId}`,
-          name: req.param('name') || `Insteon Device ${insteonId}`
-        }
-        Device.create(attrs).exec((err, device) => {
-          if (err) {
-            return res.serverError({ error: err })
-          }
-          return res.json({ device: device })
-        })
-        sails.hooks.ssdp_server.client().startServer(insteonId)
+    var attrs = {
+      insteon_id: req.params.insteon_id,
+      name: req.param('name'),
+      description: req.param('description')
+    }
+    Device.create(attrs).exec((err, device) => {
+      if (err) {
+        return res.serverError({ error: err })
       }
+      return res.json({ device: device })
     })
   },
 

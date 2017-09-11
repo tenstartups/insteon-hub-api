@@ -9,7 +9,7 @@ var ssdpServers = {}
 
 function startServer (device) {
   var usn = `urn:schemas-upnp-org:device:Insteon${camelCase(device.type)}:1`
-  var udn = `insteon:hub:${sails.hooks.insteon_hub.client().insteonId}:${device.type}${device.insteon_id}`
+  var udn = `insteon:hub:${sails.hooks.insteon_hub.client().insteonId}:${device.type}:${device.insteon_id}`
   var location = `http://${locationAddress}:${locationPort}/api/device/${device.insteon_id}`
 
   console.log(`Starting SSDP server advertising for USN: ${usn}, UDN: ${udn}, Location: ${location}...`)
@@ -69,7 +69,7 @@ module.exports = (sails) => {
     defaults: () => {
     },
 
-    startServer (device) {
+    start (device) {
       startServer(device)
     },
 
