@@ -15,7 +15,9 @@ module.exports = {
       if (err) {
         return res.serverError(err)
       }
-      return res.json({ device: device })
+      var result = { device: device }
+      result['hardware_address'] = `${sails.hooks.insteon_hub.client().insteonId}${device.insteon_id}`
+      return res.json(result)
     })
   },
 

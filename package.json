@@ -5,6 +5,7 @@
   "description": "Insteon Hub (2245) API server for integration with a SmartThing controller",
   "keywords": [],
   "dependencies": {
+    "decamelize": "*",
     "ejs": "*",
     "grunt": "*",
     "grunt-contrib-clean": "*",
@@ -24,7 +25,8 @@
     "node-ssdp": "*",
     "rc": "*",
     "sails": "*",
-    "sails-disk": "*"
+    "sails-disk": "*",
+    "uppercamelcase": "*"
   },
   "scripts": {
     "debug": "node debug app.js",

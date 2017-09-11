@@ -1,31 +1,33 @@
 var SSDP = require('node-ssdp').Server
+const camelCase = require('uppercamelcase')
 
-const DEVICE_USN = 'urn:schemas-upnp-org:device:Insteon:1'
 const LISTEN_INTERFACE = process.env.LISTEN_INTERFACE || 'eth0'
 
 var locationAddress
 var locationPort
 var ssdpServers = {}
 
-function startServer (insteonId) {
-  var hubId = `${sails.hooks.insteon_hub.client().insteonId}`
-  var location = `http://${locationAddress}:${locationPort}/api/device/${insteonId}`
-  var udn = `insteon:${hubId}:${insteonId}`
+function startServer (device) {
+  var usn = `urn:schemas-upnp-org:device:Insteon${camelCase(device.type)}:1`
+  var udn = `insteon:hub:${sails.hooks.insteon_hub.client().insteonId}:${device.type}${device.insteon_id}`
+  var location = `http://${locationAddress}:${locationPort}/api/device/${device.insteon_id}`
 
-  console.log(`Starting SSDP server advertising for UDN ${udn} at ${location}...`)
+  console.log(`Starting SSDP server advertising for USN: ${usn}, UDN: ${udn}, Location: ${location}...`)
 
   var ssdp = new SSDP({ location: location, udn: udn, sourcePort: 1900 })
-  ssdpServers[insteonId] = ssdp
+  ssdpServers[device.insteon_id] = ssdp
 
-  ssdp.addUSN(DEVICE_USN)
+  ssdp.addUSN(usn)
 
   ssdp.on('advertise-alive', (headers) => {
     // Expire old devices from your cache.
     // Register advertising device somewhere (as designated in http headers heads)
+    console.log(`Advertise alive for USN: ${usn}, UDN: ${udn}, Location: ${location}`)
   })
 
   ssdp.on('advertise-bye', (headers) => {
     // Remove specified device from cache.
+    console.log(`Advertise bye for USN: ${usn}, UDN: ${udn}, Location: ${location}`)
   })
 
   ssdp.start()
@@ -35,7 +37,7 @@ function startServer (insteonId) {
     ssdp.stop()
   })
 
-  console.log(`Started SSDP server advertising for UDN ${udn} at ${location}`)
+  console.log(`Started SSDP server advertising for USN: ${usn}, UDN: ${udn}, Location: ${location}`)
 }
 
 module.exports = (sails) => {
@@ -67,8 +69,8 @@ module.exports = (sails) => {
     defaults: () => {
     },
 
-    startServer (insteonId) {
-      startServer(insteonId)
+    startServer (device) {
+      startServer(device)
     },
 
     initialize: (cb) => {
@@ -81,7 +83,7 @@ module.exports = (sails) => {
             console.log(err)
             return
           }
-          devices.forEach(device => { startServer(device.insteon_id) })
+          devices.forEach(device => { startServer(device) })
         })
 
         console.log(`Started SSDP advertisement for all devices`)
