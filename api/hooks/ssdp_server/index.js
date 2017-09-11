@@ -1,6 +1,7 @@
 var SSDP = require('node-ssdp').Server
 const camelCase = require('uppercamelcase')
 
+const INSTANCE_ID = process.env.INSTANCE_ID || '01'
 const LISTEN_INTERFACE = process.env.LISTEN_INTERFACE || 'eth0'
 
 var locationAddress
@@ -9,12 +10,13 @@ var ssdpServers = {}
 
 function startServer (device) {
   var usn = `urn:schemas-upnp-org:device:Insteon${camelCase(device.type)}:1`
-  var udn = `insteon:hub:${sails.hooks.insteon_hub.client().insteonId}:${device.type}:${device.insteonId}`
+  var udn = `insteon:${INSTANCE_ID}:hub:${sails.hooks.insteon_hub.client().insteonId}:${device.type}:${device.insteonId}`
   var location = `http://${locationAddress}:${locationPort}/api/device/${device.insteonId}`
 
   console.log(`Starting SSDP server advertising for USN: ${usn}, UDN: ${udn}, Location: ${location}...`)
 
   var ssdp = new SSDP({ location: location, udn: udn, sourcePort: 1900 })
+
   ssdpServers[device.insteonId] = ssdp
 
   ssdp.addUSN(usn)

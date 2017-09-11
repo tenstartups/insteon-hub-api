@@ -5,6 +5,8 @@
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
+const INSTANCE_ID = process.env.INSTANCE_ID || '01'
+
 module.exports = {
 
   attributes: {
@@ -36,11 +38,11 @@ module.exports = {
     },
 
     udn: function () {
-      return `insteon:hub:${sails.hooks.insteon_hub.client().insteonId}:${this.type}:${this.insteonId}`
+      return `insteon:${INSTANCE_ID}:hub:${sails.hooks.insteon_hub.client().insteonId}:${this.type}:${this.insteonId}`
     },
 
-    hardwareAddress: function () {
-      return `${sails.hooks.insteon_hub.client().insteonId}${this.insteonId}`
+    networkId: function () {
+      return `${INSTANCE_ID}${sails.hooks.insteon_hub.client().insteonId}${this.insteonId}`
     },
 
     toJSON: function () {
