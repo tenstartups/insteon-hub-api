@@ -48,7 +48,7 @@ module.exports = {
     toJSON: function () {
       var device = this.toObject()
       device.udn = this.udn()
-      device.hardwareAddress = this.hardwareAddress()
+      device.networkId = this.networkId()
       return device
     }
   },
