@@ -19,18 +19,18 @@ module.exports = (sails) => {
             return
           }
           devices.forEach(device => {
-            console.log(`[${device.insteon_id}] Subscribing to light switch events...`)
-            var light = hub.light(device.insteon_id)
+            console.log(`[${device.insteonId}] Subscribing to light switch events...`)
+            var light = hub.light(device.insteonId)
 
             light.on('turnOn', () => {
-              console.log(`[${device.insteon_id}] Light turned ON`)
+              console.log(`[${device.insteonId}] Light turned ON`)
             })
 
             light.on('turnOff', () => {
-              console.log(`[${device.insteon_id}] Light turned OFF`)
+              console.log(`[${device.insteonId}] Light turned OFF`)
             })
 
-            console.log(`[${device.insteon_id}] Subscribed to light switch events`)
+            console.log(`[${device.insteonId}] Subscribed to light switch events`)
           })
         })
 

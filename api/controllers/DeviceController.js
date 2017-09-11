@@ -10,8 +10,8 @@ module.exports = {
   },
 
   show: (req, res) => {
-    var insteonId = req.params.insteon_id
-    Device.findOne({ insteon_id: insteonId }).exec((err, device) => {
+    var insteonId = req.params.insteonId
+    Device.findOne({ insteonId: insteonId }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
@@ -21,7 +21,7 @@ module.exports = {
 
   create: (req, res) => {
     var attrs = {
-      insteon_id: req.params.insteon_id,
+      insteonId: req.params.insteonId,
       name: req.param('name'),
       description: req.param('description')
     }
@@ -34,8 +34,8 @@ module.exports = {
   },
 
   update: (req, res) => {
-    var insteonId = req.params.insteon_id
-    Device.findOne({ insteon_id: insteonId }).exec((err, device) => {
+    var insteonId = req.params.insteonId
+    Device.findOne({ insteonId: insteonId }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
@@ -44,8 +44,8 @@ module.exports = {
   },
 
   destroy: (req, res) => {
-    var insteonId = req.params.insteon_id
-    Device.findOne({ insteon_id: insteonId }).exec((err, device) => {
+    var insteonId = req.params.insteonId
+    Device.findOne({ insteonId: insteonId }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }

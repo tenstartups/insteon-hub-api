@@ -9,7 +9,7 @@ module.exports = {
 
   attributes: {
 
-    insteon_id: {
+    insteonId: {
       type: 'string',
       primaryKey: true,
       required: true
@@ -30,15 +30,20 @@ module.exports = {
       type: 'text'
     },
 
-    udn: function() {
-      return `insteon:hub:${sails.hooks.insteon_hub.client().insteonId}:${this.type}:${this.insteon_id}`
+    refreshSeconds: {
+      type: 'integer',
+      defaultsTo: 300
     },
 
-    hardware_address: function() {
-      return `${sails.hooks.insteon_hub.client().insteonId}${this.insteon_id}`
+    udn: function () {
+      return `insteon:hub:${sails.hooks.insteon_hub.client().insteonId}:${this.type}:${this.insteonId}`
     },
 
-    toJSON: function() {
+    hardware_address: function () {
+      return `${sails.hooks.insteon_hub.client().insteonId}${this.insteonId}`
+    },
+
+    toJSON: function () {
       var device = this.toObject()
       device.udn = this.udn()
       device.hardware_address = this.hardware_address()
@@ -48,11 +53,11 @@ module.exports = {
 
   beforeValidate: (device, cb) => {
     var hub = sails.hooks.insteon_hub.client()
-    hub.info(device.insteon_id)
+    hub.info(device.insteonId)
     .then(deviceInfo => {
       console.log(deviceInfo)
       if (deviceInfo === undefined) {
-        cb(`Device with Insteon ID ${device.insteon_id} unknown to hub`)
+        cb(`Device with Insteon ID ${device.insteonId} unknown to hub`)
       } else {
         if (deviceInfo.isLighting) {
           if (deviceInfo.isDimmable) {

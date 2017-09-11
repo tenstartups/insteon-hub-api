@@ -1,7 +1,7 @@
 module.exports = {
 
   status: (req, res) => {
-    var insteonId = req.params.insteon_id
+    var insteonId = req.params.insteonId
     var hub = sails.hooks.insteon_hub.client()
     console.log(`[${insteonId}] Retrieving switch status...`)
     var relay = hub.light(insteonId)
@@ -12,17 +12,17 @@ module.exports = {
       } else {
         if (result === 0) {
           console.log(`[${insteonId}] Switch is OFF`)
-          return res.json({ insteon_id: insteonId, status: 'off' })
+          return res.json({ insteonId: insteonId, status: 'off' })
         } else {
           console.log(`[${insteonId}] Switch is ON`)
-          return res.json({ insteon_id: insteonId, status: 'on' })
+          return res.json({ insteonId: insteonId, status: 'on' })
         }
       }
     })
   },
 
   on: (req, res) => {
-    var insteonId = req.params.insteon_id
+    var insteonId = req.params.insteonId
     var hub = sails.hooks.insteon_hub.client()
     console.log(`[${insteonId}] Turning switch ON...`)
     var relay = hub.light(insteonId)
@@ -30,7 +30,7 @@ module.exports = {
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ insteon_id: insteonId, command: 'on' })
+        return res.json({ insteonId: insteonId, command: 'on' })
       } else {
         return unknownDevice(res, insteonId)
       }
@@ -38,7 +38,7 @@ module.exports = {
   },
 
   off: (req, res) => {
-    var insteonId = req.params.insteon_id
+    var insteonId = req.params.insteonId
     var hub = sails.hooks.insteon_hub.client()
     console.log(`[${insteonId}] Turning switch OFF...`)
     var relay = hub.light(insteonId)
@@ -46,7 +46,7 @@ module.exports = {
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ insteon_id: insteonId, command: 'off' })
+        return res.json({ insteonId: insteonId, command: 'off' })
       } else {
         return unknownDevice(res, insteonId)
       }
