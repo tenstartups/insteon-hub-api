@@ -39,14 +39,14 @@ module.exports = {
       return `insteon:hub:${sails.hooks.insteon_hub.client().insteonId}:${this.type}:${this.insteonId}`
     },
 
-    hardware_address: function () {
+    hardwareAddress: function () {
       return `${sails.hooks.insteon_hub.client().insteonId}${this.insteonId}`
     },
 
     toJSON: function () {
       var device = this.toObject()
       device.udn = this.udn()
-      device.hardware_address = this.hardware_address()
+      device.hardwareAddress = this.hardwareAddress()
       return device
     }
   },
