@@ -26,7 +26,7 @@ module.exports = {
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ device: insteonId, command: 'on', status: 'on' })
+        return res.json({ device: insteonId, command: 'on', status: 'on', level: 100 })
       } else {
         return unknownDevice(res, insteonId)
       }
@@ -42,7 +42,7 @@ module.exports = {
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ device: insteonId, command: 'off', status: 'off' })
+        return res.json({ device: insteonId, command: 'off', status: 'off', level: 0 })
       } else {
         return unknownDevice(res, insteonId)
       }

@@ -24,12 +24,12 @@ function startServer (device) {
   ssdp.on('advertise-alive', (headers) => {
     // Expire old devices from your cache.
     // Register advertising device somewhere (as designated in http headers heads)
-    console.log(`Advertise alive for USN: ${usn}, UDN: ${udn}, Location: ${location}`)
+    // console.log(`Advertise alive for USN: ${usn}, UDN: ${udn}, Location: ${location}`)
   })
 
   ssdp.on('advertise-bye', (headers) => {
     // Remove specified device from cache.
-    console.log(`Advertise bye for USN: ${usn}, UDN: ${udn}, Location: ${location}`)
+    // console.log(`Advertise bye for USN: ${usn}, UDN: ${udn}, Location: ${location}`)
   })
 
   ssdp.start()
