@@ -46,6 +46,9 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
+  // SmartThingsAccess controller actions
+  'patch /api/smart_things': 'SmartThingsController.update',
+
   // Device controller actions
   'get /api/devices': 'DeviceController.index',
   'get /api/device/:insteonId': 'DeviceController.show',

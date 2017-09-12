@@ -12,7 +12,7 @@ module.exports = {
       } else {
         var level = parseInt(result)
         console.log(`[${insteonId}] Dimmer level is ${result}`)
-        return res.json({ device: dimmer, command: 'status', status: (level === 0 ? 'off' : 'on'), level: level })
+        return res.json({ device: insteonId, command: 'status', status: (level === 0 ? 'off' : 'on'), level: level })
       }
     })
   },
@@ -26,7 +26,7 @@ module.exports = {
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ device: dimmer, command: 'on', status: 'on' })
+        return res.json({ device: insteonId, command: 'on', status: 'on' })
       } else {
         return unknownDevice(res, insteonId)
       }
@@ -42,7 +42,7 @@ module.exports = {
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ device: dimmer, command: 'off', status: 'off' })
+        return res.json({ device: insteonId, command: 'off', status: 'off' })
       } else {
         return unknownDevice(res, insteonId)
       }
@@ -59,7 +59,7 @@ module.exports = {
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ device: dimmer, command: 'level', status: (level === 0 ? 'off' : 'on'), level: level })
+        return res.json({ device: insteonId, command: 'level', status: (level === 0 ? 'off' : 'on'), level: level })
       } else {
         return unknownDevice(res, insteonId)
       }
@@ -75,7 +75,7 @@ module.exports = {
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ device: dimmer, command: 'brighten' })
+        return res.json({ device: insteonId, command: 'brighten' })
       } else {
         return unknownDevice(res, insteonId)
       }
@@ -91,7 +91,7 @@ module.exports = {
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ device: dimmer, command: 'dim' })
+        return res.json({ device: insteonId, command: 'dim' })
       } else {
         return unknownDevice(res, insteonId)
       }

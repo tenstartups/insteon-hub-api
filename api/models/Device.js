@@ -78,5 +78,20 @@ module.exports = {
   afterCreate: (device, cb) => {
     sails.hooks.ssdp_server.start(device)
     cb()
+  },
+
+  statusCommand: () => {
+    var dimmer = hub.light(insteonId)
+    dimmer.level()
+    .then((result) => {
+      console.log(result)
+      if (result === undefined) {
+        return unknownDevice(res, insteonId)
+      } else {
+        var level = parseInt(result)
+        console.log(`[${insteonId}] Dimmer level is ${result}`)
+        console.log({ device: dimmer, command: 'status', status: (level === 0 ? 'off' : 'on'), level: level })
+      }
+    })
   }
 }

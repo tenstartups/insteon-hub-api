@@ -12,10 +12,10 @@ module.exports = {
       } else {
         if (result === 0) {
           console.log(`[${insteonId}] Switch is OFF`)
-          return res.json({ device: relay, command: 'status', status: 'off' })
+          return res.json({ device: insteonId, command: 'status', status: 'off' })
         } else {
           console.log(`[${insteonId}] Switch is ON`)
-          return res.json({ device: relay, command: 'status', status: 'on' })
+          return res.json({ device: insteonId, command: 'status', status: 'on' })
         }
       }
     })
@@ -30,7 +30,7 @@ module.exports = {
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ device: relay, command: 'on', status: 'on' })
+        return res.json({ device: insteonId, command: 'on', status: 'on' })
       } else {
         return unknownDevice(res, insteonId)
       }
@@ -46,7 +46,7 @@ module.exports = {
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ device: relay, command: 'off', status: 'off' })
+        return res.json({ device: insteonId, command: 'off', status: 'off' })
       } else {
         return unknownDevice(res, insteonId)
       }
@@ -65,7 +65,7 @@ module.exports = {
       console.log(`[${insteonId}] Light turned OFF`)
     })
     console.log(`[${insteonId}] Subscribed to switch events...`)
-    return res.json({ device: relay, command: 'subscribe' })
+    return res.json({ device: insteonId, command: 'subscribe' })
   }
 }
 
