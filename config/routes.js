@@ -57,6 +57,7 @@ module.exports.routes = {
   'post /api/switch/:insteonId/on': 'SwitchController.on',
   'post /api/switch/:insteonId/off': 'SwitchController.off',
   'post /api/switch/:insteonId/status': 'SwitchController.status',
+  'post /api/switch/:insteonId/subscribe': 'SwitchController.subscribe',
 
   // Dimmer controller actions
   'post /api/dimmer/:insteonId/on': 'DimmerController.on',

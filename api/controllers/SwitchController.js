@@ -12,10 +12,10 @@ module.exports = {
       } else {
         if (result === 0) {
           console.log(`[${insteonId}] Switch is OFF`)
-          return res.json({ insteonId: insteonId, status: 'off' })
+          return res.json({ device: relay, command: 'status', status: 'off' })
         } else {
           console.log(`[${insteonId}] Switch is ON`)
-          return res.json({ insteonId: insteonId, status: 'on' })
+          return res.json({ device: relay, command: 'status', status: 'on' })
         }
       }
     })
@@ -30,7 +30,7 @@ module.exports = {
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ insteonId: insteonId, command: 'on' })
+        return res.json({ device: relay, command: 'on', status: 'on' })
       } else {
         return unknownDevice(res, insteonId)
       }
@@ -46,11 +46,26 @@ module.exports = {
     .then((result) => {
       if (result.response) {
         console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ insteonId: insteonId, command: 'off' })
+        return res.json({ device: relay, command: 'off', status: 'off' })
       } else {
         return unknownDevice(res, insteonId)
       }
     })
+  },
+
+  subscribe: (req, res) => {
+    var insteonId = req.params.insteonId
+    var hub = sails.hooks.insteon_hub.client()
+    var relay = hub.light(insteonId)
+    console.log(`[${insteonId}] Subscribing to switch events...`)
+    relay.on('turnOn', () => {
+      console.log(`[${insteonId}] Light turned ON`)
+    })
+    relay.on('turnOff', () => {
+      console.log(`[${insteonId}] Light turned OFF`)
+    })
+    console.log(`[${insteonId}] Subscribed to switch events...`)
+    return res.json({ device: relay, command: 'subscribe' })
   }
 }
 
