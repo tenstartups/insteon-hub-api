@@ -68,7 +68,10 @@ module.exports = (sails) => {
       }
     },
 
-    defaults: () => {
+    defaults: {
+       __configKey__: {
+          _hookTimeout: 60000
+       }
     },
 
     start (device) {

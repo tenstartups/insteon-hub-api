@@ -3,7 +3,10 @@ module.exports = (sails) => {
     configure: () => {
     },
 
-    defaults: () => {
+    defaults: {
+       __configKey__: {
+          _hookTimeout: 60000
+       }
     },
 
     initialize: (cb) => {
