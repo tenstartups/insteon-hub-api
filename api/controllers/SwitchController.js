@@ -2,73 +2,46 @@ module.exports = {
 
   status: (req, res) => {
     var insteonId = req.params.insteonId
-    var hub = sails.hooks.insteon_hub.client()
     console.log(`[${insteonId}] Retrieving switch status...`)
-    var relay = hub.light(insteonId)
-    relay.level()
-    .then((result) => {
-      if (result === undefined) {
-        return unknownDevice(res, insteonId)
-      } else {
-        if (result === 0) {
-          console.log(`[${insteonId}] Switch is OFF`)
-          return res.json({ device: insteonId, command: 'status', status: 'off' })
-        } else {
-          console.log(`[${insteonId}] Switch is ON`)
-          return res.json({ device: insteonId, command: 'status', status: 'on' })
-        }
+    Switch.findOne({ insteonId: insteonId }).exec((err, device) => {
+      if (err) {
+        return res.serverError(err)
       }
+      device.getStatus().then(result => {
+        return res.json({ device: device, result: result })
+      }).catch(err => {
+        return res.serverError(err)
+      })
     })
   },
 
   on: (req, res) => {
     var insteonId = req.params.insteonId
-    var hub = sails.hooks.insteon_hub.client()
     console.log(`[${insteonId}] Turning switch ON...`)
-    var relay = hub.light(insteonId)
-    relay.turnOn()
-    .then((result) => {
-      if (result.response) {
-        console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ device: insteonId, command: 'on', status: 'on' })
-      } else {
-        return unknownDevice(res, insteonId)
+    Switch.findOne({ insteonId: insteonId }).exec((err, device) => {
+      if (err) {
+        return res.serverError(err)
       }
+      device.turnOn().then(result => {
+        return res.json({ device: device, result: result })
+      }).catch(err => {
+        return res.serverError(err)
+      })
     })
   },
 
   off: (req, res) => {
     var insteonId = req.params.insteonId
-    var hub = sails.hooks.insteon_hub.client()
     console.log(`[${insteonId}] Turning switch OFF...`)
-    var relay = hub.light(insteonId)
-    relay.turnOff()
-    .then((result) => {
-      if (result.response) {
-        console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ device: insteonId, command: 'off', status: 'off' })
-      } else {
-        return unknownDevice(res, insteonId)
+    Switch.findOne({ insteonId: insteonId }).exec((err, device) => {
+      if (err) {
+        return res.serverError(err)
       }
+      device.turnOff().then(result => {
+        return res.json({ device: device, result: result })
+      }).catch(err => {
+        return res.serverError(err)
+      })
     })
-  },
-
-  subscribe: (req, res) => {
-    var insteonId = req.params.insteonId
-    var hub = sails.hooks.insteon_hub.client()
-    var relay = hub.light(insteonId)
-    console.log(`[${insteonId}] Subscribing to switch events...`)
-    relay.on('turnOn', () => {
-      console.log(`[${insteonId}] Light turned ON`)
-    })
-    relay.on('turnOff', () => {
-      console.log(`[${insteonId}] Light turned OFF`)
-    })
-    console.log(`[${insteonId}] Subscribed to switch events...`)
-    return res.json({ device: insteonId, command: 'subscribe' })
   }
-}
-
-function unknownDevice (res, insteonId) {
-  return res.notFound({ error: `Device with Insteon ID ${insteonId} unknown to Hub` })
 }

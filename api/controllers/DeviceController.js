@@ -53,7 +53,3 @@ module.exports = {
     })
   }
 }
-
-function unknownDevice (res, insteonId) {
-  return res.notFound({ error: `Device with Insteon ID ${insteonId} unknown to Hub` })
-}

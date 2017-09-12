@@ -2,99 +2,92 @@ module.exports = {
 
   status: (req, res) => {
     var insteonId = req.params.insteonId
-    var hub = sails.hooks.insteon_hub.client()
-    console.log(`[${insteonId}] Retrieving dimmer level...`)
-    var dimmer = hub.light(insteonId)
-    dimmer.level()
-    .then((result) => {
-      if (result === undefined) {
-        return unknownDevice(res, insteonId)
-      } else {
-        var level = parseInt(result)
-        console.log(`[${insteonId}] Dimmer level is ${result}`)
-        return res.json({ device: insteonId, command: 'status', status: (level === 0 ? 'off' : 'on'), level: level })
+    console.log(`[${insteonId}] Retrieving dimmer status...`)
+    Dimmer.findOne({ insteonId: insteonId }).exec((err, device) => {
+      if (err) {
+        return res.serverError(err)
       }
+      device.getStatus().then(result => {
+        return res.json({ device: device, result: result })
+      }).catch(err => {
+        return res.serverError(err)
+      })
     })
   },
 
   on: (req, res) => {
     var insteonId = req.params.insteonId
-    var hub = sails.hooks.insteon_hub.client()
-    console.log(`[${insteonId}] Setting dimmer level to 100%...`)
-    var dimmer = hub.light(insteonId)
-    dimmer.turnOn()
-    .then((result) => {
-      if (result.response) {
-        console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ device: insteonId, command: 'on', status: 'on', level: 100 })
-      } else {
-        return unknownDevice(res, insteonId)
+    console.log(`[${insteonId}] Turning dimmer ON...`)
+    Dimmer.findOne({ insteonId: insteonId }).exec((err, device) => {
+      if (err) {
+        return res.serverError(err)
       }
+      device.turnOn().then(result => {
+        return res.json({ device: device, result: result })
+      }).catch(err => {
+        return res.serverError(err)
+      })
     })
   },
 
   off: (req, res) => {
     var insteonId = req.params.insteonId
-    var hub = sails.hooks.insteon_hub.client()
-    console.log(`[${insteonId}] Setting dimmer level to 0%...`)
-    var dimmer = hub.light(insteonId)
-    dimmer.turnOff()
-    .then((result) => {
-      if (result.response) {
-        console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ device: insteonId, command: 'off', status: 'off', level: 0 })
-      } else {
-        return unknownDevice(res, insteonId)
+    console.log(`[${insteonId}] Turning dimmer OFF...`)
+    Dimmer.findOne({ insteonId: insteonId }).exec((err, device) => {
+      if (err) {
+        return res.serverError(err)
       }
+      device.turnOff().then(result => {
+        return res.json({ device: device, result: result })
+      }).catch(err => {
+        return res.serverError(err)
+      })
     })
   },
 
   level: (req, res) => {
     var insteonId = req.params.insteonId
     var level = req.params.level
-    var hub = sails.hooks.insteon_hub.client()
     console.log(`[${insteonId}] Setting dimnmer level to ${level}%...`)
-    var dimmer = hub.light(insteonId)
-    dimmer.level(level)
-    .then((result) => {
-      if (result.response) {
-        console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ device: insteonId, command: 'level', status: (level === 0 ? 'off' : 'on'), level: level })
-      } else {
-        return unknownDevice(res, insteonId)
+    Dimmer.findOne({ insteonId: insteonId }).exec((err, device) => {
+      if (err) {
+        return res.serverError(err)
       }
+      device.setLevel(level).then(result => {
+        return res.json({ device: device, result: result })
+      }).catch(err => {
+        return res.serverError(err)
+      })
     })
   },
 
   brighten: (req, res) => {
     var insteonId = req.params.insteonId
-    var hub = sails.hooks.insteon_hub.client()
-    console.log(`[${insteonId}] Increasing dimmer level...`)
-    var dimmer = hub.light(insteonId)
-    dimmer.brighten()
-    .then((result) => {
-      if (result.response) {
-        console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ device: insteonId, command: 'brighten' })
-      } else {
-        return unknownDevice(res, insteonId)
+    console.log(`[${insteonId}] Brightening dimmer...`)
+    Dimmer.findOne({ insteonId: insteonId }).exec((err, device) => {
+      if (err) {
+        return res.serverError(err)
       }
+      device.brighten().then(result => {
+        return res.json({ device: device, result: result })
+      }).catch(err => {
+        return res.serverError(err)
+      })
     })
   },
 
   dim: (req, res) => {
     var insteonId = req.params.insteonId
-    var hub = sails.hooks.insteon_hub.client()
-    console.log(`[${insteonId}] Reducing dimmer level...`)
-    var dimmer = hub.light(insteonId)
-    dimmer.dim()
-    .then((result) => {
-      if (result.response) {
-        console.log(`[${insteonId}] Response: ${JSON.stringify(result.response)}`)
-        return res.json({ device: insteonId, command: 'dim' })
-      } else {
-        return unknownDevice(res, insteonId)
+    console.log(`[${insteonId}] Lowering dimmer...`)
+    Dimmer.findOne({ insteonId: insteonId }).exec((err, device) => {
+      if (err) {
+        return res.serverError(err)
       }
+      device.dim().then(result => {
+        return res.json({ device: device, result: result })
+      }).catch(err => {
+        return res.serverError(err)
+      })
     })
   }
 }

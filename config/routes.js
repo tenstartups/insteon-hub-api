@@ -47,7 +47,7 @@ module.exports.routes = {
   ***************************************************************************/
 
   // SmartThingsAccess controller actions
-  'patch /api/smart_things': 'SmartThingsController.update',
+  'patch /api/smart_things/update_callback': 'SmartThingsController.update_callback',
 
   // Device controller actions
   'get /api/devices': 'DeviceController.index',
@@ -60,7 +60,6 @@ module.exports.routes = {
   'post /api/switch/:insteonId/on': 'SwitchController.on',
   'post /api/switch/:insteonId/off': 'SwitchController.off',
   'post /api/switch/:insteonId/status': 'SwitchController.status',
-  'post /api/switch/:insteonId/subscribe': 'SwitchController.subscribe',
 
   // Dimmer controller actions
   'post /api/dimmer/:insteonId/on': 'DimmerController.on',

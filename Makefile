@@ -17,7 +17,6 @@ run: build
 		-p 8080 \
 		-v "$(PWD)/tmp":/etc/insteon-server:ro \
 		-v "$(PWD)/tmp":/var/lib/insteon-server \
-		-e DEBUG=node-ssdp* \
 		-e SETTINGS_FILE=/etc/insteon-server/settings.yml \
 		-e DATABASE_DIRECTORY=/var/lib/insteon-server \
 		-e PORT=8080 \

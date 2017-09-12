@@ -22,6 +22,7 @@
     "home-controller": "*",
     "include-all": "*",
     "js-yaml": "*",
+    "lodash": "*",
     "node-ssdp": "*",
     "rc": "*",
     "sails": "*",
