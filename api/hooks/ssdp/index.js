@@ -1,7 +1,6 @@
 var SSDP = require('node-ssdp').Server
 const camelCase = require('uppercamelcase')
 
-const INSTANCE_ID = process.env.INSTANCE_ID || '01'
 const LISTEN_INTERFACE = process.env.LISTEN_INTERFACE || 'eth0'
 
 var locationAddress
@@ -9,8 +8,9 @@ var locationPort
 var ssdpServers = {}
 
 function startServer (device) {
+  var hub = sails.hooks.insteon.hub()
   var usn = `urn:schemas-upnp-org:device:Insteon${camelCase(device.type)}:1`
-  var udn = `insteon:${INSTANCE_ID}:hub:${sails.hooks.insteon_hub.client().insteonId}:${device.type}:${device.insteonId}`
+  var udn = `insteon:${hub.instanceId()}:hub:${hub.insteonId}:${device.type}:${device.insteonId}`
   var location = `http://${locationAddress}:${locationPort}/api/device/${device.insteonId}`
 
   console.log(`Starting SSDP server advertising for USN: ${usn}, UDN: ${udn}, Location: ${location}...`)
@@ -79,10 +79,10 @@ module.exports = (sails) => {
     },
 
     initialize: (cb) => {
-      sails.after('hook:insteon_hub:loaded', () => {
+      sails.after('hook:insteon:loaded', () => {
         console.log(`Starting SSDP advertisement for all devices...`)
 
-        Device.find().exec((err, devices) => {
+        Device.find().populate('hub').exec((err, devices) => {
           if (err) {
             console.log(`Error loading devices for SSDP advertisement`)
             console.log(err)

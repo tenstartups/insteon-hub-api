@@ -3,13 +3,13 @@ var Device = require('./Device')
 
 module.exports =  _.merge(_.cloneDeep(Device), {
   attributes: {
-    insteonDevice: function () {
-      return this.insteonHub().light(this.insteonId)
+    insteonClient: function () {
+      return sails.hooks.insteon.hub().insteonClient().light(this.insteonId)
     },
 
     getStatus: function () {
       return new Promise((resolve, reject) => {
-        this.insteonDevice().level()
+        this.insteonClient().level()
         .then((result) => {
           if (result !== undefined && result !== null && result !== '') {
             var level = parseInt(result)
@@ -19,13 +19,15 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           } else {
             reject(new Error(`Unable to get status for dimmer ${this.insteonId}`))
           }
+        }, reason => {
+          reject(new Error(`Error getting status for dimmer ${this.insteonId}`))
         })
       })
     },
 
     turnOn: function () {
       return new Promise((resolve, reject) => {
-        this.insteonDevice().turnOn()
+        this.insteonClient().turnOn()
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
@@ -33,13 +35,15 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           } else {
             reject(new Error(`Unable to turn on dimmer ${this.insteonId}`))
           }
+        }, reason => {
+          reject(new Error(`Error turning on dimmer ${this.insteonId}`))
         })
       })
     },
 
     turnOff: function () {
       return new Promise((resolve, reject) => {
-        this.insteonDevice().turnOff()
+        this.insteonClient().turnOff()
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
@@ -47,13 +51,15 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           } else {
             reject(new Error(`Unable to turn off dimmer ${this.insteonId}`))
           }
+        }, reason => {
+          reject(new Error(`Error turning off dimmer ${this.insteonId}`))
         })
       })
     },
 
     setLevel: function (level) {
       return new Promise((resolve, reject) => {
-        this.insteonDevice().level(level)
+        this.insteonClient().level(level)
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
@@ -62,13 +68,15 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           } else {
             reject(new Error(`Unable to set level for dimmer ${this.insteonId}`))
           }
+        }, reason => {
+          reject(new Error(`Error setting level for dimmer ${this.insteonId}`))
         })
       })
     },
 
     brighten: function () {
       return new Promise((resolve, reject) => {
-        this.insteonDevice().brighten()
+        this.insteonClient().brighten()
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
@@ -76,13 +84,15 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           } else {
             reject(new Error(`Unable to brighten dimmer ${this.insteonId}`))
           }
+        }, reason => {
+          reject(new Error(`Error brightening dimmer ${this.insteonId}`))
         })
       })
     },
 
     dim: function () {
       return new Promise((resolve, reject) => {
-        this.insteonDevice().dim()
+        this.insteonClient().dim()
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
@@ -90,6 +100,8 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           } else {
             reject(new Error(`Unable to lower dimmer ${this.insteonId}`))
           }
+        }, reason => {
+          reject(new Error(`Error lowering dimmer ${this.insteonId}`))
         })
       })
     }

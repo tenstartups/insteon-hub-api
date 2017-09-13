@@ -4,9 +4,6 @@
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
-
-const INSTANCE_ID = process.env.INSTANCE_ID || '01'
-
 module.exports = {
 
   attributes: {
@@ -23,6 +20,19 @@ module.exports = {
 
     smartThingsToken: {
       type: 'string'
+    },
+
+    devices: {
+      collection: 'device',
+      via: 'hub'
+    },
+
+    instanceId: function () {
+      return process.env.INSTANCE_ID || '01'
+    },
+
+    insteonClient: function () {
+      return this._insteonClient
     },
 
     toJSON: function () {

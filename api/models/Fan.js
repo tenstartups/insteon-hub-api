@@ -3,8 +3,8 @@ var Device = require('./Device')
 
 module.exports =  _.merge(_.cloneDeep(Device), {
   attributes: {
-    insteonDevice: function () {
-      return this.insteonHub().fan(this.insteonId)
+    insteonClient: function () {
+      return sails.hooks.insteon.hub().insteonClient().fan(this.insteonId)
     }
   },
 

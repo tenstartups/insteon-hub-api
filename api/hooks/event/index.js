@@ -10,12 +10,10 @@ module.exports = (sails) => {
     },
 
     initialize: (cb) => {
-      sails.after(['hook:orm:loaded', 'hook:insteon_hub:loaded'], () => {
-        var hub = sails.hooks.insteon_hub.client()
-
+      sails.after('hook:insteon:loaded', () => {
         console.log(`Subscribing to Insteon device events...`)
 
-        Device.find().exec((err, devices) => {
+        Device.find().populate('hub').exec((err, devices) => {
           if (err) {
             console.log(`Error loading devices for event subscription`)
             console.log(err)
@@ -23,7 +21,7 @@ module.exports = (sails) => {
           }
           devices.forEach(device => {
             // console.log(`[${device.insteonId}] Subscribing to light switch events...`)
-            // var light = hub.light(device.insteonId)
+            // var light = device.populate('hub').light(device.insteonId)
             //
             // light.on('turnOn', () => {
             //   console.log(`[${device.insteonId}] Light turned ON`)

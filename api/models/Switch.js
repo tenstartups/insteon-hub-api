@@ -3,13 +3,13 @@ var Device = require('./Device')
 
 module.exports =  _.merge(_.cloneDeep(Device), {
   attributes: {
-    insteonDevice: function () {
-      return this.insteonHub().light(this.insteonId)
+    insteonClient: function () {
+      return sails.hooks.insteon.hub().insteonClient().light(this.insteonId)
     },
 
     getStatus: function () {
       return new Promise((resolve, reject) => {
-        this.insteonDevice().level()
+        this.insteonClient().level()
         .then((result) => {
           if (result !== undefined && result !== null && result !== '') {
             var level = parseInt(result)
@@ -19,13 +19,15 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           } else {
             reject(new Error(`Unable to get status for switch ${this.insteonId}`))
           }
+        }, reason => {
+          reject(new Error(`Error getting status for switch ${this.insteonId}`))
         })
       })
     },
 
     turnOn: function () {
       return new Promise((resolve, reject) => {
-        this.insteonDevice().turnOn()
+        this.insteonClient().turnOn()
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
@@ -33,13 +35,15 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           } else {
             reject(new Error(`Unable to turn on switch ${this.insteonId}`))
           }
+        }, reason => {
+          reject(new Error(`Error turning on switch ${this.insteonId}`))
         })
       })
     },
 
     turnOff: function () {
       return new Promise((resolve, reject) => {
-        this.insteonDevice().turnOff()
+        this.insteonClient().turnOff()
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
@@ -47,6 +51,8 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           } else {
             reject(new Error(`Unable to turn off switch ${this.insteonId}`))
           }
+        }, reason => {
+          reject(new Error(`Error turning off switch ${this.insteonId}`))
         })
       })
     }

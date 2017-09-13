@@ -5,8 +5,6 @@
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
-const INSTANCE_ID = process.env.INSTANCE_ID || '01'
-
 module.exports = {
 
   tableName: 'device',
@@ -39,12 +37,17 @@ module.exports = {
       defaultsTo: 300
     },
 
+    hub: {
+      model: 'hub',
+      required: true
+    },
+
     udn: function () {
-      return `insteon:${INSTANCE_ID}:hub:${sails.hooks.insteon_hub.client().insteonId}:${this.type}:${this.insteonId}`
+      return `insteon:${this.hub.instanceId()}:hub:${this.hub.insteonId}:${this.type}:${this.insteonId}`
     },
 
     networkId: function () {
-      return `${INSTANCE_ID}${sails.hooks.insteon_hub.client().insteonId}${this.insteonId}`
+      return `${this.hub.instanceId()}${this.hub.insteonId}${this.insteonId}`
     },
 
     toJSON: function () {
@@ -52,17 +55,15 @@ module.exports = {
       device.udn = this.udn()
       device.networkId = this.networkId()
       return device
-    },
-
-    insteonHub: function () {
-      return sails.hooks.insteon_hub.client()
     }
   },
 
   beforeValidate: function (device, cb) {
-    this.insteonHub().info(device.insteonId)
+    if (device.hub === undefined || device.hub === null) {
+      device.hub = sails.hooks.insteon.hub().insteonId
+    }
+    sails.hooks.insteon.hub().insteonClient().info(device.insteonId)
     .then(deviceInfo => {
-      console.log(deviceInfo)
       if (deviceInfo === undefined) {
         cb(`Device with Insteon ID ${device.insteonId} unknown to hub`)
       } else {
@@ -77,11 +78,13 @@ module.exports = {
         }
       }
       cb()
+    }, reason => {
+      cb(`Error getting device information for Insteon ID ${device.insteonId}`)
     })
   },
 
-  afterCreate: (device, cb) => {
-    sails.hooks.ssdp_server.start(device)
+  afterCreate: function (device, cb) {
+    sails.hooks.ssdp.start(device)
     cb()
   }
 }
