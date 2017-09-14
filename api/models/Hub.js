@@ -14,10 +14,6 @@ module.exports = {
       required: true
     },
 
-    smartThingsUrl: {
-      type: 'string'
-    },
-
     smartThingsToken: {
       type: 'string'
     },

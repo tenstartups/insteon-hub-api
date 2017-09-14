@@ -38,6 +38,7 @@ module.exports = {
     },
 
     hub: {
+      columnName: 'hubId',
       model: 'hub',
       required: true
     },

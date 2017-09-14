@@ -30,13 +30,13 @@ module.exports =  _.merge(_.cloneDeep(Device), {
         this.insteonClient().turnOn()
         .then((result) => {
           if (result.response) {
-            console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
+            console.log(`[${this.insteonId}] ${JSON.stringify(result.response)}`)
             resolve({ command: 'turn_on', status: 'on' })
           } else {
-            reject(new Error(`Unable to turn on switch ${this.insteonId}`))
+            reject(new Error(`[${this.insteonId}] Switch not found`))
           }
         }, reason => {
-          reject(new Error(`Error turning on switch ${this.insteonId}`))
+          reject(new Error(`[${this.insteonId}] Error turning on switch`))
         })
       })
     },

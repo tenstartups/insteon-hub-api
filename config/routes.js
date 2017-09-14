@@ -47,7 +47,7 @@ module.exports.routes = {
   ***************************************************************************/
 
   // SmartThingsAccess controller actions
-  'patch /api/smart_things/update_callback': 'SmartThingsController.update_callback',
+  'patch /api/smart_things/token/:token': 'SmartThingsController.token',
 
   // Device controller actions
   'get /api/devices': 'DeviceController.index',
