@@ -121,3 +121,11 @@ def sync(mac, ip, port) {
 		updateDataValue("port", port)
 	}
 }
+
+def processEvent(event) {
+	log.debug("[${insteonId()}] Received event ${event}")
+    if (event.status) {
+	    log.debug "[${insteonId()}] Switch turned ${event.status.toUpperCase()}"
+	    sendEvent(name: "switch", value: event.status)
+    }
+}

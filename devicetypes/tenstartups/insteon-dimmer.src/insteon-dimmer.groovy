@@ -141,3 +141,15 @@ def sync(mac, ip, port) {
 		updateDataValue("port", port)
 	}
 }
+
+def processEvent(event) {
+	log.debug("[${insteonId()}] Received event ${event}")
+    if (event.status) {
+	    log.debug "[${insteonId()}] Dimmer turned ${event.status.toUpperCase()}"
+	    sendEvent(name: "switch", value: event.status)
+    }
+    if (event.level) {
+	    log.debug "[${insteonId()}] Dimmer set to ${event.level}%"
+	    sendEvent(name: "level", value: event.level, unit: "%")
+    }
+}
