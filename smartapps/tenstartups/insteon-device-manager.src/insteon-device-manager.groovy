@@ -28,17 +28,8 @@ preferences {
 }
 
 mappings {
-    path("/switch/turned_on") {
-        action: [POST: "switchTurnedOnEvent"]
-    }
-    path("/switch/turned_off") {
-        action: [POST: "switchTurnedOffEvent"]
-    }
-    path("/dimmer/turned_on") {
-        action: [POST: "dimmerTurnedOnEvent"]
-    }
-    path("/dimmer/turned_off") {
-        action: [POST: "dimmerTurnedOffEvent"]
+    path("/event") {
+        action: [POST: "processEvent"]
     }
 }
 
@@ -243,25 +234,17 @@ void sendAccessTokenHandler(physicalgraph.device.HubResponse hubResponse) {
 }
 
 def processEvent() {
-	def device = request.JSON?.device
-	def event = request.JSON?.event
-    log.debug("Received event ${event.name} from ${device.insteonId}")
-    return [ status: 'ok' ]
-}
-
-def switchTurnedOnEvent() {
-    return [ status: 'ok' ]
-}
-
-def switchTurnedOffEvent() {
-    return [ status: 'ok' ]
-}
-
-def dimmerTurnedOnEvent() {
-    return [ status: 'ok' ]
-}
-
-def dimmerTurnedOffEvent() {
+	if (!request.JSON?.device?.networkId) {
+    	httpError(400, "No device network ID found in provided data")
+    }
+	if (!request.JSON?.event) {
+    	httpError(400, "Event data not provided")
+    }
+    def child = getChildDevice(request.JSON.device.networkId)
+	if (!child) {
+    	httpError(404, "Child device ${request.JSON.device.networkId} not found")
+    }
+    child.processEvent(request.JSON.event)
     return [ status: 'ok' ]
 }
 
