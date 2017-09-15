@@ -117,7 +117,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
 
       light.on('turnOff', (group) => {
         console.log(`[${this.insteonId}] Dimmer turned OFF`)
-        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turned_off', status: 'off' })
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turned_off', status: 'off', level: 0 })
       })
 
       console.log(`[${this.insteonId}] Subscribed to dimmer events`)
