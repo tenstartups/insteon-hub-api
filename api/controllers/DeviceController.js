@@ -1,7 +1,7 @@
 module.exports = {
 
   index: (req, res) => {
-    Device.find().populate('hub').exec((err, devices) => {
+    Device.find().exec((err, devices) => {
       if (err) {
         return res.serverError(err)
       }
@@ -11,7 +11,7 @@ module.exports = {
 
   show: (req, res) => {
     var insteonId = req.params.insteonId
-    Device.findOne({ insteonId: insteonId }).populate('hub').exec((err, device) => {
+    Device.findOne({ insteonId: insteonId }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }

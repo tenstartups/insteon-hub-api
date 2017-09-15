@@ -82,7 +82,7 @@ module.exports = (sails) => {
       sails.after('hook:insteon:loaded', () => {
         console.log(`Starting SSDP advertisement for all devices...`)
 
-        Device.find().populate('hub').exec((err, devices) => {
+        Device.find().exec((err, devices) => {
           if (err) {
             console.log(`Error loading devices for SSDP advertisement`)
             console.log(err)

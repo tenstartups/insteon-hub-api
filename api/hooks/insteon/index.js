@@ -48,8 +48,8 @@ module.exports = (sails) => {
               throw err
             } else {
               hub = record
-              hub._insteonClient = result[1]
-              hub.loadSmartThingsEventUrl()
+              hub.storeInsteonClient(result[1])
+              hub.loadSmartThingsEndpoints(record.token)
               .then(result => {
                 console.log('Initialized hub record')
                 return cb()

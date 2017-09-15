@@ -37,12 +37,6 @@ module.exports = {
       defaultsTo: 300
     },
 
-    hub: {
-      columnName: 'hubId',
-      model: 'hub',
-      required: true
-    },
-
     udn: function () {
       return `insteon:${sails.hooks.insteon.hub().instanceId()}:hub:${sails.hooks.insteon.hub().insteonId}:${this.type}:${this.insteonId}`
     },
@@ -60,9 +54,6 @@ module.exports = {
   },
 
   beforeValidate: function (device, cb) {
-    if (device.hub === undefined || device.hub === null) {
-      device.hub = sails.hooks.insteon.hub().insteonId
-    }
     sails.hooks.insteon.hub().insteonClient().info(device.insteonId)
     .then(deviceInfo => {
       if (deviceInfo === undefined) {

@@ -21,14 +21,13 @@ module.exports = {
       type: 'string'
     },
 
-    devices: {
-      collection: 'device',
-      via: 'hub'
+    storeInsteonClient: function (client) {
+      this._insteonClient = client
     },
 
-    loadSmartThingsEventUrl: function () {
+    loadSmartThingsEndpoints: function (token) {
       return new Promise((resolve, reject) => {
-        if (!this.smartThingsToken) {
+        if (!token) {
           resolve(null)
         }
         var options = {
@@ -40,7 +39,7 @@ module.exports = {
         }
         request(options)
         .then(result => {
-          this.oauthEndpoints = result
+          this._smartThingsEndpoints = result
           resolve(result)
         })
         .catch(reason => {
@@ -50,10 +49,10 @@ module.exports = {
     },
 
     sendSmartThingsEvent: function (device, eventJSON) {
-      if (!this.smartThingsToken || !this.oauthEndpoints) {
+      if (!this.smartThingsToken || !this._smartThingsEndpoints) {
         return
       }
-      this.oauthEndpoints.forEach(endpoint => {
+      this._smartThingsEndpoints.forEach(endpoint => {
         var options = {
           method: 'POST',
           headers: {
