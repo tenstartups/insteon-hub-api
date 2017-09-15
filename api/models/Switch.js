@@ -55,6 +55,23 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           reject(new Error(`Error turning off switch ${this.insteonId}`))
         })
       })
+    },
+
+    subscribeEvents: function () {
+      console.log(`[${this.insteonId}] Subscribing to switch events...`)
+      var light = this.insteonClient()
+
+      light.on('turnOn', () => {
+        console.log(`[${this.insteonId}] Switch turned ON`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turned_on', status: 'on' })
+      })
+
+      light.on('turnOff', () => {
+        console.log(`[${this.insteonId}] Switch turned OFF`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turned_off', status: 'off' })
+      })
+
+      console.log(`[${this.insteonId}] Subscribed to switch events`)
     }
   },
 

@@ -104,6 +104,23 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           reject(new Error(`Error lowering dimmer ${this.insteonId}`))
         })
       })
+    },
+
+    subscribeEvents: function () {
+      console.log(`[${this.insteonId}] Subscribing to dimmer events...`)
+      var light = this.insteonClient()
+
+      light.on('turnOn', () => {
+        console.log(`[${this.insteonId}] Dimmer turned ON`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turned_on', status: 'on' })
+      })
+
+      light.on('turnOff', () => {
+        console.log(`[${this.insteonId}] Dimmer turned OFF`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turned_off', status: 'off' })
+      })
+
+      console.log(`[${this.insteonId}] Subscribed to dimmer events`)
     }
   },
 

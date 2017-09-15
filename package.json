@@ -25,6 +25,8 @@
     "lodash": "*",
     "node-ssdp": "*",
     "rc": "*",
+    "request": "*",
+    "request-promise-native": "*",
     "sails": "*",
     "sails-disk": "*",
     "uppercamelcase": "*"

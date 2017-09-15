@@ -13,26 +13,29 @@ module.exports = (sails) => {
       sails.after('hook:insteon:loaded', () => {
         console.log(`Subscribing to Insteon device events...`)
 
-        Device.find().populate('hub').exec((err, devices) => {
+        Switch.find({ type: 'switch' }).exec((err, switches) => {
           if (err) {
-            console.log(`Error loading devices for event subscription`)
+            console.log(`Error loading switch devices for event subscription`)
             console.log(err)
             return
           }
-          devices.forEach(device => {
-            // console.log(`[${device.insteonId}] Subscribing to light switch events...`)
-            // var light = device.populate('hub').light(device.insteonId)
-            //
-            // light.on('turnOn', () => {
-            //   console.log(`[${device.insteonId}] Light turned ON`)
-            // })
-            //
-            // light.on('turnOff', () => {
-            //   console.log(`[${device.insteonId}] Light turned OFF`)
-            // })
-            //
-            // console.log(`[${device.insteonId}] Subscribed to light switch events`)
-          })
+          switches.forEach(relay => { relay.subscribeEvents() })
+        })
+        Dimmer.find({ type: 'dimmer' }).exec((err, dimmers) => {
+          if (err) {
+            console.log(`Error loading dimmer devices for event subscription`)
+            console.log(err)
+            return
+          }
+          dimmers.forEach(dimmer => { dimmer.subscribeEvents() })
+        })
+        Fan.find({ type: 'fan' }).exec((err, fans) => {
+          if (err) {
+            console.log(`Error loading fan devices for event subscription`)
+            console.log(err)
+            return
+          }
+          fans.forEach(fan => { fan.subscribeEvents() })
         })
 
         console.log(`Finished subscribing to Insteon device events`)

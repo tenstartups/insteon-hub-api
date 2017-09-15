@@ -44,11 +44,11 @@ module.exports = {
     },
 
     udn: function () {
-      return `insteon:${this.hub.instanceId()}:hub:${this.hub.insteonId}:${this.type}:${this.insteonId}`
+      return `insteon:${sails.hooks.insteon.hub().instanceId()}:hub:${sails.hooks.insteon.hub().insteonId}:${this.type}:${this.insteonId}`
     },
 
     networkId: function () {
-      return `${this.hub.instanceId()}${this.hub.insteonId}${this.insteonId}`
+      return `${sails.hooks.insteon.hub().instanceId()}${sails.hooks.insteon.hub().insteonId}${this.insteonId}`
     },
 
     toJSON: function () {
@@ -86,6 +86,7 @@ module.exports = {
 
   afterCreate: function (device, cb) {
     sails.hooks.ssdp.start(device)
+    device.subscribeEvents()
     cb()
   }
 }

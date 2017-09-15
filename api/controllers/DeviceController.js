@@ -35,21 +35,25 @@ module.exports = {
 
   update: (req, res) => {
     var insteonId = req.params.insteonId
-    Device.findOne({ insteonId: insteonId }).populate('hub').exec((err, device) => {
+    var attrs = {
+      name: req.param('name'),
+      description: req.param('description')
+    }
+    Device.update({ insteonId: insteonId }, attrs).exec((err, devices) => {
       if (err) {
         return res.serverError(err)
       }
-      return res.json({ device: device })
+      return res.json({ device: devices[0] })
     })
   },
 
   destroy: (req, res) => {
     var insteonId = req.params.insteonId
-    Device.findOne({ insteonId: insteonId }).populate('hub').exec((err, device) => {
+    Device.destroy({ insteonId: insteonId }).exec((err, devices) => {
       if (err) {
         return res.serverError(err)
       }
-      return res.json({ device: device })
+      return res.json({ device: devices[0] })
     })
   }
 }

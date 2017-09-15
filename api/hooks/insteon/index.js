@@ -49,8 +49,11 @@ module.exports = (sails) => {
             } else {
               hub = record
               hub._insteonClient = result[1]
-              console.log('Initialized hub record')
-              return cb()
+              hub.loadSmartThingsEventUrl()
+              .then(result => {
+                console.log('Initialized hub record')
+                return cb()
+              })
             }
           })
         }, reason => {
