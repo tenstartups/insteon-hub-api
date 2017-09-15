@@ -61,12 +61,12 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       console.log(`[${this.insteonId}] Subscribing to switch events...`)
       var light = this.insteonClient()
 
-      light.on('turnOn', () => {
+      light.on('turnOn', (group, level) => {
         console.log(`[${this.insteonId}] Switch turned ON`)
         sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turned_on', status: 'on' })
       })
 
-      light.on('turnOff', () => {
+      light.on('turnOff', (group) => {
         console.log(`[${this.insteonId}] Switch turned OFF`)
         sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turned_off', status: 'off' })
       })
