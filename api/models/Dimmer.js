@@ -112,12 +112,42 @@ module.exports =  _.merge(_.cloneDeep(Device), {
 
       light.on('turnOn', (group, level) => {
         console.log(`[${this.insteonId}] Dimmer turned ON`)
-        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turned_on', status: 'on', level: level })
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_on', status: 'on', level: level })
+      })
+
+      light.on('turnOnFast', (group) => {
+        console.log(`[${this.insteonId}] Dimmer turned ON FAST`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_on_fast', status: 'on', level: 100 })
       })
 
       light.on('turnOff', (group) => {
         console.log(`[${this.insteonId}] Dimmer turned OFF`)
-        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turned_off', status: 'off', level: 0 })
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_off', status: 'off', level: 0 })
+      })
+
+      light.on('turnOffFast', (group) => {
+        console.log(`[${this.insteonId}] Dimmer turned OFF FAST`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_off_fast', status: 'off', level: 0 })
+      })
+
+      light.on('brightening', (group) => {
+        console.log(`[${this.insteonId}] Dimmer brightening`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'brightening' })
+      })
+
+      light.on('brightened', (group) => {
+        console.log(`[${this.insteonId}] Dimmer brightened`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'brightened' })
+      })
+
+      light.on('dimming', (group) => {
+        console.log(`[${this.insteonId}] Dimmer dimming`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'dimming' })
+      })
+
+      light.on('dimmed', (group) => {
+        console.log(`[${this.insteonId}] Dimmer dimmed`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'dimmed' })
       })
 
       console.log(`[${this.insteonId}] Subscribed to dimmer events`)
