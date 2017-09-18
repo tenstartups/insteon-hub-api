@@ -101,7 +101,7 @@ module.exports = {
       })
     },
 
-    sendSmartThingsEvent: function (device, eventJSON) {
+    sendSmartThingsUpdate: function (device, data) {
       if (!this.smartThingsToken || !this._smartThingsEndpoints) {
         return
       }
@@ -111,16 +111,16 @@ module.exports = {
           headers: {
             'Authorization': `Bearer ${this.smartThingsToken}`
           },
-          uri: `${endpoint.uri}/event`,
-          body: { device: device, event: eventJSON },
+          uri: `${endpoint.uri}/update`,
+          body: { device: device, data: data },
           json: true
         }
         request(options)
         .then(result => {
-          console.log(`Successfully sent event ${eventJSON.name} to ${endpoint.uri}/event`)
+          console.log(`Successfully sent update ${JSON.stringify(data)} to ${endpoint.uri}/update`)
         })
         .catch(reason => {
-          console.log(`Error sending event ${eventJSON.name} to ${endpoint.uri}/event`)
+          console.log(`Error sending update ${JSON.stringify(data)} to ${endpoint.uri}/update`)
         })
       })
     }

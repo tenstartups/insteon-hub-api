@@ -10,7 +10,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           var level = parseInt(result)
           var status = (level === 0 ? 'off' : 'on')
           console.log(`[${this.insteonId}] Dimmer is ${status.toUpperCase()}`)
-          this.sendSmartThingsEvent({ status: status, level: level })
+          this.sendSmartThingsUpdate({ command: 'get_status', status: status, level: level })
         } else {
           console.log(`Unable to get status for dimmer ${this.insteonId}`)
         }
@@ -24,7 +24,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       .then((result) => {
         if (result.response) {
           console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
-          this.sendSmartThingsEvent({ status: 'on', level: '100' })
+          this.sendSmartThingsUpdate({ command: 'turn_on', status: 'on', level: '100' })
         } else {
           console.log(`Unable to turn on dimmer ${this.insteonId}`)
         }
@@ -38,7 +38,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       .then((result) => {
         if (result.response) {
           console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
-          this.sendSmartThingsEvent({ status: 'off', level: 0 })
+          this.sendSmartThingsUpdate({ command: 'turn_off', status: 'off', level: 0 })
         } else {
           console.log(`Unable to turn off dimmer ${this.insteonId}`)
         }
@@ -53,7 +53,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
         if (result.response) {
           console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
           var status = level === 0 ? 'off' : 'on'
-          this.sendSmartThingsEvent({ status: status, level: level })
+          this.sendSmartThingsUpdate({ command: 'set_level', status: status, level: level })
         } else {
           console.log(`Unable to set level for dimmer ${this.insteonId}`)
         }
@@ -67,6 +67,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       .then((result) => {
         if (result.response) {
           console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
+          this.sendSmartThingsUpdate({ command: 'brighten' })
         } else {
           console.log(`Unable to brighten dimmer ${this.insteonId}`)
         }
@@ -82,6 +83,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
         } else {
           console.log(`Unable to lower dimmer ${this.insteonId}`)
+          this.sendSmartThingsUpdate({ command: 'dim' })
         }
       }, reason => {
         console.log(`Error lowering dimmer ${this.insteonId}`)
@@ -94,42 +96,42 @@ module.exports =  _.merge(_.cloneDeep(Device), {
 
       light.on('turnOn', (group, level) => {
         console.log(`[${this.insteonId}] Dimmer turned ON`)
-        this.sendSmartThingsEvent({ name: 'turn_on', status: 'on', level: level })
+        this.sendSmartThingsUpdate({ event: 'turn_on', status: 'on', level: level })
       })
 
       light.on('turnOnFast', (group) => {
         console.log(`[${this.insteonId}] Dimmer turned ON FAST`)
-        this.sendSmartThingsEvent({ name: 'turn_on_fast', status: 'on', level: 100 })
+        this.sendSmartThingsUpdate({ event: 'turn_on_fast', status: 'on', level: 100 })
       })
 
       light.on('turnOff', (group) => {
         console.log(`[${this.insteonId}] Dimmer turned OFF`)
-        this.sendSmartThingsEvent({ name: 'turn_off', status: 'off', level: 0 })
+        this.sendSmartThingsUpdate({ event: 'turn_off', status: 'off', level: 0 })
       })
 
       light.on('turnOffFast', (group) => {
         console.log(`[${this.insteonId}] Dimmer turned OFF FAST`)
-        this.sendSmartThingsEvent({ name: 'turn_off_fast', status: 'off', level: 0 })
+        this.sendSmartThingsUpdate({ event: 'turn_off_fast', status: 'off', level: 0 })
       })
 
       light.on('brightening', (group) => {
         console.log(`[${this.insteonId}] Dimmer brightening`)
-        this.sendSmartThingsEvent({ name: 'brightening' })
+        this.sendSmartThingsUpdate({ event: 'brightening' })
       })
 
       light.on('brightened', (group) => {
         console.log(`[${this.insteonId}] Dimmer brightened`)
-        this.sendSmartThingsEvent({ name: 'brightened' })
+        this.sendSmartThingsUpdate({ event: 'brightened' })
       })
 
       light.on('dimming', (group) => {
         console.log(`[${this.insteonId}] Dimmer dimming`)
-        this.sendSmartThingsEvent({ name: 'dimming' })
+        this.sendSmartThingsUpdate({ event: 'dimming' })
       })
 
       light.on('dimmed', (group) => {
         console.log(`[${this.insteonId}] Dimmer dimmed`)
-        this.sendSmartThingsEvent({ name: 'dimmed' })
+        this.sendSmartThingsUpdate({ event: 'dimmed' })
       })
 
       console.log(`[${this.insteonId}] Subscribed to dimmer events`)

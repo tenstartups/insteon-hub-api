@@ -71,8 +71,8 @@ module.exports = {
       return this.hub().insteonClient().light(this.insteonId)
     },
 
-    sendSmartThingsEvent: function (event) {
-      this.server().sendSmartThingsEvent(this, event)
+    sendSmartThingsUpdate: function (event) {
+      this.server().sendSmartThingsUpdate(this, event)
     }
   },
 

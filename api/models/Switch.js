@@ -10,7 +10,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           var level = parseInt(result)
           var status = (level === 0 ? 'off' : 'on')
           console.log(`[${this.insteonId}] Switch is ${status.toUpperCase()}`)
-          this.sendSmartThingsEvent({ status: status })
+          this.sendSmartThingsUpdate({ command: 'get_status', status: status })
         } else {
           console.log(`Unable to get status for switch ${this.insteonId}`)
         }
@@ -24,7 +24,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       .then((result) => {
         if (result.response) {
           console.log(`[${this.insteonId}] ${JSON.stringify(result.response)}`)
-          this.sendSmartThingsEvent({ status: 'on' })
+          this.sendSmartThingsUpdate({ command: 'turn_on', status: 'on' })
         } else {
           console.log(`[${this.insteonId}] Switch not found`)
         }
@@ -38,7 +38,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       .then((result) => {
         if (result.response) {
           console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
-          this.sendSmartThingsEvent({ status: 'off' })
+          this.sendSmartThingsUpdate({ command: 'turn_off', status: 'off' })
         } else {
           console.log(`Unable to turn off switch ${this.insteonId}`)
         }
@@ -53,22 +53,22 @@ module.exports =  _.merge(_.cloneDeep(Device), {
 
       light.on('turnOn', (group, level) => {
         console.log(`[${this.insteonId}] Switch turned ON`)
-        this.sendSmartThingsEvent({ name: 'turn_on', status: 'on' })
+        this.sendSmartThingsUpdate({ event: 'turn_on', status: 'on' })
       })
 
       light.on('turnOnFast', (group) => {
         console.log(`[${this.insteonId}] Switch turned ON FAST`)
-        this.sendSmartThingsEvent({ name: 'turn_on_fast', status: 'on' })
+        this.sendSmartThingsUpdate({ event: 'turn_on_fast', status: 'on' })
       })
 
       light.on('turnOff', (group) => {
         console.log(`[${this.insteonId}] Switch turned OFF`)
-        this.sendSmartThingsEvent({ name: 'turn_off', status: 'off' })
+        this.sendSmartThingsUpdate({ event: 'turn_off', status: 'off' })
       })
 
       light.on('turnOffFast', (group) => {
         console.log(`[${this.insteonId}] Switch turned OFF FAST`)
-        this.sendSmartThingsEvent({ name: 'turn_off_fast', status: 'off' })
+        this.sendSmartThingsUpdate({ event: 'turn_off_fast', status: 'off' })
       })
 
       console.log(`[${this.insteonId}] Subscribed to switch events`)
