@@ -28,8 +28,8 @@ preferences {
 }
 
 mappings {
-    path("/event") {
-        action: [POST: "processEvent"]
+    path("/update") {
+        action: [POST: "processUpdate"]
     }
 }
 
@@ -233,18 +233,19 @@ void sendAccessTokenHandler(physicalgraph.device.HubResponse hubResponse) {
     log.debug(body)
 }
 
-def processEvent() {
+def processUpdate() {
 	if (!request.JSON?.device?.networkId) {
-    	httpError(400, "No device network ID found in provided data")
+    	httpError(400, "Device network ID not provided")
     }
-	if (!request.JSON?.event) {
-    	httpError(400, "Event data not provided")
+	log.debug("Received update ${request.JSON}")
+	if (!request.JSON?.data) {
+    	httpError(400, "Update data not provided")
     }
     def child = getChildDevice(request.JSON.device.networkId)
 	if (!child) {
-    	httpError(404, "Child device ${request.JSON.device.networkId} not found")
+    	httpError(404, "Device ${request.JSON.device.networkId} not found")
     }
-    child.processEvent(request.JSON.event)
+    child.processUpdate(request.JSON)
     return [ status: 'ok' ]
 }
 
