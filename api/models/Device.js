@@ -59,12 +59,15 @@ module.exports = {
     },
 
     toJSON: function () {
-      var device = this.toObject()
-      device.udn = this.udn()
-      device.networkId = this.networkId()
-      device.ip = this.server().advertiseAddress()
-      device.port = this.server().advertisePort()
-      return device
+      return {
+        insteon_id: this.insteonId,
+        udn: this.udn(),
+        network_id: this.networkId(),
+        name: this.name,
+        label: this.description,
+        ip: this.server().advertiseAddress(),
+        port: this.server().advertisePort()
+      }
     },
 
     insteonClient: function () {
