@@ -3,8 +3,217 @@ var Device = require('./Device')
 
 module.exports =  _.merge(_.cloneDeep(Device), {
   attributes: {
-    insteonClient: function () {
-      return sails.hooks.insteon.hub().insteonClient().fan(this.insteonId)
+    getStatus: function () {
+      return new Promise((resolve, reject) => {
+        this.insteonClient().level()
+        .then((result) => {
+          if (result !== undefined && result !== null && result !== '') {
+            var level = parseInt(result)
+            var status = (level === 0 ? 'off' : 'on')
+            console.log(`[${this.insteonId}] Dimmer is ${status.toUpperCase()}`)
+            resolve({ command: 'get_status', status: status, level: level })
+          } else {
+            reject(new Error(`Unable to get status for dimmer ${this.insteonId}`))
+          }
+        }, reason => {
+          reject(new Error(`Error getting status for dimmer ${this.insteonId}`))
+        })
+      })
+    },
+
+    fanOff: function () {
+      return new Promise((resolve, reject) => {
+        this.insteonClient().fanOff()
+        .then((result) => {
+          if (result.response) {
+            console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
+            resolve({ command: 'fan_off', status: 'off' })
+          } else {
+            reject(new Error(`Unable to turn off fan ${this.insteonId}`))
+          }
+        }, reason => {
+          reject(new Error(`Error turning off fan ${this.insteonId}`))
+        })
+      })
+    },
+
+    fanLow: function () {
+      return new Promise((resolve, reject) => {
+        this.insteonClient().fanLow()
+        .then((result) => {
+          if (result.response) {
+            console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
+            resolve({ command: 'fan_low', status: 'low' })
+          } else {
+            reject(new Error(`Unable to turn fan to low ${this.insteonId}`))
+          }
+        }, reason => {
+          reject(new Error(`Error turning fan to low ${this.insteonId}`))
+        })
+      })
+    },
+
+    fanMed: function () {
+      return new Promise((resolve, reject) => {
+        this.insteonClient().fanMed()
+        .then((result) => {
+          if (result.response) {
+            console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
+            resolve({ command: 'fan_med', status: 'medium' })
+          } else {
+            reject(new Error(`Unable to turn fan to medium ${this.insteonId}`))
+          }
+        }, reason => {
+          reject(new Error(`Error turning fan to medium ${this.insteonId}`))
+        })
+      })
+    },
+
+    fanHigh: function () {
+      return new Promise((resolve, reject) => {
+        this.insteonClient().fanHigh()
+        .then((result) => {
+          if (result.response) {
+            console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
+            resolve({ command: 'fan_high', status: 'high' })
+          } else {
+            reject(new Error(`Unable to turn fan to high ${this.insteonId}`))
+          }
+        }, reason => {
+          reject(new Error(`Error turning fan to high ${this.insteonId}`))
+        })
+      })
+    },
+
+    turnOn: function () {
+      return new Promise((resolve, reject) => {
+        this.insteonClient().turnOn()
+        .then((result) => {
+          if (result.response) {
+            console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
+            sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_on', status: 'on', level: 100 })
+            resolve({ command: 'turn_on', status: 'on', level: 100 })
+          } else {
+            reject(new Error(`Unable to turn on fan dimmer ${this.insteonId}`))
+          }
+        }, reason => {
+          reject(new Error(`Error turning on fan dimmer ${this.insteonId}`))
+        })
+      })
+    },
+
+    turnOff: function () {
+      return new Promise((resolve, reject) => {
+        this.insteonClient().turnOff()
+        .then((result) => {
+          if (result.response) {
+            console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
+            sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_off', status: 'off', level: 0 })
+            resolve({ command: 'turn_off', status: 'off', level: 0 })
+          } else {
+            reject(new Error(`Unable to turn off fan dimmer ${this.insteonId}`))
+          }
+        }, reason => {
+          reject(new Error(`Error turning off fan dimmer ${this.insteonId}`))
+        })
+      })
+    },
+
+    setLevel: function (level) {
+      return new Promise((resolve, reject) => {
+        this.insteonClient().level(level)
+        .then((result) => {
+          if (result.response) {
+            console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
+            var status = level === 0 ? 'off' : 'on'
+            sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'set_level', status: status, level: level })
+            resolve({ command: 'set_level', status: status, level: level })
+          } else {
+            reject(new Error(`Unable to set level for fan dimmer ${this.insteonId}`))
+          }
+        }, reason => {
+          reject(new Error(`Error setting level for fan dimmer ${this.insteonId}`))
+        })
+      })
+    },
+
+    brighten: function () {
+      return new Promise((resolve, reject) => {
+        this.insteonClient().brighten()
+        .then((result) => {
+          if (result.response) {
+            console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
+            resolve({ command: 'brighten' })
+          } else {
+            reject(new Error(`Unable to brighten fan dimmer ${this.insteonId}`))
+          }
+        }, reason => {
+          reject(new Error(`Error brightening fan dimmer ${this.insteonId}`))
+        })
+      })
+    },
+
+    dim: function () {
+      return new Promise((resolve, reject) => {
+        this.insteonClient().dim()
+        .then((result) => {
+          if (result.response) {
+            console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
+            resolve({ command: 'dim' })
+          } else {
+            reject(new Error(`Unable to lower fan dimmer ${this.insteonId}`))
+          }
+        }, reason => {
+          reject(new Error(`Error lowering fan dimmer ${this.insteonId}`))
+        })
+      })
+    },
+
+    subscribeEvents: function () {
+      console.log(`[${this.insteonId}] Subscribing to fan controller events...`)
+      var light = this.insteonClient()
+
+      light.on('turnOn', (group, level) => {
+        console.log(`[${this.insteonId}] Fan dimmer turned ON`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_on', status: 'on', level: level })
+      })
+
+      light.on('turnOnFast', (group) => {
+        console.log(`[${this.insteonId}] Fan dimmer turned ON FAST`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_on_fast', status: 'on', level: 100 })
+      })
+
+      light.on('turnOff', (group) => {
+        console.log(`[${this.insteonId}] Fan dimmer turned OFF`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_off', status: 'off', level: 0 })
+      })
+
+      light.on('turnOffFast', (group) => {
+        console.log(`[${this.insteonId}] Fan dimmer turned OFF FAST`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_off_fast', status: 'off', level: 0 })
+      })
+
+      light.on('brightening', (group) => {
+        console.log(`[${this.insteonId}] Fan dimmer brightening`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'brightening' })
+      })
+
+      light.on('brightened', (group) => {
+        console.log(`[${this.insteonId}] Fan dimmer brightened`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'brightened' })
+      })
+
+      light.on('dimming', (group) => {
+        console.log(`[${this.insteonId}] Fan dimmer dimming`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'dimming' })
+      })
+
+      light.on('dimmed', (group) => {
+        console.log(`[${this.insteonId}] Fan dimmer dimmed`)
+        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'dimmed' })
+      })
+
+      console.log(`[${this.insteonId}] Subscribed to fan controller events`)
     }
   },
 

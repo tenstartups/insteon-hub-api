@@ -3,10 +3,6 @@ var Device = require('./Device')
 
 module.exports =  _.merge(_.cloneDeep(Device), {
   attributes: {
-    insteonClient: function () {
-      return sails.hooks.insteon.hub().insteonClient().light(this.insteonId)
-    },
-
     getStatus: function () {
       return new Promise((resolve, reject) => {
         this.insteonClient().level()
@@ -31,6 +27,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
+            sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_on', status: 'on', level: 100 })
             resolve({ command: 'turn_on', status: 'on', level: 100 })
           } else {
             reject(new Error(`Unable to turn on dimmer ${this.insteonId}`))
@@ -47,6 +44,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
+            sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_off', status: 'off', level: 0 })
             resolve({ command: 'turn_off', status: 'off', level: 0 })
           } else {
             reject(new Error(`Unable to turn off dimmer ${this.insteonId}`))
@@ -64,6 +62,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
             var status = level === 0 ? 'off' : 'on'
+            sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'set_level', status: status, level: level })
             resolve({ command: 'set_level', status: status, level: level })
           } else {
             reject(new Error(`Unable to set level for dimmer ${this.insteonId}`))

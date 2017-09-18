@@ -3,10 +3,6 @@ var Device = require('./Device')
 
 module.exports =  _.merge(_.cloneDeep(Device), {
   attributes: {
-    insteonClient: function () {
-      return sails.hooks.insteon.hub().insteonClient().light(this.insteonId)
-    },
-
     getStatus: function () {
       return new Promise((resolve, reject) => {
         this.insteonClient().level()

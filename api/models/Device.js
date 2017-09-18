@@ -50,6 +50,10 @@ module.exports = {
       device.udn = this.udn()
       device.networkId = this.networkId()
       return device
+    },
+
+    insteonClient: function () {
+      return sails.hooks.insteon.hub().insteonClient().light(this.insteonId)
     }
   },
 
