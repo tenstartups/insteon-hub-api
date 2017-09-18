@@ -60,6 +60,7 @@ module.exports = {
 
     toJSON: function () {
       return {
+        type: this.type,
         insteon_id: this.insteonId,
         udn: this.udn(),
         network_id: this.networkId(),
