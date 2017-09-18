@@ -135,6 +135,13 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       })
 
       console.log(`[${this.insteonId}] Subscribed to dimmer events`)
+    },
+
+    startPolling: function () {
+      this.getStatus()
+      setInterval(() => {
+        this.getStatus()
+      }, this.refreshSeconds * 1000)
     }
   },
 

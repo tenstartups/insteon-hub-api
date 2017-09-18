@@ -214,6 +214,13 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       })
 
       console.log(`[${this.insteonId}] Subscribed to fan controller events`)
+    },
+
+    startPolling: function () {
+      this.getStatus()
+      return setInterval(() => {
+        this.getStatus()
+      }, this.refreshSeconds * 1000)
     }
   },
 

@@ -13,7 +13,7 @@ module.exports = (sails) => {
 
     initialize: (cb) => {
       sails.after(['hook:orm:loaded', 'hook:server:loaded', 'hook:hub:loaded'], () => {
-        EventHandler.initSingleton().then(result => {
+        DeviceEventHandler.initSingleton().then(result => {
           singleton = result
           return cb()
         }, reason => {

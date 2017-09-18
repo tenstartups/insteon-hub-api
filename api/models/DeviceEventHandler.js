@@ -3,7 +3,7 @@ module.exports = {
   initSingleton: function () {
     return new Promise((resolve, reject) => {
       console.log('Initializing device event handlers...')
-      var eventHandler = new EventHandler._model({})
+      var eventHandler = new DeviceEventHandler._model({})
       eventHandler.start()
       .then(discovery => {
         console.log('Initialized device event handlers')
@@ -18,6 +18,10 @@ module.exports = {
   },
 
   attributes: {
+    handlers: {
+      type: 'array'
+    },
+
     server: function () {
       return sails.hooks.server.singleton()
     },
