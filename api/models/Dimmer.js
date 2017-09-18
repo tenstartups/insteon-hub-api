@@ -97,6 +97,9 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       light.on('turnOn', (group, level) => {
         console.log(`[${this.insteonId}] Dimmer turned ON`)
         this.sendSmartThingsUpdate({ event: 'turn_on', status: 'on', level: level })
+        if (level === null) {
+          this.getStatus()
+        }
       })
 
       light.on('turnOnFast', (group) => {
@@ -122,6 +125,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       light.on('brightened', (group) => {
         console.log(`[${this.insteonId}] Dimmer brightened`)
         this.sendSmartThingsUpdate({ event: 'brightened' })
+        this.getStatus()
       })
 
       light.on('dimming', (group) => {
@@ -132,6 +136,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       light.on('dimmed', (group) => {
         console.log(`[${this.insteonId}] Dimmer dimmed`)
         this.sendSmartThingsUpdate({ event: 'dimmed' })
+        this.getStatus()
       })
 
       console.log(`[${this.insteonId}] Subscribed to dimmer events`)
