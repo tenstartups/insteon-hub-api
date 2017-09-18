@@ -52,12 +52,10 @@ def insteonId() {
 
 def installed() {
     log.debug "[${insteonId()}] Installed with settings: ${settings}"
-    refreshLoop()
 }
 
 def updated() {
     log.debug "[${insteonId()}] Updated with settings: ${settings}"
-    refreshLoop()
 }
 
 def sendCommand(String commandPath, Map queryParams = [:]) {
@@ -78,7 +76,7 @@ def sendCommand(String commandPath, Map queryParams = [:]) {
 void commandResponseHandler(physicalgraph.device.HubResponse hubResponse) {
     def response = hubResponse.json
 	log.debug("[${insteonId()}] Received response ${response}")
-    if (response.result?.status) {
+    if (response.result?.status != null) {
 	    log.debug "[${insteonId()}] Switch is ${response.result?.status.toUpperCase()}"
 	    sendEvent(name: "switch", value: response.result?.status)
     }
@@ -100,16 +98,6 @@ def refresh()
     sendCommand("status")
 }
 
-def refreshLoop()
-{
-	def refreshSeconds = getDataValue("refreshSeconds").toInteger()
-    if (refreshSeconds > 0) {
-        refresh()
-        log.debug "[${insteonId()}] Scheduling next refresh in ${refreshSeconds} seconds..."
-        runIn(refreshSeconds, refreshLoop)
-    }
-}
-
 def sync(mac, ip, port) {
 	if (mac && mac != getDataValue("mac")) {
 		updateDataValue("mac", mac)
@@ -122,10 +110,15 @@ def sync(mac, ip, port) {
 	}
 }
 
-def processEvent(event) {
-	log.debug("[${insteonId()}] Received event ${event}")
-    if (event.status) {
-	    log.debug "[${insteonId()}] Switch turned ${event.status.toUpperCase()}"
-	    sendEvent(name: "switch", value: event.status)
+def processUpdate(message) {
+	def updateDevice = message.device
+    def updateData = message.data
+    device.name = updateDevice.name
+    device.label = updateDevice.label
+    updateDataValue("ip", updateDevice.ip)
+	updateDataValue("port", updateDevice.port)
+    if (updateData.status != null) {
+	    log.debug "[${insteonId()}] Switch is ${updateData.status.toUpperCase()}"
+	    sendEvent(name: "switch", value: updateData.status)
     }
 }

@@ -61,12 +61,10 @@ def insteonId() {
 
 def installed() {
     log.debug "[${insteonId()}] Installed with settings: ${settings}"
-    refreshLoop()
 }
 
 def updated() {
     log.debug "[${insteonId()}] Updated with settings: ${settings}"
-    refreshLoop()
 }
 
 def sendCommand(String commandPath) {
@@ -89,11 +87,11 @@ def sendCommand(String commandPath) {
 void commandResponseHandler(physicalgraph.device.HubResponse hubResponse) {
     def response = hubResponse.json
 	log.debug("[${insteonId()}] Received response ${response}")
-    if (response.result?.status) {
+    if (response.result?.status != null) {
 	    log.debug "[${insteonId()}] Dimmer is ${response.result?.status.toUpperCase()}"
 	    sendEvent(name: "switch", value: response.result?.status)
     }
-    if (response.result?.level) {
+    if (response.result?.level != null) {
 	    log.debug "[${insteonId()}] Dimmer is at ${response.result?.level}%"
 	    sendEvent(name: "level", value: response.result?.level, unit: "%")
     }
@@ -120,16 +118,6 @@ def refresh()
     sendCommand("status")
 }
 
-def refreshLoop()
-{
-	def refreshSeconds = getDataValue("refreshSeconds").toInteger()
-    if (refreshSeconds > 0) {
-        refresh()
-        log.debug "[${insteonId()}] Scheduling next refresh in ${refreshSeconds} seconds..."
-        runIn(refreshSeconds, refreshLoop)
-    }
-}
-
 def sync(mac, ip, port) {
 	if (mac && mac != getDataValue("mac")) {
 		updateDataValue("mac", mac)
@@ -142,14 +130,19 @@ def sync(mac, ip, port) {
 	}
 }
 
-def processEvent(event) {
-	log.debug("[${insteonId()}] Received event ${event}")
-    if (event.status) {
-	    log.debug "[${insteonId()}] Dimmer turned ${event.status.toUpperCase()}"
-	    sendEvent(name: "switch", value: event.status)
+def processUpdate(message) {
+	def device = message.device
+    def data = message.data
+    device.name = device.name
+    device.label = device.label
+    updateDataValue("ip", device.ip)
+	updateDataValue("port", device.port)
+    if (data.status != null) {
+	    log.debug "[${insteonId()}] Dimmer is ${data.status.toUpperCase()}"
+	    sendEvent(name: "switch", value: data.status)
     }
-    if (event.level) {
-	    log.debug "[${insteonId()}] Dimmer set to ${event.level}%"
-	    sendEvent(name: "level", value: event.level, unit: "%")
+    if (data.level != null) {
+	    log.debug "[${insteonId()}] Dimmer level is ${data.level}%"
+	    sendEvent(name: "level", value: data.level, unit: "%")
     }
 }
