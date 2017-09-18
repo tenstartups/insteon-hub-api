@@ -25,6 +25,14 @@ module.exports = {
       name: req.param('name'),
       description: req.param('description')
     }
+    Device.findOne({ insteonId: attrs['insteonId'] }).exec((err, device) => {
+      if (err) {
+        return res.serverError(err)
+      }
+      if (device) {
+        return res.badRequest(`Insteon ID ${attrs['insteonId']} already taken`)
+      }
+    })
     Device.create(attrs).exec((err, device) => {
       if (err) {
         return res.serverError({ error: err })

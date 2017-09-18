@@ -91,7 +91,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
-            sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_on', status: 'on', level: 100 })
+            sails.hooks.hub.record().sendSmartThingsEvent(this, { name: 'turn_on', status: 'on', level: 100 })
             resolve({ command: 'turn_on', status: 'on', level: 100 })
           } else {
             reject(new Error(`Unable to turn on fan dimmer ${this.insteonId}`))
@@ -108,7 +108,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
-            sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_off', status: 'off', level: 0 })
+            sails.hooks.hub.record().sendSmartThingsEvent(this, { name: 'turn_off', status: 'off', level: 0 })
             resolve({ command: 'turn_off', status: 'off', level: 0 })
           } else {
             reject(new Error(`Unable to turn off fan dimmer ${this.insteonId}`))
@@ -126,7 +126,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
             var status = level === 0 ? 'off' : 'on'
-            sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'set_level', status: status, level: level })
+            sails.hooks.hub.record().sendSmartThingsEvent(this, { name: 'set_level', status: status, level: level })
             resolve({ command: 'set_level', status: status, level: level })
           } else {
             reject(new Error(`Unable to set level for fan dimmer ${this.insteonId}`))
@@ -175,42 +175,42 @@ module.exports =  _.merge(_.cloneDeep(Device), {
 
       light.on('turnOn', (group, level) => {
         console.log(`[${this.insteonId}] Fan dimmer turned ON`)
-        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_on', status: 'on', level: level })
+        sails.hooks.hub.record().sendSmartThingsEvent(this, { name: 'turn_on', status: 'on', level: level })
       })
 
       light.on('turnOnFast', (group) => {
         console.log(`[${this.insteonId}] Fan dimmer turned ON FAST`)
-        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_on_fast', status: 'on', level: 100 })
+        sails.hooks.hub.record().sendSmartThingsEvent(this, { name: 'turn_on_fast', status: 'on', level: 100 })
       })
 
       light.on('turnOff', (group) => {
         console.log(`[${this.insteonId}] Fan dimmer turned OFF`)
-        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_off', status: 'off', level: 0 })
+        sails.hooks.hub.record().sendSmartThingsEvent(this, { name: 'turn_off', status: 'off', level: 0 })
       })
 
       light.on('turnOffFast', (group) => {
         console.log(`[${this.insteonId}] Fan dimmer turned OFF FAST`)
-        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'turn_off_fast', status: 'off', level: 0 })
+        sails.hooks.hub.record().sendSmartThingsEvent(this, { name: 'turn_off_fast', status: 'off', level: 0 })
       })
 
       light.on('brightening', (group) => {
         console.log(`[${this.insteonId}] Fan dimmer brightening`)
-        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'brightening' })
+        sails.hooks.hub.record().sendSmartThingsEvent(this, { name: 'brightening' })
       })
 
       light.on('brightened', (group) => {
         console.log(`[${this.insteonId}] Fan dimmer brightened`)
-        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'brightened' })
+        sails.hooks.hub.record().sendSmartThingsEvent(this, { name: 'brightened' })
       })
 
       light.on('dimming', (group) => {
         console.log(`[${this.insteonId}] Fan dimmer dimming`)
-        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'dimming' })
+        sails.hooks.hub.record().sendSmartThingsEvent(this, { name: 'dimming' })
       })
 
       light.on('dimmed', (group) => {
         console.log(`[${this.insteonId}] Fan dimmer dimmed`)
-        sails.hooks.insteon.hub().sendSmartThingsEvent(this, { name: 'dimmed' })
+        sails.hooks.hub.record().sendSmartThingsEvent(this, { name: 'dimmed' })
       })
 
       console.log(`[${this.insteonId}] Subscribed to fan controller events`)

@@ -2,6 +2,10 @@ module.exports = (sails) => {
   var singleton
 
   return {
+    singleton: () => {
+      return singleton
+    },
+
     configure: () => {
     },
 
@@ -12,8 +16,8 @@ module.exports = (sails) => {
     },
 
     initialize: (cb) => {
-      sails.after(['hook:orm:loaded', 'hook:server:loaded', 'hook:hub:loaded'], () => {
-        EventHandler.initSingleton().then(result => {
+      sails.after(['hook:orm:loaded', 'hook:server:loaded'], () => {
+        Hub.initSingleton().then(result => {
           singleton = result
           return cb()
         }, reason => {

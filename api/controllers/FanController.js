@@ -1,36 +1,62 @@
 module.exports = {
 
   status: (req, res) => {
-    return res.json({
-      todo: 'status() is not implemented yet!'
+    var insteonId = req.params.insteonId
+    console.log(`[${insteonId}] Retrieving fan status...`)
+    Fan.findOne({ insteonId: insteonId }).exec((err, device) => {
+      if (err) {
+        return res.serverError(err)
+      }
+      device.getStatus()
+      return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
 
   off: (req, res) => {
-    return res.json({
-      todo: 'off() is not implemented yet!'
+    var insteonId = req.params.insteonId
+    console.log(`[${insteonId}] Turning fan off...`)
+    Fan.findOne({ insteonId: insteonId }).exec((err, device) => {
+      if (err) {
+        return res.serverError(err)
+      }
+      device.off()
+      return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
 
   low: (req, res) => {
-    return res.json({
-      todo: 'low() is not implemented yet!'
+    var insteonId = req.params.insteonId
+    console.log(`[${insteonId}] Turning fan to low...`)
+    Fan.findOne({ insteonId: insteonId }).exec((err, device) => {
+      if (err) {
+        return res.serverError(err)
+      }
+      device.low()
+      return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
 
   medium: (req, res) => {
-    return res.json({
-      todo: 'medium() is not implemented yet!'
+    var insteonId = req.params.insteonId
+    console.log(`[${insteonId}] Turning fan to medium...`)
+    Fan.findOne({ insteonId: insteonId }).exec((err, device) => {
+      if (err) {
+        return res.serverError(err)
+      }
+      device.medium()
+      return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
 
   high: (req, res) => {
-    return res.json({
-      todo: 'high() is not implemented yet!'
+    var insteonId = req.params.insteonId
+    console.log(`[${insteonId}] Turning fan to high...`)
+    Fan.findOne({ insteonId: insteonId }).exec((err, device) => {
+      if (err) {
+        return res.serverError(err)
+      }
+      device.high()
+      return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   }
-}
-
-function unknownDevice (res, insteonId) {
-  return res.notFound({ error: `Device with Insteon ID ${insteonId} unknown to Hub` })
 }

@@ -5,84 +5,73 @@
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
-var request = require('request-promise-native')
+var Insteon = require('home-controller').Insteon
+
+function connectToHub () {
+  return new Promise((resolve, reject) => {
+    var settings = require('js-yaml')
+                   .safeLoad(require('fs')
+                   .readFileSync(process.env.SETTINGS_FILE, 'utf8'))
+                   .hub
+    var client = new Insteon()
+    console.log(`Connecting to Insteon Hub (2245) at ${settings.host}:${settings.port}...`)
+    client.httpClient(settings, () => {
+      console.log(`Connected to Insteon Hub (2245) at ${settings.host}:${settings.port}`)
+      console.log(`Retrieving Insteon Hub (2245) information...`)
+      client.info()
+      .then(hubInfo => {
+        client.insteonId = hubInfo.id
+        console.log(`Retrieved Insteon Hub (2245) information [${hubInfo.id}]`)
+        resolve(client)
+      }, reason => {
+        reject(new Error(`Unable to connect to Insteon Hub (2245) at ${settings.host}:${settings.port}`))
+      })
+    })
+  })
+}
 
 module.exports = {
+
+  initSingleton: function () {
+    return new Promise((resolve, reject) => {
+      console.log('Initializing hub information...')
+      connectToHub().then(client => {
+        Hub.findOrCreate({ insteonId: client.insteonId }).exec((err, hub) => {
+          if (err) {
+            console.log('Error initializing hub information')
+            reject(err)
+          } else {
+            hub.setInsteonClient(client)
+            console.log('Initialized hub information')
+            resolve(hub)
+          }
+        })
+      }, reason => {
+        console.log('Error initializing hub information')
+        reject(reason)
+      })
+    })
+  },
 
   attributes: {
 
     insteonId: {
       type: 'string',
       primaryKey: true,
-      required: true
+      required: true,
+      unique: true
     },
 
-    smartThingsToken: {
-      type: 'string'
+    server: function () {
+      return sails.hooks.server.singleton()
     },
 
-    storeInsteonClient: function (client) {
+    setInsteonClient: function (client) {
       this._insteonClient = client
-    },
-
-    loadSmartThingsEndpoints: function (token) {
-      return new Promise((resolve, reject) => {
-        if (!token) {
-          resolve(null)
-        }
-        var options = {
-          headers: {
-            'Authorization': `Bearer ${this.smartThingsToken}`
-          },
-          uri: 'https://graph.api.smartthings.com/api/smartapps/endpoints',
-          json: true
-        }
-        request(options)
-        .then(result => {
-          this._smartThingsEndpoints = result
-          resolve(result)
-        })
-        .catch(reason => {
-          throw reason
-        })
-      })
-    },
-
-    sendSmartThingsEvent: function (device, eventJSON) {
-      if (!this.smartThingsToken || !this._smartThingsEndpoints) {
-        return
-      }
-      this._smartThingsEndpoints.forEach(endpoint => {
-        var options = {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${this.smartThingsToken}`
-          },
-          uri: `${endpoint.uri}/event`,
-          body: { device: device, event: eventJSON },
-          json: true
-        }
-        request(options)
-        .then(result => {
-          console.log(`Successfully sent event ${eventJSON.name} to ${endpoint.uri}/event`)
-        })
-        .catch(reason => {
-          console.log(`Error sending event ${eventJSON.name} to ${endpoint.uri}/event`)
-        })
-      })
-    },
-
-    instanceId: function () {
-      return process.env.INSTANCE_ID || '01'
     },
 
     insteonClient: function () {
       return this._insteonClient
-    },
-
-    toJSON: function () {
-      var hub = this.toObject()
-      return hub
     }
   }
 }

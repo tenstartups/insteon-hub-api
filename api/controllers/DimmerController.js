@@ -7,11 +7,8 @@ module.exports = {
       if (err) {
         return res.serverError(err)
       }
-      device.getStatus().then(result => {
-        return res.json({ device: device, result: result })
-      }, reason => {
-        return res.serverError(reason)
-      })
+      device.getStatus()
+      return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
 
@@ -22,11 +19,8 @@ module.exports = {
       if (err) {
         return res.serverError(err)
       }
-      device.turnOn().then(result => {
-        return res.json({ device: device, result: result })
-      }, reason => {
-        return res.serverError(reason)
-      })
+      device.turnOn()
+      return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
 
@@ -37,11 +31,8 @@ module.exports = {
       if (err) {
         return res.serverError(err)
       }
-      device.turnOff().then(result => {
-        return res.json({ device: device, result: result })
-      }, reason => {
-        return res.serverError(reason)
-      })
+      device.turnOff()
+      return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
 
@@ -53,11 +44,8 @@ module.exports = {
       if (err) {
         return res.serverError(err)
       }
-      device.setLevel(level).then(result => {
-        return res.json({ device: device, result: result })
-      }, reason => {
-        return res.serverError(reason)
-      })
+      device.setLevel(level)
+      return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
 
@@ -68,11 +56,8 @@ module.exports = {
       if (err) {
         return res.serverError(err)
       }
-      device.brighten().then(result => {
-        return res.json({ device: device, result: result })
-      }, reason => {
-        return res.serverError(reason)
-      })
+      device.brighten()
+      return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
 
@@ -83,11 +68,8 @@ module.exports = {
       if (err) {
         return res.serverError(err)
       }
-      device.dim().then(result => {
-        return res.json({ device: device, result: result })
-      }, reason => {
-        return res.serverError(reason)
-      })
+      device.dim()
+      return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   }
 }

@@ -14,7 +14,8 @@ module.exports = {
     insteonId: {
       type: 'string',
       primaryKey: true,
-      required: true
+      required: true,
+      unique: true
     },
 
     type: {
@@ -37,28 +38,46 @@ module.exports = {
       defaultsTo: 300
     },
 
+    server: function () {
+      return sails.hooks.server.singleton()
+    },
+
+    hub: function () {
+      return sails.hooks.hub.singleton()
+    },
+
+    discovery: function () {
+      return sails.hooks.discovery.singleton()
+    },
+
     udn: function () {
-      return `insteon:${sails.hooks.insteon.hub().instanceId()}:hub:${sails.hooks.insteon.hub().insteonId}:${this.type}:${this.insteonId}`
+      return `server:${this.server().instanceId}:hub:${this.hub().insteonId}:${this.type}:${this.insteonId}`
     },
 
     networkId: function () {
-      return `${sails.hooks.insteon.hub().instanceId()}${sails.hooks.insteon.hub().insteonId}${this.insteonId}`
+      return `${this.server().instanceId}${this.hub().insteonId}${this.insteonId}`
     },
 
     toJSON: function () {
       var device = this.toObject()
       device.udn = this.udn()
       device.networkId = this.networkId()
+      device.ip = this.server().advertiseAddress()
+      device.port = this.server().advertisePort()
       return device
     },
 
     insteonClient: function () {
-      return sails.hooks.insteon.hub().insteonClient().light(this.insteonId)
+      return this.hub().insteonClient().light(this.insteonId)
+    },
+
+    sendSmartThingsEvent: function (event) {
+      this.server().sendSmartThingsEvent(this, event)
     }
   },
 
   beforeValidate: function (device, cb) {
-    sails.hooks.insteon.hub().insteonClient().info(device.insteonId)
+    sails.hooks.hub.singleton().insteonClient().info(device.insteonId)
     .then(deviceInfo => {
       if (deviceInfo === undefined) {
         cb(`Device with Insteon ID ${device.insteonId} unknown to hub`)
@@ -80,8 +99,8 @@ module.exports = {
   },
 
   afterCreate: function (device, cb) {
-    sails.hooks.ssdp.start(device)
-    device.subscribeEvents()
+    sails.hooks.discovery.singleton().startFor(device)
+    // device.subscribeEvents()
     cb()
   }
 }
