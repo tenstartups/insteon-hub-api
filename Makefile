@@ -20,8 +20,8 @@ run: build
 		-e SETTINGS_FILE=/etc/insteon-server/settings.yml \
 		-e DATABASE_DIRECTORY=/var/lib/insteon-server \
 		-e PORT=8080 \
-		-e SSDP_LOCATION_ADDRESS=$(IP_ADDRESS) \
-		-e SSDP_LOCATION_PORT=8080 \
+		-e DEVICE_ADVERTISE_IP=$(IP_ADDRESS) \
+		-e DEVICE_ADVERTISE_PORT=8080 \
 		-e VIRTUAL_HOST=insteon-server.docker \
 		--name insteon-server \
 		$(DOCKER_IMAGE_NAME) $(ARGS)

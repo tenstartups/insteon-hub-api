@@ -57,22 +57,25 @@ module.exports.routes = {
   'delete /api/device/:insteonId': 'DeviceController.destroy',
 
   // Switch controller actions
-  'post /api/switch/:insteonId/refresh': 'SwitchController.refresh',
-  'post /api/switch/:insteonId/on': 'SwitchController.on',
-  'post /api/switch/:insteonId/off': 'SwitchController.off',
+  'get /api/switch/:insteonId/status': 'SwitchController.status',
+  'post /api/switch/:insteonId/command/refresh': 'SwitchController.refresh',
+  'post /api/switch/:insteonId/command/on': 'SwitchController.on',
+  'post /api/switch/:insteonId/command/off': 'SwitchController.off',
 
   // Dimmer controller actions
-  'post /api/dimmer/:insteonId/refresh': 'DimmerController.refresh',
-  'post /api/dimmer/:insteonId/on': 'DimmerController.on',
-  'post /api/dimmer/:insteonId/off': 'DimmerController.off',
-  'post /api/dimmer/:insteonId/level/:level': 'DimmerController.level',
-  'post /api/dimmer/:insteonId/brighten': 'DimmerController.brighten',
-  'post /api/dimmer/:insteonId/dim': 'DimmerController.dim',
+  'get /api/dimmer/:insteonId/status': 'DimmerController.status',
+  'post /api/dimmer/:insteonId/command/refresh': 'DimmerController.refresh',
+  'post /api/dimmer/:insteonId/command/on': 'DimmerController.on',
+  'post /api/dimmer/:insteonId/command/off': 'DimmerController.off',
+  'post /api/dimmer/:insteonId/command/level/:level': 'DimmerController.level',
+  'post /api/dimmer/:insteonId/command/brighten': 'DimmerController.brighten',
+  'post /api/dimmer/:insteonId/command/dim': 'DimmerController.dim',
 
   // Fan controller actions
-  'post /api/fan/:insteonId/refresh': 'FanController.refresh',
-  'post /api/fan/:insteonId/off': 'FanController.off',
-  'post /api/fan/:insteonId/low': 'FanController.low',
-  'post /api/fan/:insteonId/medium': 'FanController.medium',
-  'post /api/fan/:insteonId/high': 'FanController.high'
+  'get /api/fan/:insteonId/status': 'FanController.status',
+  'post /api/fan/:insteonId/command/refresh': 'FanController.refresh',
+  'post /api/fan/:insteonId/command/off': 'FanController.off',
+  'post /api/fan/:insteonId/command/low': 'FanController.low',
+  'post /api/fan/:insteonId/command/medium': 'FanController.medium',
+  'post /api/fan/:insteonId/command/high': 'FanController.high'
 }

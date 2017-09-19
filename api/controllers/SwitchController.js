@@ -1,8 +1,22 @@
 module.exports = {
+  status: (req, res) => {
+    var insteonId = req.params.insteonId
+    console.log(`[${insteonId}] Retrieving switch status...`)
+    Switch.findOne({ insteonId: insteonId }).exec((err, device) => {
+      if (err) {
+        return res.serverError(err)
+      }
+      device.getStatus().then(result => {
+        return res.json({ device: device, result: result })
+      }, reason => {
+        return res.serverError(reason)
+      })
+    })
+  },
 
   refresh: (req, res) => {
     var insteonId = req.params.insteonId
-    console.log(`[${insteonId}] Retrieving switch status...`)
+    console.log(`[${insteonId}] Sending switch refresh command...`)
     Switch.findOne({ insteonId: insteonId }).exec((err, device) => {
       if (err) {
         return res.serverError(err)

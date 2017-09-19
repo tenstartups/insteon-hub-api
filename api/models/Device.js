@@ -65,9 +65,11 @@ module.exports = {
         udn: this.udn(),
         network_id: this.networkId(),
         name: this.name,
-        label: this.description,
-        ip: this.server().advertiseAddress(),
-        port: this.server().advertisePort()
+        label: this.name,
+        description: this.description,
+        ip: this.server().advertiseIP(),
+        port: this.server().advertisePort(),
+        mac: this.server().advertiseMAC()
       }
     },
 

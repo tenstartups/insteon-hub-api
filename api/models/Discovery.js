@@ -52,7 +52,7 @@ module.exports = {
     startFor: function (device) {
       var usn = `urn:schemas-upnp-org:device:Insteon${camelCase(device.type)}:1`
       var udn = `insteon:${this.server().instanceId}:hub:${this.hub().insteonId}:${device.type}:${device.insteonId}`
-      var location = `http://${this.server().advertiseAddress()}:${this.server().advertisePort()}/api/device/${device.insteonId}`
+      var location = `http://${this.server().advertiseIP()}:${this.server().advertisePort()}/api/device/${device.insteonId}`
 
       console.log(`Starting SSDP server advertising for USN: ${usn}, UDN: ${udn}, Location: ${location}...`)
 

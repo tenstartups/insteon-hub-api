@@ -51,31 +51,45 @@ module.exports = {
     },
 
     loadTcpAddress: function () {
-      // Determine the listener address and port to use
-      this._advertiseAddress = process.env.SSDP_LOCATION_ADDRESS
-      if (this._advertiseAddress === undefined) {
-        this._advertiseAddress = require('ip').address()
+      // Determine the advertise IP to use
+      this._advertiseIP = process.env.DEVICE_ADVERTISE_IP
+      if (this._advertiseIP === undefined) {
+        this._advertiseIP = require('ip').address()
         var ifaces = require('os').networkInterfaces()
         Object.keys(ifaces).forEach(dev => {
           ifaces[dev].filter(details => {
             if (dev === LISTEN_INTERFACE && details.family === 'IPv4' && details.internal === false) {
-              this._advertiseAddress = details.address
+              this._advertiseIP = details.address
             }
           })
         })
       }
-      this._advertisePort = process.env.SSDP_LOCATION_PORT
+      // Determine the advertise Port to use
+      this._advertisePort = process.env.DEVICE_ADVERTISE
       if (this._advertisePort === undefined) {
         this._advertisePort = sails.config.port
       }
+      // Determine the advertise MAC to use
+      ifaces = require('os').networkInterfaces()
+      Object.keys(ifaces).forEach(dev => {
+        ifaces[dev].filter(details => {
+          if (dev === LISTEN_INTERFACE && details.family === 'IPv4' && details.internal === false) {
+            this._advertiseMAC = details.mac
+          }
+        })
+      })
     },
 
-    advertiseAddress: function () {
-      return this._advertiseAddress
+    advertiseIP: function () {
+      return this._advertiseIP
     },
 
     advertisePort: function () {
       return this._advertisePort
+    },
+
+    advertiseMAC: function () {
+      return this._advertiseMAC
     },
 
     loadSmartThingsEndpoints: function () {
