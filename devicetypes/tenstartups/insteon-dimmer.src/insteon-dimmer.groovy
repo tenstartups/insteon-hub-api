@@ -115,7 +115,7 @@ def setLevel(level) {
 def refresh()
 {
     log.debug "[${insteonId()}] Refreshing dimmer status..."
-    sendCommand("status")
+    sendCommand("refresh")
 }
 
 def sync(mac, ip, port) {

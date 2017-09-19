@@ -95,7 +95,7 @@ def off() {
 def refresh()
 {
     log.debug "[${insteonId()}] Refreshing switch status..."
-    sendCommand("status")
+    sendCommand("refresh")
 }
 
 def sync(mac, ip, port) {
