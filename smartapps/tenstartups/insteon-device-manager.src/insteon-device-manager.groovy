@@ -179,7 +179,7 @@ def addSelectedDevices() {
         	def deviceType
             if (selectedDevice?.value?.type == 'switch') {
             	deviceType = 'Insteon Switch'
-            } else if (selectedDevice?.value?.type == 'dimmer') {git p
+            } else if (selectedDevice?.value?.type == 'dimmer') {
             	deviceType = 'Insteon Dimmer'
             } else if (selectedDevice?.value?.type == 'fan') {
             	deviceType = 'Insteon Fan'
