@@ -6,6 +6,9 @@ module.exports = {
       if (err) {
         return res.serverError(err)
       }
+      if (!device) {
+        return res.notFound({ error: `Switch with Insteon ID ${insteonId} not found` })
+      }
       device.getStatus().then(result => {
         return res.json({ device: device, result: result })
       }, reason => {
@@ -21,6 +24,9 @@ module.exports = {
       if (err) {
         return res.serverError(err)
       }
+      if (!device) {
+        return res.notFound({ error: `Switch with Insteon ID ${insteonId} not found` })
+      }
       device.refresh()
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
@@ -33,6 +39,9 @@ module.exports = {
       if (err) {
         return res.serverError(err)
       }
+      if (!device) {
+        return res.notFound({ error: `Switch with Insteon ID ${insteonId} not found` })
+      }
       device.turnOn()
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
@@ -44,6 +53,9 @@ module.exports = {
     Switch.findOne({ insteonId: insteonId }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
+      }
+      if (!device) {
+        return res.notFound({ error: `Switch with Insteon ID ${insteonId} not found` })
       }
       device.turnOff()
       return res.json({ insteon_id: insteonId, command: req.options.action })

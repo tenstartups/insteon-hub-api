@@ -8,7 +8,7 @@ module.exports = {
       console.log('Initializing discovery servers...')
       var discovery = new Discovery._model({})
       discovery.start()
-      .then(discovery => {
+      .then(devices => {
         console.log('Initialized discovery servers')
         resolve(discovery)
       })
@@ -16,7 +16,6 @@ module.exports = {
         console.log('Error initializing discovery servers')
         reject(reason)
       })
-      resolve(discovery)
     })
   },
 

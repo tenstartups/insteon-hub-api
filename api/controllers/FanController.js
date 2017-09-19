@@ -7,6 +7,9 @@ module.exports = {
       if (err) {
         return res.serverError(err)
       }
+      if (!device) {
+        return res.notFound({ error: `Fan with Insteon ID ${insteonId} not found` })
+      }
       device.getStatus().then(result => {
         return res.json({ device: device, result: result })
       }, reason => {
@@ -22,6 +25,9 @@ module.exports = {
       if (err) {
         return res.serverError(err)
       }
+      if (!device) {
+        return res.notFound({ error: `Fan with Insteon ID ${insteonId} not found` })
+      }
       device.refresh()
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
@@ -33,6 +39,9 @@ module.exports = {
     Fan.findOne({ insteonId: insteonId }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
+      }
+      if (!device) {
+        return res.notFound({ error: `Fan with Insteon ID ${insteonId} not found` })
       }
       device.off()
       return res.json({ insteon_id: insteonId, command: req.options.action })
@@ -46,6 +55,9 @@ module.exports = {
       if (err) {
         return res.serverError(err)
       }
+      if (!device) {
+        return res.notFound({ error: `Fan with Insteon ID ${insteonId} not found` })
+      }
       device.low()
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
@@ -58,6 +70,9 @@ module.exports = {
       if (err) {
         return res.serverError(err)
       }
+      if (!device) {
+        return res.notFound({ error: `Fan with Insteon ID ${insteonId} not found` })
+      }
       device.medium()
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
@@ -69,6 +84,9 @@ module.exports = {
     Fan.findOne({ insteonId: insteonId }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
+      }
+      if (!device) {
+        return res.notFound({ error: `Fan with Insteon ID ${insteonId} not found` })
       }
       device.high()
       return res.json({ insteon_id: insteonId, command: req.options.action })

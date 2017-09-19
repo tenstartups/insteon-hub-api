@@ -5,15 +5,14 @@ module.exports = {
       console.log('Initializing device event handlers...')
       var eventHandler = new DeviceEventHandler._model({})
       eventHandler.start()
-      .then(discovery => {
+      .then(eventHandler => {
         console.log('Initialized device event handlers')
-        resolve(discovery)
+        resolve(eventHandler)
       })
       .catch(reason => {
         console.log('Error initializing device event handlers')
         reject(reason)
       })
-      resolve(eventHandler)
     })
   },
 

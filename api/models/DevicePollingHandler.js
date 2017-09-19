@@ -5,15 +5,14 @@ module.exports = {
       console.log('Initializing device polling handlers...')
       var pollingHandler = new DevicePollingHandler._model({})
       pollingHandler.start()
-      .then(discovery => {
+      .then(something => {
         console.log('Initialized device polling handlers')
-        resolve(discovery)
+        resolve(pollingHandler)
       })
       .catch(reason => {
         console.log('Error initializing device polling handlers')
         reject(reason)
       })
-      resolve(pollingHandler)
     })
   },
 

@@ -19,7 +19,7 @@ module.exports = {
           console.log('Error initializing server information')
           reject(err)
         } else {
-          server.loadTcpAddress()
+          server.discoverTcpInterface()
           server.loadSmartThingsEndpoints()
           .then(endpoints => {
             console.log('Initialized server information')
@@ -50,7 +50,7 @@ module.exports = {
       type: 'string'
     },
 
-    loadTcpAddress: function () {
+    discoverTcpInterface: function () {
       // Determine the advertise IP to use
       this._advertiseIP = process.env.DEVICE_ADVERTISE_IP
       if (this._advertiseIP === undefined) {
@@ -74,7 +74,8 @@ module.exports = {
       Object.keys(ifaces).forEach(dev => {
         ifaces[dev].filter(details => {
           if (dev === LISTEN_INTERFACE && details.family === 'IPv4' && details.internal === false) {
-            this._advertiseMAC = details.mac
+            this._advertiseMAC = details.mac.toUpperCase().replace(/:/g, '')
+            console.log(this._advertiseMAC)
           }
         })
       })
