@@ -73,7 +73,10 @@ module.exports = {
       }
 
       // Determine the advertise MAC to use
-      macaddress.one(LISTEN_INTERFACE, function (err, mac) {
+      macaddress.one(LISTEN_INTERFACE, (err, mac) => {
+        if (err) {
+          throw err
+        }
         this._advertiseMAC = mac.toUpperCase().replace(/:/g, '')
       })
     },
