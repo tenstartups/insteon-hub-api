@@ -8,7 +8,7 @@ module.exports = {
       } else {
         var server = sails.hooks.server.singleton()
         server.smartThingsToken = token
-        server.loadSmartThingsEndpoints(token)
+        server.loadSmartThingsEndpoints()
         return res.json({ hub: record })
       }
     })

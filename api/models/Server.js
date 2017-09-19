@@ -78,10 +78,10 @@ module.exports = {
       return this._advertisePort
     },
 
-    loadSmartThingsEndpoints: function (token) {
+    loadSmartThingsEndpoints: function () {
       return new Promise((resolve, reject) => {
         console.log('Loading SmartThings SmartApp endpoints...')
-        if (!token) {
+        if (!this.smartThingsToken) {
           resolve(null)
         }
         var options = {
