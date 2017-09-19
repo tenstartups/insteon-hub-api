@@ -61,7 +61,7 @@ def updated() {
 def sendCommand(String commandPath, Map queryParams = [:]) {
 	new physicalgraph.device.HubAction(
         method: "POST",
-        path: "/api/switch/${insteonId()}/${commandPath}",
+        path: "/api/switch/${insteonId()}/command/${commandPath}",
         headers: [HOST: "${getDataValue("ip")}:${getDataValue("port")}"]
     )
 }
@@ -94,15 +94,9 @@ def sync(mac, ip, port) {
 	}
 }
 
-def processUpdate(message) {
-	def updateDevice = message.device
-    def updateData = message.data
-    device.name = updateDevice.name
-    device.label = updateDevice.label
-    updateDataValue("ip", updateDevice.ip)
-	updateDataValue("port", updateDevice.port)
-    if (updateData.status != null) {
-	    log.debug "[${insteonId()}] Switch is ${updateData.status.toUpperCase()}"
-	    sendEvent(name: "switch", value: updateData.status)
+def processStatusUpdate(data) {
+    if (data.status != null) {
+	    log.debug "[${insteonId()}] Switch is ${data.status.toUpperCase()}"
+	    sendEvent(name: "switch", value: data.status)
     }
 }

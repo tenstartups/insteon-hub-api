@@ -70,7 +70,7 @@ def updated() {
 def sendCommand(String commandPath) {
 	new physicalgraph.device.HubAction(
         method: "POST",
-        path: "/api/dimmer/${insteonId()}/${commandPath}",
+        path: "/api/dimmer/${insteonId()}/command/${commandPath}",
         headers: [
             HOST: "${getDataValue("ip")}:${getDataValue("port")}"
         ]
@@ -110,13 +110,7 @@ def sync(mac, ip, port) {
 	}
 }
 
-def processUpdate(message) {
-	def device = message.device
-    def data = message.data
-    device.name = device.name
-    device.label = device.label
-    updateDataValue("ip", device.ip)
-	updateDataValue("port", device.port)
+def processStatusUpdate(data) {
     if (data.status != null) {
 	    log.debug "[${insteonId()}] Dimmer is ${data.status.toUpperCase()}"
 	    sendEvent(name: "switch", value: data.status)

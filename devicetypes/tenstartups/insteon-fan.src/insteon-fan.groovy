@@ -91,7 +91,7 @@ def updated() {
 def sendCommand(String commandPath) {
 	new physicalgraph.device.HubAction(
         method: "POST",
-        path: "/api/fan/${insteonId()}/${commandPath}",
+        path: "/api/fan/${insteonId()}/command/${commandPath}",
         headers: [
             HOST: "${getDataValue("ip")}:${getDataValue("port")}"
         ]
@@ -131,15 +131,14 @@ def sync(mac, ip, port) {
 	}
 }
 
-def processEvent(event) {
-	log.debug("[${insteonId()}] Received event ${event}")
-    if (event.status != null) {
-	    log.debug "[${insteonId()}] Dimmer turned ${event.status.toUpperCase()}"
-	    sendEvent(name: "switch", value: event.status)
+def processStatusUpdate(data) {
+    if (data.status != null) {
+	    log.debug "[${insteonId()}] Dimmer turned ${data.status.toUpperCase()}"
+	    sendEvent(name: "switch", value: data.status)
     }
-    if (event.level != null) {
-	    log.debug "[${insteonId()}] Dimmer set to ${event.level}%"
-	    sendEvent(name: "level", value: event.level, unit: "%")
+    if (data.level != null) {
+	    log.debug "[${insteonId()}] Dimmer set to ${data.level}%"
+	    sendEvent(name: "level", value: data.level, unit: "%")
     }
 }
 
