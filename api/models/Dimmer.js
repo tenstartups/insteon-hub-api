@@ -70,7 +70,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       .then((result) => {
         if (result.response) {
           console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
-          var status = level === 0 ? 'off' : 'on'
+          var status = (level === 0 ? 'off' : 'on')
           this.sendSmartThingsUpdate({ command: 'set_level', status: status, level: level })
         } else {
           console.log(`Unable to set level for dimmer ${this.insteonId}`)
