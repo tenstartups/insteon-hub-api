@@ -80,6 +80,7 @@ module.exports = {
 
     loadSmartThingsEndpoints: function (token) {
       return new Promise((resolve, reject) => {
+        console.log('Loading SmartThings SmartApp endpoints...')
         if (!token) {
           resolve(null)
         }
@@ -93,9 +94,11 @@ module.exports = {
         request(options)
         .then(result => {
           this._smartThingsEndpoints = result
+          console.log('Loaded SmartThings SmartApp endpoints')
           resolve(result)
         })
         .catch(reason => {
+          console.log('Error loading SmartThings SmartApp endpoints...')
           reject(reason)
         })
       })

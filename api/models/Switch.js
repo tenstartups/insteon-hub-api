@@ -93,9 +93,9 @@ module.exports =  _.merge(_.cloneDeep(Device), {
     },
 
     startPolling: function () {
-      this.getStatus()
+      this.refresh()
       setInterval(() => {
-        this.getStatus()
+        this.refresh()
       }, this.refreshSeconds * 1000)
     }
   },
