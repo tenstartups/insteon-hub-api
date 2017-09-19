@@ -66,6 +66,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
     },
 
     setLevel: function (level) {
+      level = parseInt(level)
       this.insteonClient().level(level)
       .then((result) => {
         if (result.response) {
@@ -122,6 +123,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
             this.sendSmartThingsUpdate({ event: 'turn_on', status: 'on' })
           })
         } else {
+          level = parseInt(level)
           this.sendSmartThingsUpdate({ event: 'turn_on', status: 'on', level: level })
         }
       })
