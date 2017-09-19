@@ -4,13 +4,31 @@ var Device = require('./Device')
 module.exports =  _.merge(_.cloneDeep(Device), {
   attributes: {
     getStatus: function () {
+      return new Promise((resolve, reject) => {
+        this.insteonClient().level()
+        .then((result) => {
+          if (result !== undefined && result !== null && result !== '') {
+            var level = parseInt(result)
+            var status = (level === 0 ? 'off' : 'on')
+            console.log(`[${this.insteonId}] Switch is ${status.toUpperCase()}`)
+            resolve({ status: status, level: level })
+          } else {
+            reject(new Error(`Unable to get status for switch ${this.insteonId}`))
+          }
+        }, reason => {
+          reject(reason)
+        })
+      })
+    },
+
+    refresh: function () {
       this.insteonClient().level()
       .then((result) => {
         if (result !== undefined && result !== null && result !== '') {
           var level = parseInt(result)
           var status = (level === 0 ? 'off' : 'on')
           console.log(`[${this.insteonId}] Switch is ${status.toUpperCase()}`)
-          this.sendSmartThingsUpdate({ command: 'get_status', status: status })
+          this.sendSmartThingsUpdate({ command: 'refresh', status: status })
         } else {
           console.log(`Unable to get status for switch ${this.insteonId}`)
         }

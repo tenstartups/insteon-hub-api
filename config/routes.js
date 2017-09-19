@@ -57,20 +57,20 @@ module.exports.routes = {
   'delete /api/device/:insteonId': 'DeviceController.destroy',
 
   // Switch controller actions
+  'post /api/switch/:insteonId/refresh': 'SwitchController.refresh',
   'post /api/switch/:insteonId/on': 'SwitchController.on',
   'post /api/switch/:insteonId/off': 'SwitchController.off',
-  'post /api/switch/:insteonId/status': 'SwitchController.status',
 
   // Dimmer controller actions
+  'post /api/dimmer/:insteonId/refresh': 'DimmerController.refresh',
   'post /api/dimmer/:insteonId/on': 'DimmerController.on',
   'post /api/dimmer/:insteonId/off': 'DimmerController.off',
   'post /api/dimmer/:insteonId/level/:level': 'DimmerController.level',
   'post /api/dimmer/:insteonId/brighten': 'DimmerController.brighten',
   'post /api/dimmer/:insteonId/dim': 'DimmerController.dim',
-  'post /api/dimmer/:insteonId/status': 'DimmerController.status',
 
   // Fan controller actions
-  'post /api/fan/:insteonId/status': 'FanController.status',
+  'post /api/fan/:insteonId/refresh': 'FanController.refresh',
   'post /api/fan/:insteonId/off': 'FanController.off',
   'post /api/fan/:insteonId/low': 'FanController.low',
   'post /api/fan/:insteonId/medium': 'FanController.medium',
