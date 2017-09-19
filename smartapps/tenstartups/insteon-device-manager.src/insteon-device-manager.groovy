@@ -245,7 +245,14 @@ def processUpdate() {
 	if (!child) {
     	httpError(404, "Device ${request.JSON.device.network_id} not found")
     }
-    child.processUpdate(request.JSON)
+    child.sync(request.JSON.device.mac, request.JSON.device.ip, request.JSON.device.port)
+    if (request.JSON.device.name) {
+    	child.name = request.JSON.device.name
+    }
+    if (request.JSON.device.label) {
+        child.label = request.JSON.device.label
+    }
+    child.processStatusUpdate(request.JSON.data)
     return [ status: 'ok' ]
 }
 
