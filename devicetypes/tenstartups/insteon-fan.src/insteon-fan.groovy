@@ -89,33 +89,13 @@ def updated() {
 }
 
 def sendCommand(String commandPath) {
-	def command = new physicalgraph.device.HubAction(
-    	[
-            method: "POST",
-            path: "/api/fan/${insteonId()}/${commandPath}",
-            headers: [
-                HOST: "${getDataValue("ip")}:${getDataValue("port")}"
-            ]
-        ],
-        null,
-        [
-            callback: commandResponseHandler
+	new physicalgraph.device.HubAction(
+        method: "POST",
+        path: "/api/fan/${insteonId()}/${commandPath}",
+        headers: [
+            HOST: "${getDataValue("ip")}:${getDataValue("port")}"
         ]
     )
-    return command
-}
-
-void commandResponseHandler(physicalgraph.device.HubResponse hubResponse) {
-    def response = hubResponse.json
-	log.debug("[${insteonId()}] Received response ${response}")
-    if (response.result?.status != null) {
-	    log.debug "[${insteonId()}] Dimmer is ${response.result?.status.toUpperCase()}"
-	    sendEvent(name: "switch", value: response.result?.status)
-    }
-    if (response.result?.level != null) {
-	    log.debug "[${insteonId()}] Dimmer is at ${response.result?.level}%"
-	    sendEvent(name: "level", value: response.result?.level, unit: "%")
-    }
 }
 
 def on() {
