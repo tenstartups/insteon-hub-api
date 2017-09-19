@@ -75,7 +75,6 @@ module.exports = {
       // Determine the advertise MAC to use
       macaddress.one(LISTEN_INTERFACE, function (err, mac) {
         this._advertiseMAC = mac.toUpperCase().replace(/:/g, '')
-        console.log(this._advertiseMAC)
       })
     },
 
