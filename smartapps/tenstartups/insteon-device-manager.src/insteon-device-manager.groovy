@@ -155,7 +155,7 @@ void deviceDescriptionHandler(physicalgraph.device.HubResponse hubResponse) {
 	def devices = getDevices()
 	def device = devices.find { it?.key?.contains(body?.device?.udn) }
 	if (device) {
-		device.value << [networkId: body?.device?.networkId, insteonId: body?.device?.insteonId, type: body?.device?.type, name: body?.device?.name, refreshSeconds: body?.device?.refreshSeconds, verified: true]
+		device.value << [networkId: body?.device?.network_id, insteonId: body?.device?.insteon_id, type: body?.device?.type, name: body?.device?.name, label: body?.device?.label, verified: true]
 	}
 }
 
@@ -179,7 +179,7 @@ def addSelectedDevices() {
         	def deviceType
             if (selectedDevice?.value?.type == 'switch') {
             	deviceType = 'Insteon Switch'
-            } else if (selectedDevice?.value?.type == 'dimmer') {
+            } else if (selectedDevice?.value?.type == 'dimmer') {git p
             	deviceType = 'Insteon Dimmer'
             } else if (selectedDevice?.value?.type == 'fan') {
             	deviceType = 'Insteon Fan'
@@ -234,16 +234,16 @@ void sendAccessTokenHandler(physicalgraph.device.HubResponse hubResponse) {
 }
 
 def processUpdate() {
-	if (!request.JSON?.device?.networkId) {
+	if (!request.JSON?.device?.network_id) {
     	httpError(400, "Device network ID not provided")
     }
 	log.debug("Received update ${request.JSON}")
 	if (!request.JSON?.data) {
     	httpError(400, "Update data not provided")
     }
-    def child = getChildDevice(request.JSON.device.networkId)
+    def child = getChildDevice(request.JSON.device.network_id)
 	if (!child) {
-    	httpError(404, "Device ${request.JSON.device.networkId} not found")
+    	httpError(404, "Device ${request.JSON.device.network_id} not found")
     }
     child.processUpdate(request.JSON)
     return [ status: 'ok' ]
