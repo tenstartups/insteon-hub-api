@@ -23,6 +23,7 @@
     "include-all": "*",
     "js-yaml": "*",
     "lodash": "*",
+    "macaddress": "*",
     "node-ssdp": "*",
     "rc": "*",
     "request": "*",

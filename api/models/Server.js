@@ -7,6 +7,7 @@
 
 const LISTEN_INTERFACE = process.env.LISTEN_INTERFACE || 'eth0'
 
+var macaddress = require('macaddress')
 var request = require('request-promise-native')
 
 module.exports = {
@@ -64,20 +65,17 @@ module.exports = {
           })
         })
       }
+
       // Determine the advertise Port to use
       this._advertisePort = process.env.DEVICE_ADVERTISE
       if (this._advertisePort === undefined) {
         this._advertisePort = sails.config.port
       }
+
       // Determine the advertise MAC to use
-      ifaces = require('os').networkInterfaces()
-      Object.keys(ifaces).forEach(dev => {
-        ifaces[dev].filter(details => {
-          if (dev === LISTEN_INTERFACE && details.family === 'IPv4' && details.internal === false) {
-            this._advertiseMAC = details.mac.toUpperCase().replace(/:/g, '')
-            console.log(this._advertiseMAC)
-          }
-        })
+      macaddress.one(LISTEN_INTERFACE, function (err, mac) {
+        this._advertiseMAC = mac.toUpperCase().replace(/:/g, '')
+        console.log(this._advertiseMAC)
       })
     },
 
