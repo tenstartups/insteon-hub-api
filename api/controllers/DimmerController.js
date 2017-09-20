@@ -20,7 +20,7 @@ module.exports = {
 
   refresh: (req, res) => {
     var insteonId = req.params.insteonId
-    console.log(`[${insteonId}] Retrieving dimmer status...`)
+    console.log(`[${insteonId}] Sending dimmer refresh command...`)
     Dimmer.findOne({ insteonId: insteonId }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
