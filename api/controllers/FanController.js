@@ -43,7 +43,7 @@ module.exports = {
       if (!device) {
         return res.notFound({ error: `Fan controller with Insteon ID ${insteonId} not found` })
       }
-      device.turnOn()
+      device.turnLightOn()
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
@@ -58,7 +58,7 @@ module.exports = {
       if (!device) {
         return res.notFound({ error: `Fan controller with Insteon ID ${insteonId} not found` })
       }
-      device.turnOff()
+      device.turnLightOff()
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
@@ -74,12 +74,12 @@ module.exports = {
       if (!device) {
         return res.notFound({ error: `Fan controller with Insteon ID ${insteonId} not found` })
       }
-      device.setLevel(level)
+      device.setLightLevel(level)
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
 
-  brighten: (req, res) => {
+  brightenLight: (req, res) => {
     var insteonId = req.params.insteonId
     console.log(`[${insteonId}] Brightening fan dimmer...`)
     Fan.findOne({ insteonId: insteonId }).exec((err, device) => {
@@ -89,12 +89,12 @@ module.exports = {
       if (!device) {
         return res.notFound({ error: `Fan controller with Insteon ID ${insteonId} not found` })
       }
-      device.brighten()
+      device.brightenLight()
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
 
-  dim: (req, res) => {
+  dimLight: (req, res) => {
     var insteonId = req.params.insteonId
     console.log(`[${insteonId}] Lowering fan dimmer...`)
     Fan.findOne({ insteonId: insteonId }).exec((err, device) => {
@@ -104,7 +104,7 @@ module.exports = {
       if (!device) {
         return res.notFound({ error: `Fan controller with Insteon ID ${insteonId} not found` })
       }
-      device.dim()
+      device.dimLight()
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
@@ -119,7 +119,7 @@ module.exports = {
       if (!device) {
         return res.notFound({ error: `Fan with Insteon ID ${insteonId} not found` })
       }
-      device.fanOff()
+      device.turnFanOff()
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
@@ -134,7 +134,7 @@ module.exports = {
       if (!device) {
         return res.notFound({ error: `Fan with Insteon ID ${insteonId} not found` })
       }
-      device.fanLow()
+      device.turnFanLow()
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
@@ -149,7 +149,7 @@ module.exports = {
       if (!device) {
         return res.notFound({ error: `Fan with Insteon ID ${insteonId} not found` })
       }
-      device.fanMedium()
+      device.turnFanMedium()
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
@@ -164,7 +164,7 @@ module.exports = {
       if (!device) {
         return res.notFound({ error: `Fan with Insteon ID ${insteonId} not found` })
       }
-      device.fanHigh()
+      device.turnFanHigh()
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   }

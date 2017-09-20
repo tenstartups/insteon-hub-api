@@ -7,6 +7,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       return new Promise((resolve, reject) => {
         this.insteonClient().level()
         .then((result) => {
+          console.log(result)
           if (result !== undefined && result !== null && result !== '') {
             var level = parseInt(result)
             var status = (level === 0 ? 'off' : 'on')
@@ -39,13 +40,14 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       })
     },
 
-    fanOff: function () {
+    turnFanOff: function () {
       return new Promise((resolve, reject) => {
         this.insteonClient().fanOff()
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
-            resolve({ command: 'fan_off', status: 'off' })
+            this.sendSmartThingsUpdate({ command: 'turn_fan_off', speed: 'off' })
+            resolve({ command: 'turn_fan_off', speed: 'off' })
           } else {
             reject(new Error(`Unable to turn off fan ${this.insteonId}`))
           }
@@ -55,13 +57,14 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       })
     },
 
-    fanLow: function () {
+    turnFanLow: function () {
       return new Promise((resolve, reject) => {
         this.insteonClient().fanLow()
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
-            resolve({ command: 'fan_low', status: 'low' })
+            this.sendSmartThingsUpdate({ command: 'turn_fan_low', speed: 'low' })
+            resolve({ command: 'turn_fan_low', speed: 'low' })
           } else {
             reject(new Error(`Unable to turn fan to low ${this.insteonId}`))
           }
@@ -71,13 +74,14 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       })
     },
 
-    fanMedium: function () {
+    turnFanMedium: function () {
       return new Promise((resolve, reject) => {
         this.insteonClient().fanMedium()
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
-            resolve({ command: 'fan_med', status: 'medium' })
+            this.sendSmartThingsUpdate({ command: 'turn_fan_medium', speed: 'medium' })
+            resolve({ command: 'turn_fan_medium', speed: 'medium' })
           } else {
             reject(new Error(`Unable to turn fan to medium ${this.insteonId}`))
           }
@@ -87,13 +91,14 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       })
     },
 
-    fanHigh: function () {
+    turnFanHigh: function () {
       return new Promise((resolve, reject) => {
         this.insteonClient().fanHigh()
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
-            resolve({ command: 'fan_high', status: 'high' })
+            this.sendSmartThingsUpdate({ command: 'turn_fan_high', speed: 'high' })
+            resolve({ command: 'turn_fan_high', speed: 'high' })
           } else {
             reject(new Error(`Unable to turn fan to high ${this.insteonId}`))
           }
@@ -103,14 +108,14 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       })
     },
 
-    turnOn: function () {
+    turnLightOn: function () {
       return new Promise((resolve, reject) => {
         this.insteonClient().turnOn()
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
-            this.sendSmartThingsUpdate({ command: 'turn_on', status: 'on', level: 100 })
-            resolve({ command: 'turn_on', status: 'on', level: 100 })
+            this.sendSmartThingsUpdate({ command: 'turn_light_on', status: 'on', level: 100 })
+            resolve({ command: 'turn_light_on', status: 'on', level: 100 })
           } else {
             reject(new Error(`Unable to turn on fan dimmer ${this.insteonId}`))
           }
@@ -120,14 +125,14 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       })
     },
 
-    turnOff: function () {
+    turnLightOff: function () {
       return new Promise((resolve, reject) => {
         this.insteonClient().turnOff()
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
-            this.sendSmartThingsUpdate({ command: 'turn_off', status: 'off', level: 0 })
-            resolve({ command: 'turn_off', status: 'off', level: 0 })
+            this.sendSmartThingsUpdate({ command: 'turn_light_off', status: 'off', level: 0 })
+            resolve({ command: 'turn_light_off', status: 'off', level: 0 })
           } else {
             reject(new Error(`Unable to turn off fan dimmer ${this.insteonId}`))
           }
@@ -137,15 +142,15 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       })
     },
 
-    setLevel: function (level) {
+    setLightLevel: function (level) {
       return new Promise((resolve, reject) => {
         this.insteonClient().level(level)
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
             var status = level === 0 ? 'off' : 'on'
-            this.sendSmartThingsUpdate({ command: 'set_level', status: status, level: level })
-            resolve({ command: 'set_level', status: status, level: level })
+            this.sendSmartThingsUpdate({ command: 'set_light_level', status: status, level: level })
+            resolve({ command: 'set_set_level', status: status, level: level })
           } else {
             reject(new Error(`Unable to set level for fan dimmer ${this.insteonId}`))
           }
@@ -155,13 +160,13 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       })
     },
 
-    brighten: function () {
+    brightenLight: function () {
       return new Promise((resolve, reject) => {
         this.insteonClient().brighten()
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
-            resolve({ command: 'brighten' })
+            resolve({ command: 'brighten_light' })
           } else {
             reject(new Error(`Unable to brighten fan dimmer ${this.insteonId}`))
           }
@@ -171,13 +176,13 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       })
     },
 
-    dim: function () {
+    dimLight: function () {
       return new Promise((resolve, reject) => {
         this.insteonClient().dim()
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)
-            resolve({ command: 'dim' })
+            resolve({ command: 'dim_light' })
           } else {
             reject(new Error(`Unable to lower fan dimmer ${this.insteonId}`))
           }
@@ -193,22 +198,22 @@ module.exports =  _.merge(_.cloneDeep(Device), {
 
       light.on('turnOn', (group, level) => {
         console.log(`[${this.insteonId}] Fan dimmer turned ON`)
-        this.sendSmartThingsUpdate({ event: 'turn_on', status: 'on', level: level })
+        this.sendSmartThingsUpdate({ event: 'turn_light_on', status: 'on', level: level })
       })
 
       light.on('turnOnFast', (group) => {
         console.log(`[${this.insteonId}] Fan dimmer turned ON FAST`)
-        this.sendSmartThingsUpdate({ event: 'turn_on_fast', status: 'on', level: 100 })
+        this.sendSmartThingsUpdate({ event: 'turn_light_on_fast', status: 'on', level: 100 })
       })
 
       light.on('turnOff', (group) => {
         console.log(`[${this.insteonId}] Fan dimmer turned OFF`)
-        this.sendSmartThingsUpdate({ event: 'turn_off', status: 'off', level: 0 })
+        this.sendSmartThingsUpdate({ event: 'turn_light_off', status: 'off', level: 0 })
       })
 
       light.on('turnOffFast', (group) => {
         console.log(`[${this.insteonId}] Fan dimmer turned OFF FAST`)
-        this.sendSmartThingsUpdate({ event: 'turn_off_fast', status: 'off', level: 0 })
+        this.sendSmartThingsUpdate({ event: 'turn_light_off_fast', status: 'off', level: 0 })
       })
 
       light.on('brightening', (group) => {
