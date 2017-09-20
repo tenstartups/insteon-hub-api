@@ -10,10 +10,10 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           if (result !== undefined && result !== null && result !== '') {
             var level = parseInt(result)
             var status = (level === 0 ? 'off' : 'on')
-            console.log(`[${this.insteonId}] Dimmer is at ${level}%`)
+            console.log(`[${this.insteonId}] Fan dimmer is at ${level}%`)
             resolve({ status: status, level: level })
           } else {
-            reject(new Error(`Unable to get status for dimmer ${this.insteonId}`))
+            reject(new Error(`Unable to get status for fan ${this.insteonId}`))
           }
         }, reason => {
           reject(reason)
@@ -28,13 +28,13 @@ module.exports =  _.merge(_.cloneDeep(Device), {
           if (result !== undefined && result !== null && result !== '') {
             var level = parseInt(result)
             var status = (level === 0 ? 'off' : 'on')
-            console.log(`[${this.insteonId}] Dimmer is at ${level}%`)
+            console.log(`[${this.insteonId}] Fan dimmer is at ${level}%`)
             resolve({ command: 'refresh', status: status, level: level })
           } else {
-            reject(new Error(`Unable to get status for dimmer ${this.insteonId}`))
+            reject(new Error(`Unable to get status for fan ${this.insteonId}`))
           }
         }, reason => {
-          reject(new Error(`Error getting status for dimmer ${this.insteonId}`))
+          reject(new Error(`Error getting status for fan ${this.insteonId}`))
         })
       })
     },
@@ -71,9 +71,9 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       })
     },
 
-    fanMed: function () {
+    fanMedium: function () {
       return new Promise((resolve, reject) => {
-        this.insteonClient().fanMed()
+        this.insteonClient().fanMedium()
         .then((result) => {
           if (result.response) {
             console.log(`[${this.insteonId}] Insteon response: ${JSON.stringify(result.response)}`)

@@ -77,8 +77,13 @@ module.exports.routes = {
   // Fan controller actions
   'get /api/fan/:insteonId/status': 'FanController.status',
   'post /api/fan/:insteonId/command/refresh': 'FanController.refresh',
-  'post /api/fan/:insteonId/command/off': 'FanController.off',
-  'post /api/fan/:insteonId/command/low': 'FanController.low',
-  'post /api/fan/:insteonId/command/medium': 'FanController.medium',
-  'post /api/fan/:insteonId/command/high': 'FanController.high'
+  'post /api/fan/:insteonId/command/light_on': 'FanController.lightOn',
+  'post /api/fan/:insteonId/command/light_off': 'FanController.lightOff',
+  'post /api/fan/:insteonId/command/light_level/:level': 'FanController.lightLevel',
+  'post /api/fan/:insteonId/command/brighten': 'FanController.brighten',
+  'post /api/fan/:insteonId/command/dim': 'FanController.dim',
+  'post /api/fan/:insteonId/command/fan_off': 'FanController.fanOff',
+  'post /api/fan/:insteonId/command/fan_low': 'FanController.fanLow',
+  'post /api/fan/:insteonId/command/fan_medium': 'FanController.fanMedium',
+  'post /api/fan/:insteonId/command/fan_high': 'FanController.fanHigh'
 }

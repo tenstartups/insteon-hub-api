@@ -106,7 +106,7 @@ module.exports = {
   },
 
   afterCreate: function (device, cb) {
-    sails.hooks.discovery.singleton().startFor(device)
+    //sails.hooks.discovery.singleton().startFor(device)
     // device.subscribeEvents()
     cb()
   }

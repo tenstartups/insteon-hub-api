@@ -33,7 +33,7 @@ module.exports = {
     })
   },
 
-  on: (req, res) => {
+  lightOn: (req, res) => {
     var insteonId = req.params.insteonId
     console.log(`[${insteonId}] Turning fan dimmer ON...`)
     Fan.findOne({ insteonId: insteonId }).exec((err, device) => {
@@ -48,7 +48,7 @@ module.exports = {
     })
   },
 
-  off: (req, res) => {
+  lightOff: (req, res) => {
     var insteonId = req.params.insteonId
     console.log(`[${insteonId}] Turning fan dimmer OFF...`)
     Fan.findOne({ insteonId: insteonId }).exec((err, device) => {
@@ -63,7 +63,7 @@ module.exports = {
     })
   },
 
-  level: (req, res) => {
+  lightLevel: (req, res) => {
     var insteonId = req.params.insteonId
     var level = req.params.level
     console.log(`[${insteonId}] Setting dimnmer level to ${level}%...`)
