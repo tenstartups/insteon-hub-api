@@ -52,9 +52,12 @@ module.exports.routes = {
   // Device controller actions
   'get /api/devices': 'DeviceController.index',
   'get /api/device/:insteonId': 'DeviceController.show',
-  'post /api/device/:insteonId': 'DeviceController.create',
+  'post /api/:type/:insteonId': 'DeviceController.create',
   'patch /api/device/:insteonId': 'DeviceController.update',
   'delete /api/device/:insteonId': 'DeviceController.destroy',
+
+  // Links controller actions
+  'get /api/device/:insteonId/links': 'LinkController.show',
 
   // Switch controller actions
   'get /api/switch/:insteonId/status': 'SwitchController.status',

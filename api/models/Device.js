@@ -38,6 +38,17 @@ module.exports = {
       defaultsTo: 300
     },
 
+    getLinks: function () {
+      return new Promise((resolve, reject) => {
+        this.hub().insteonClient().links(this.insteonId)
+        .then((result) => {
+          resolve(result)
+        }, reason => {
+          reject(reason)
+        })
+      })
+    },
+
     server: function () {
       return sails.hooks.server.singleton()
     },
@@ -82,21 +93,11 @@ module.exports = {
     }
   },
 
-  beforeValidate: function (device, cb) {
+  beforeSave: function (device, cb) {
     sails.hooks.hub.singleton().insteonClient().info(device.insteonId)
     .then(deviceInfo => {
       if (deviceInfo === undefined) {
         cb(`Device with Insteon ID ${device.insteonId} unknown to hub`)
-      } else {
-        if (deviceInfo.isLighting) {
-          if (deviceInfo.isDimmable) {
-            device.type = 'dimmer'
-          } else {
-            device.type = 'switch'
-          }
-        } else if (deviceInfo.isFan) {
-          device.type = 'fan'
-        }
       }
       cb()
     }, reason => {

@@ -96,8 +96,8 @@ module.exports = {
     loadSmartThingsEndpoints: function () {
       return new Promise((resolve, reject) => {
         console.log('Loading SmartThings SmartApp endpoints...')
-        if (!this.smartThingsToken) {
-          resolve(null)
+        if (this.smartThingsToken === undefined || this.smartThingsToken === null) {
+          return resolve(null)
         }
         var options = {
           headers: {

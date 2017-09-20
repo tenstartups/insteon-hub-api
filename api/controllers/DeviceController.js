@@ -22,6 +22,7 @@ module.exports = {
   create: (req, res) => {
     var attrs = {
       insteonId: req.params.insteonId,
+      type: req.params.type,
       name: req.param('name'),
       description: req.param('description')
     }
