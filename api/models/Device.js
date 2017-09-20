@@ -62,7 +62,7 @@ module.exports = {
     },
 
     udn: function () {
-      return `server:${this.server().instanceId}:hub:${this.hub().insteonId}:${this.type}:${this.insteonId}`
+      return `insteon:${this.server().instanceId}:hub:${this.hub().insteonId}:${this.type}:${this.insteonId}`
     },
 
     networkId: function () {

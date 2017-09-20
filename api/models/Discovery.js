@@ -50,12 +50,11 @@ module.exports = {
 
     startFor: function (device) {
       var usn = `urn:schemas-upnp-org:device:Insteon${camelCase(device.type)}:1`
-      var udn = `insteon:${this.server().instanceId}:hub:${this.hub().insteonId}:${device.type}:${device.insteonId}`
       var location = `http://${this.server().advertiseIP()}:${this.server().advertisePort()}/api/device/${device.insteonId}`
 
-      console.log(`Starting SSDP server advertising for USN: ${usn}, UDN: ${udn}, Location: ${location}...`)
+      console.log(`Starting SSDP server advertising for USN: ${usn}, UDN: ${device.udn()}, Location: ${location}...`)
 
-      var ssdp = new SSDP({ location: location, udn: udn, sourcePort: 1900 })
+      var ssdp = new SSDP({ location: location, udn: device.udn(), sourcePort: 1900 })
 
       this.ssdpServers << ssdp
 
@@ -64,12 +63,12 @@ module.exports = {
       ssdp.on('advertise-alive', (headers) => {
         // Expire old devices from your cache.
         // Register advertising device somewhere (as designated in http headers heads)
-        // console.log(`Advertise alive for USN: ${usn}, UDN: ${udn}, Location: ${location}`)
+        // console.log(`Advertise alive for USN: ${usn}, UDN: ${device.udn()}, Location: ${location}`)
       })
 
       ssdp.on('advertise-bye', (headers) => {
         // Remove specified device from cache.
-        // console.log(`Advertise bye for USN: ${usn}, UDN: ${udn}, Location: ${location}`)
+        // console.log(`Advertise bye for USN: ${usn}, UDN: ${device.udn()}, Location: ${location}`)
       })
 
       ssdp.start()
@@ -79,7 +78,7 @@ module.exports = {
         ssdp.stop()
       })
 
-      console.log(`Started SSDP server advertising for USN: ${usn}, UDN: ${udn}, Location: ${location}`)
+      console.log(`Started SSDP server advertising for USN: ${usn}, UDN: ${device.udn()}, Location: ${location}`)
     }
   }
 }
