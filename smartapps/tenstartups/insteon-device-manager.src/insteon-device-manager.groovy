@@ -71,17 +71,17 @@ def updated() {
 }
 
 def uninstalled() {
-	revokeAccessToken()
 }
 
 def initialize() {
 	unsubscribe()
 	unschedule()
 	ssdpSubscribe()
+	revokeAccessToken()
+    createAccessToken()
 	addSelectedDevices()
     removeUnselectedDevices()
-    createAccessToken()
-    sendAccessToken()
+    sendAccessTokenToChildDevices()
 	runEvery5Minutes("ssdpDiscover")
 }
 
@@ -105,6 +105,7 @@ def getVerifiedDevices() {
 }
 
 Map verifiedDevices() {
+	log.debug("verifiedDevices")
 	def devices = getVerifiedDevices()
 	def map = [:]
 	devices.each {
@@ -115,47 +116,69 @@ Map verifiedDevices() {
 	map
 }
 
-def ssdpHandler(evt) {
-	def description = evt.description
-	def hub = evt?.hubId
-
-	def parsedEvent = parseLanMessage(description)
-	parsedEvent << ["hub":hub]
-    
+def ssdpHandler(event) {
+	def parsedEvent = parseLanMessage(event?.description)
+	def hub = event?.hubId
 	def devices = getDevices()
-	String ssdpUSN = parsedEvent.ssdpUSN.toString()
-	if (devices."${ssdpUSN}") {
-		def d = devices."${ssdpUSN}"
-		if (d.networkAddress != parsedEvent.networkAddress || d.deviceAddress != parsedEvent.deviceAddress) {
-			d.networkAddress = parsedEvent.networkAddress
-			d.deviceAddress = parsedEvent.deviceAddress
-            def dni = ssdpUSN.split(':')[1] + ssdpUSN.split(':')[3] + ssdpUSN.split(':')[5]
-			def child = getChildDevice(dni)
-			if (child) {
-				child.sync(parsedEvent.mac, parsedEvent.networkAddress, parsedEvent.deviceAddress)
-			}
-		}
-	} else {
-		devices << ["${ssdpUSN}": parsedEvent]
-	}
+	def ssdpUSN = parsedEvent?.ssdpUSN?.toString()
+	parsedEvent << [
+        "hub": hub,
+        "lastHeardAboutAt": now()
+    ]
+    if (!devices[ssdpUSN]) {
+    	devices[ssdpUSN] = [:]
+    }
+    devices[ssdpUSN] << parsedEvent
+    
+    //log.trace("Received SSDP event message ${deviceProperties}")
+   
+    def dni = ssdpUSN.split(':')[1] + ssdpUSN.split(':')[3] + ssdpUSN.split(':')[5]
+    def child = getChildDevice(dni)
+    if (child) {
+        child.sync(parsedEvent.mac, parsedEvent.networkAddress, parsedEvent.deviceAddress)
+    }
 }
 
 void verifyDevices() {
-	def devices = getDevices().findAll { it?.value?.verified != true }
+	def currentTime = now()
+    if (state.lastVerificationTime == null || (currentTime - state.lastVerificationTime) > 60000) {
+    	log.debug("Resetting device verification")
+    	getDevices().each { d -> d.value.verified = false }
+    }
+	def devices = getDevices().findAll { it.value.verified != true }
 	devices.each {
 		int port = convertHexToInt(it.value.deviceAddress)
 		String ip = convertHexToIP(it.value.networkAddress)
 		String host = "${ip}:${port}"
-		sendHubCommand(new physicalgraph.device.HubAction("""GET ${it.value.ssdpPath} HTTP/1.1\r\nHOST: ${host}\r\n\r\n""", physicalgraph.device.Protocol.LAN, host, [callback: deviceDescriptionHandler]))
+		sendHubCommand(
+        	new physicalgraph.device.HubAction(
+            	"""GET ${it.value.ssdpPath} HTTP/1.1\r\nHOST: ${host}\r\n\r\n""",
+                physicalgraph.device.Protocol.LAN,
+                host,
+                [callback: deviceDescriptionHandler]
+            )
+        )
 	}
+	state.lastVerificationTime = currentTime
 }
 
 void deviceDescriptionHandler(physicalgraph.device.HubResponse hubResponse) {
-	def body = hubResponse.json
+	def deviceDescription = hubResponse.json.device
+    //log.trace("Retrieved device description ${deviceDescription}")
 	def devices = getDevices()
-	def device = devices.find { it?.key?.contains(body?.device?.udn) }
+	def device = devices.find { it.key.contains(deviceDescription?.udn) }
 	if (device) {
-		device.value << [networkId: body?.device?.network_id, insteonId: body?.device?.insteon_id, type: body?.device?.type, name: body?.device?.name, label: body?.device?.label, verified: true]
+		device.value << [
+            insteonId: deviceDescription?.insteon_id,
+            type: deviceDescription?.type,
+        	networkId: deviceDescription?.network_id,
+            name: deviceDescription?.name,
+            label: deviceDescription?.label,
+            description: deviceDescription?.description,
+            model: deviceDescription?.model,
+            deviceHandler: deviceDescription?.device_handler,
+            verified: true
+        ]
 	}
 }
 
@@ -176,17 +199,17 @@ def addSelectedDevices() {
 		}
 
 		if (!d) {
-        	def deviceType
+        	def deviceHandler
             if (selectedDevice?.value?.type == 'switch') {
-            	deviceType = 'Insteon Switch'
+            	deviceHandler = 'Insteon Switch'
             } else if (selectedDevice?.value?.type == 'dimmer') {
-            	deviceType = 'Insteon Dimmer'
+            	deviceHandler = 'Insteon Dimmer'
             } else if (selectedDevice?.value?.type == 'fan') {
-            	deviceType = 'Insteon Fan'
+            	deviceHandler = 'Insteon Fan Controller'
             } else {
             }
-			log.debug "Creating ${deviceType} [${selectedDevice.value.insteonId}]"
-			addChildDevice("TenStartups", deviceType, selectedDevice.value.networkId, selectedDevice?.value.hub, [
+			log.debug "Creating ${deviceHandler} [${selectedDevice.value.insteonId}]"
+			addChildDevice("TenStartups", deviceHandler, selectedDevice.value.networkId, selectedDevice?.value.hub, [
             	"name": selectedDevice?.value?.name,
 				"label": selectedDevice?.value?.name,
 				"data": [
@@ -213,24 +236,16 @@ def removeUnselectedDevices() {
     }
 }
 
-def sendAccessToken() {
+def sendAccessTokenToChildDevices() {
 	getChildDevices().each { device ->
-        def command = new physicalgraph.device.HubAction(
-            [
+        sendHubCommand(
+        	new physicalgraph.device.HubAction(
                 method: "PATCH",
                 path: "/api/smart_things/token/${state.accessToken}",
                 headers: [HOST: "${device.getDataValue("ip")}:${device.getDataValue("port")}"]
-            ],
-            null,
-            [callback: sendAccessTokenHandler]
+            )
         )
-        sendHubCommand(command)
     }
-}
-
-void sendAccessTokenHandler(physicalgraph.device.HubResponse hubResponse) {
-	def body = hubResponse.json
-    log.debug(body)
 }
 
 def processUpdate() {
