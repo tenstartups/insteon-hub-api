@@ -43,7 +43,7 @@ module.exports = {
       if (!device) {
         return res.notFound({ error: `Fan with Insteon ID ${insteonId} not found` })
       }
-      device.off()
+      device.fanOff()
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
@@ -58,7 +58,7 @@ module.exports = {
       if (!device) {
         return res.notFound({ error: `Fan with Insteon ID ${insteonId} not found` })
       }
-      device.low()
+      device.fanLow()
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
@@ -73,7 +73,7 @@ module.exports = {
       if (!device) {
         return res.notFound({ error: `Fan with Insteon ID ${insteonId} not found` })
       }
-      device.medium()
+      device.fanMedium()
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   },
@@ -88,7 +88,7 @@ module.exports = {
       if (!device) {
         return res.notFound({ error: `Fan with Insteon ID ${insteonId} not found` })
       }
-      device.high()
+      device.fanHigh()
       return res.json({ insteon_id: insteonId, command: req.options.action })
     })
   }
