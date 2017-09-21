@@ -49,6 +49,17 @@ module.exports = {
       })
     },
 
+    linkToHub: function () {
+      return new Promise((resolve, reject) => {
+        this.hub().insteonClient().link(this.hub().insteonId, [this.insteonId])
+        .then((result) => {
+          resolve(result)
+        }, reason => {
+          reject(reason)
+        })
+      })
+    },
+
     server: function () {
       return sails.hooks.server.singleton()
     },

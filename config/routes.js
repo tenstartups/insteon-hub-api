@@ -58,6 +58,7 @@ module.exports.routes = {
 
   // Links controller actions
   'get /api/device/:insteonId/links': 'LinkController.show',
+  'post /api/device/:insteonId/link': 'LinkController.create',
 
   // Switch controller actions
   'get /api/switch/:insteonId/status': 'SwitchController.status',
