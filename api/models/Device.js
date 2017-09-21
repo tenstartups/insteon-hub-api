@@ -80,15 +80,33 @@ module.exports = {
       return `${this.server().instanceId}${this.hub().insteonId}${this.insteonId}`
     },
 
+    smartThingsDeviceHandler: function () {
+      switch (this.type) {
+        case 'dimmer':
+          return 'Insteon Dimmer'
+        case 'switch':
+          return 'Insteon Switch'
+        case 'fan':
+          return 'Insteon Fan Controller'
+        default:
+          return 'Unknown'
+      }
+    },
+
+    smartThingsName: function () {
+      return `${this.smartThingsDeviceHandler()} [${this.insteonId}]`
+    },
+
     toJSON: function () {
       return {
         type: this.type,
         insteon_id: this.insteonId,
         udn: this.udn(),
         network_id: this.networkId(),
-        name: this.name,
+        name: this.smartThingsName(),
         label: this.name,
         description: this.description,
+        device_handler: this.smartThingsDeviceHandler(),
         ip: this.server().advertiseIP(),
         port: this.server().advertisePort(),
         mac: this.server().advertiseMAC()
