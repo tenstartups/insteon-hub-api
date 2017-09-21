@@ -199,19 +199,10 @@ def addSelectedDevices() {
 		}
 
 		if (!d) {
-        	def deviceHandler
-            if (selectedDevice?.value?.type == 'switch') {
-            	deviceHandler = 'Insteon Switch'
-            } else if (selectedDevice?.value?.type == 'dimmer') {
-            	deviceHandler = 'Insteon Dimmer'
-            } else if (selectedDevice?.value?.type == 'fan') {
-            	deviceHandler = 'Insteon Fan Controller'
-            } else {
-            }
-			log.debug "Creating ${deviceHandler} [${selectedDevice.value.insteonId}]"
-			addChildDevice("TenStartups", deviceHandler, selectedDevice.value.networkId, selectedDevice?.value.hub, [
+			log.debug "Adding child device ${selectedDevice?.value?.name}"
+			addChildDevice("TenStartups", selectedDevice?.value?.deviceHandler, selectedDevice.value.networkId, selectedDevice?.value.hub, [
             	"name": selectedDevice?.value?.name,
-				"label": selectedDevice?.value?.name,
+				"label": selectedDevice?.value?.label,
 				"data": [
 					"mac": selectedDevice.value.mac,
 					"ip": selectedDevice.value.networkAddress,
