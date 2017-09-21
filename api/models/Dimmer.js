@@ -116,7 +116,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
       light.on('turnOn', (group, level) => {
         console.log(`[${this.insteonId}] Dimmer turned ON`)
         if (level) {
-          this.sendSmartThingsUpdate({ event: 'turn_on', status: 'on', level: parseInt(level) })
+          this.sendSmartThingsUpdate({ event: 'turn_on', status: 'on', level: level })
         } else {
           this.getStatus()
           .then((result) => {
