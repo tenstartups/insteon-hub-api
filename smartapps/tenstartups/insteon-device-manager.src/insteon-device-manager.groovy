@@ -141,7 +141,7 @@ def ssdpHandler(event) {
 
 void verifyDevices() {
 	def currentTime = now()
-    if (state.lastVerificationTime == null || (currentTime - state.lastVerificationTime) > 60000) {
+    if (state.lastVerificationTime == null || (currentTime - state.lastVerificationTime) > (24 * 60 * 60 * 1000)) {
     	log.debug("Resetting device verification")
     	getDevices().each { d -> d.value.verified = false }
     }
@@ -216,8 +216,7 @@ def addSelectedDevices() {
 					"mac": selectedDevice.value.mac,
 					"ip": selectedDevice.value.networkAddress,
 					"port": selectedDevice.value.deviceAddress,
-                    "insteonId": selectedDevice.value.insteonId,
-                    "refreshSeconds": selectedDevice.value.refreshSeconds
+                    "insteonId": selectedDevice.value.insteonId
 				],
                 completedSetup: true
 			])
