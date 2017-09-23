@@ -52,30 +52,30 @@ module.exports.routes = {
   'patch /api/device/:id': 'DeviceController.update',
 
   // Switch controller actions
-  'get /api/switch/:insteonId/status': 'SwitchController.status',
-  'post /api/switch/:insteonId/command/refresh': 'SwitchController.refresh',
-  'post /api/switch/:insteonId/command/on': 'SwitchController.on',
-  'post /api/switch/:insteonId/command/off': 'SwitchController.off',
+  'get /api/switch/:id/status': 'SwitchController.status',
+  'post /api/switch/:id/refresh': 'SwitchController.refresh',
+  'post /api/switch/:id/on': 'SwitchController.on',
+  'post /api/switch/:id/off': 'SwitchController.off',
 
   // Dimmer controller actions
-  'get /api/dimmer/:insteonId/status': 'DimmerController.status',
-  'post /api/dimmer/:insteonId/command/refresh': 'DimmerController.refresh',
-  'post /api/dimmer/:insteonId/command/on': 'DimmerController.on',
-  'post /api/dimmer/:insteonId/command/off': 'DimmerController.off',
-  'post /api/dimmer/:insteonId/command/level/:level': 'DimmerController.level',
-  'post /api/dimmer/:insteonId/command/brighten': 'DimmerController.brighten',
-  'post /api/dimmer/:insteonId/command/dim': 'DimmerController.dim',
+  'get /api/dimmer/:id/status': 'DimmerController.status',
+  'post /api/dimmer/:id/refresh': 'DimmerController.refresh',
+  'post /api/dimmer/:id/on': 'DimmerController.on',
+  'post /api/dimmer/:id/off': 'DimmerController.off',
+  'post /api/dimmer/:id/level/:level': 'DimmerController.level',
+  'post /api/dimmer/:id/brighten': 'DimmerController.brighten',
+  'post /api/dimmer/:id/dim': 'DimmerController.dim',
 
   // Fan controller actions
-  'get /api/fan/:insteonId/status': 'FanController.status',
-  'post /api/fan/:insteonId/command/refresh': 'FanController.refresh',
-  'post /api/fan/:insteonId/command/light_on': 'FanController.lightOn',
-  'post /api/fan/:insteonId/command/light_off': 'FanController.lightOff',
-  'post /api/fan/:insteonId/command/light_level/:level': 'FanController.lightLevel',
-  'post /api/fan/:insteonId/command/brighten_light': 'FanController.brightenLight',
-  'post /api/fan/:insteonId/command/dim_light': 'FanController.dimLight',
-  'post /api/fan/:insteonId/command/fan_off': 'FanController.fanOff',
-  'post /api/fan/:insteonId/command/fan_low': 'FanController.fanLow',
-  'post /api/fan/:insteonId/command/fan_medium': 'FanController.fanMedium',
-  'post /api/fan/:insteonId/command/fan_high': 'FanController.fanHigh'
+  'get /api/fan/:id/status': 'FanController.status',
+  'post /api/fan/:id/refresh': 'FanController.refresh',
+  'post /api/fan/:id/light_on': 'FanController.lightOn',
+  'post /api/fan/:id/light_off': 'FanController.lightOff',
+  'post /api/fan/:id/light_level/:level': 'FanController.lightLevel',
+  'post /api/fan/:id/brighten_light': 'FanController.brightenLight',
+  'post /api/fan/:id/dim_light': 'FanController.dimLight',
+  'post /api/fan/:id/fan_off': 'FanController.fanOff',
+  'post /api/fan/:id/fan_low': 'FanController.fanLow',
+  'post /api/fan/:id/fan_medium': 'FanController.fanMedium',
+  'post /api/fan/:id/fan_high': 'FanController.fanHigh'
 }

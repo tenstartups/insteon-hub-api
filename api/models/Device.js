@@ -25,6 +25,38 @@ function loadSmartThingsAppEndpoints (token) {
 
 module.exports = {
 
+  tableName: 'device',
+
+  findTypedDevice: function (isyDevice) {
+    return new Promise((resolve, reject) => {
+      var deviceType
+      switch (isyDevice.deviceType) {
+        case 'Light':
+          deviceType = Switch
+          break
+        case 'DimmableLight':
+          deviceType = Dimmer
+          break
+        case 'Fan':
+          deviceType = Fan
+          break
+        case 'Outlet':
+          deviceType = Switch
+          break
+        case 'Scene':
+          deviceType = Scene
+          break
+      }
+      deviceType.findOne({ isyAddress: isyDevice.address }).exec((err, device) => {
+        if (err) {
+          console.log(`Error fetching device record for ${device.address}`)
+          reject(err)
+        }
+        resolve(device)
+      })
+    })
+  },
+
   attributes: {
 
     id: {
@@ -118,25 +150,24 @@ module.exports = {
       return sails.hooks.isy.connection().getDevice(this.isyAddress)
     },
 
-    stateChanged: function () {
-      this.sendSmartThingsUpdate(
-        { status: this.isyDevice().getCurrentLightState() ? 'on' : 'off' }
-      )
-    },
-
     resetSmartThingsEndpoints: function () {
       this._smartThingsWebhookURIs = null
     },
 
-    sendSmartThingsUpdate: function (data) {
+    sendSmartThingsUpdate: function () {
+      var body = { device: this.toJSON(), data: this.getStatus() }
+      console.log(body)
+
       if (!this.smartThingsToken) {
         return null
       }
+
       if (!this._smartThingsWebhookURIs) {
         loadSmartThingsAppEndpoints(this.smartThingsToken).then(result => {
           this._smartThingsWebhookURIs = result.map(r => { return r.uri })
         })
       }
+
       this._smartThingsWebhookURIs.forEach(endpoint => {
         var options = {
           method: 'POST',
@@ -144,7 +175,7 @@ module.exports = {
             'Authorization': `Bearer ${this.smartThingsToken}`
           },
           uri: `${endpoint.uri}/update`,
-          body: { device: this.toJSON(), data: data },
+          body: body,
           json: true
         }
         request(options)

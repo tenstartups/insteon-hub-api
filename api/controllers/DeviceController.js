@@ -14,6 +14,9 @@ module.exports = {
       if (err) {
         return res.serverError(err)
       }
+      if (!device) {
+        return res.notFound({ error: `Device with id ${req.params.id} not found` })
+      }
       return res.json({ device: device })
     })
   },
@@ -32,6 +35,9 @@ module.exports = {
     Device.update(req.params.id, attrs).exec((err, devices) => {
       if (err) {
         return res.serverError(err)
+      }
+      if (devices.length !== 1) {
+        return res.notFound({ error: `Device with id ${req.params.id} not found` })
       }
       return res.json({ device: devices[0] })
     })

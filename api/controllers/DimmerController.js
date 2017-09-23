@@ -1,111 +1,86 @@
 module.exports = {
 
   status: (req, res) => {
-    var insteonId = req.params.insteonId
-    console.log(`[${insteonId}] Retrieving dimmer status...`)
-    Dimmer.findOne({ insteonId: insteonId }).exec((err, device) => {
+    Dimmer.findOne(req.params.id).exec((err, dimmer) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!device) {
-        return res.notFound({ error: `Dimmer with Insteon ID ${insteonId} not found` })
+      if (!dimmer) {
+        return res.notFound({ error: `Dimmer with id ${req.params.id} not found` })
       }
-      device.getStatus().then(result => {
-        return res.json({ device: device, result: result })
-      }, reason => {
-        return res.serverError(reason)
-      })
+      return res.json({ device: dimmer, result: dimmer.getStatus() })
     })
   },
 
   refresh: (req, res) => {
-    var insteonId = req.params.insteonId
-    console.log(`[${insteonId}] Sending dimmer refresh command...`)
-    Dimmer.findOne({ insteonId: insteonId }).exec((err, device) => {
+    Dimmer.findOne(req.params.id).exec((err, dimmer) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!device) {
-        return res.notFound({ error: `Dimmer with Insteon ID ${insteonId} not found` })
+      if (!dimmer) {
+        return res.notFound({ error: `Dimmer with id ${req.params.id} not found` })
       }
-      device.refresh()
-      return res.json({ insteon_id: insteonId, command: req.options.action })
+      return res.json({ device: dimmer, result: dimmer.refreshStatus() })
     })
   },
 
   on: (req, res) => {
-    var insteonId = req.params.insteonId
-    console.log(`[${insteonId}] Turning dimmer ON...`)
-    Dimmer.findOne({ insteonId: insteonId }).exec((err, device) => {
+    Dimmer.findOne(req.params.id).exec((err, dimmer) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!device) {
-        return res.notFound({ error: `Dimmer with Insteon ID ${insteonId} not found` })
+      if (!dimmer) {
+        return res.notFound({ error: `Dimmer with id ${req.params.id} not found` })
       }
-      device.turnOn()
-      return res.json({ insteon_id: insteonId, command: req.options.action })
+      return res.json({ device: dimmer, result: dimmer.turnOn() })
     })
   },
 
   off: (req, res) => {
-    var insteonId = req.params.insteonId
-    console.log(`[${insteonId}] Turning dimmer OFF...`)
-    Dimmer.findOne({ insteonId: insteonId }).exec((err, device) => {
+    Dimmer.findOne(req.params.id).exec((err, dimmer) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!device) {
-        return res.notFound({ error: `Dimmer with Insteon ID ${insteonId} not found` })
+      if (!dimmer) {
+        return res.notFound({ error: `Dimmer with id ${req.params.id} not found` })
       }
-      device.turnOff()
-      return res.json({ insteon_id: insteonId, command: req.options.action })
+      return res.json({ device: dimmer, result: dimmer.turnOff() })
     })
   },
 
   level: (req, res) => {
-    var insteonId = req.params.insteonId
-    var level = req.params.level
-    console.log(`[${insteonId}] Setting dimnmer level to ${level}%...`)
-    Dimmer.findOne({ insteonId: insteonId }).exec((err, device) => {
+    Dimmer.findOne(req.params.id).exec((err, dimmer) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!device) {
-        return res.notFound({ error: `Dimmer with Insteon ID ${insteonId} not found` })
+      if (!dimmer) {
+        return res.notFound({ error: `Dimmer with id ${req.params.id} not found` })
       }
-      device.setLevel(level)
-      return res.json({ insteon_id: insteonId, command: req.options.action })
+      return res.json({ device: dimmer, result: dimmer.setLevel(req.params.level) })
     })
   },
 
   brighten: (req, res) => {
-    var insteonId = req.params.insteonId
-    console.log(`[${insteonId}] Brightening dimmer...`)
-    Dimmer.findOne({ insteonId: insteonId }).exec((err, device) => {
+    Dimmer.findOne(req.params.id).exec((err, dimmer) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!device) {
-        return res.notFound({ error: `Dimmer with Insteon ID ${insteonId} not found` })
+      if (!dimmer) {
+        return res.notFound({ error: `Dimmer with id ${req.params.id} not found` })
       }
-      device.brighten()
-      return res.json({ insteon_id: insteonId, command: req.options.action })
+      return res.json({ device: dimmer, result: dimmer.brighten() })
     })
   },
 
   dim: (req, res) => {
-    var insteonId = req.params.insteonId
-    console.log(`[${insteonId}] Lowering dimmer...`)
-    Dimmer.findOne({ insteonId: insteonId }).exec((err, device) => {
+    Dimmer.findOne(req.params.id).exec((err, dimmer) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!device) {
-        return res.notFound({ error: `Dimmer with Insteon ID ${insteonId} not found` })
+      if (!dimmer) {
+        return res.notFound({ error: `Dimmer with id ${req.params.id} not found` })
       }
-      device.dim()
-      return res.json({ insteon_id: insteonId, command: req.options.action })
+      return res.json({ device: dimmer, result: dimmer.dim() })
     })
   }
 }

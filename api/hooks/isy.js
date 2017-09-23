@@ -32,12 +32,12 @@ module.exports = (sails) => {
           settings.password,
           false, // No support for ELK
           (isy, device) => {
-            Device.findOne({ isyAddress: device.address }).exec((err, device) => {
-              if (err) {
-                console.log(`Error fetching device record for ${device.address}`)
-                return
-              }
-              device.stateChanged()
+            Device.findTypedDevice(device)
+            .then(result => {
+              result.sendSmartThingsUpdate()
+            })
+            .catch(err => {
+              throw err
             })
           },
           settings.useSSL,
