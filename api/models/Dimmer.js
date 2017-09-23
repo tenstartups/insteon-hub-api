@@ -30,17 +30,29 @@ module.exports =  _.merge(_.cloneDeep(Device), {
     },
 
     setLevel: function (level) {
-      this.isyDevice().sendLightDimCommand(level, success => {})
+      if (level <  1) {
+        level = 0
+      }
+      if (level > 100) {
+        level = 100
+      }
+      if (level === 0) {
+        this.isyDevice().sendLightCommand(false, success => {})
+      } else {
+        this.isyDevice().sendLightDimCommand(level, success => {})
+      }
       return { command: 'set_level', level: level }
     },
 
     brighten: function () {
-      this.isyDevice().sendLightDimCommand(Math.min(this.level() + 5, 100), success => {})
+      var level = Math.min(this.level() + 5, 100
+      this.isyDevice().sendLightDimCommand(level), success => {})
       return { command: 'brighten' }
     },
 
     dim: function () {
-      this.isyDevice().sendLightDimCommand(Math.max(this.level() - 5, 1), success => {})
+      var level = Math.max(this.level() - 5, 1
+      this.isyDevice().sendLightDimCommand(level), success => {})
       return { command: 'dim' }
     }
   }
