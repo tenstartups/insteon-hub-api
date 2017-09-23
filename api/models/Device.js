@@ -104,10 +104,6 @@ module.exports = {
       return this.isyAddress.replace(/[ ]/g, '')
     },
 
-    smartThingsNeworkId: function () {
-      return `${process.env.INSTANCE_ID || '01'}${this.isyAddressCompact()}`
-    },
-
     smartThingsName: function () {
       return `${this.smartThingsDeviceHandler()} [${this.isyAddress}]`
     },
