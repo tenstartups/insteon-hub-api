@@ -1,9 +1,7 @@
-var macaddress = require('macaddress')
 var request = require('request-promise-native')
 var SSDP = require('node-ssdp').Server
 const camelCase = require('uppercamelcase')
 const uuidv4 = require('uuid/v4')
-const LISTEN_INTERFACE = process.env.LISTEN_INTERFACE || 'eth0'
 
 function loadSmartThingsAppEndpoints (token) {
   return new Promise((resolve, reject) => {
@@ -172,36 +170,15 @@ module.exports = {
     },
 
     ssdpAdvertiseIP: function () {
-      var address = process.env.DEVICE_ADVERTISE_IP
-      if (address === undefined) {
-        address = require('ip').address()
-        var ifaces = require('os').networkInterfaces()
-        Object.keys(ifaces).forEach(dev => {
-          ifaces[dev].filter(details => {
-            if (dev === LISTEN_INTERFACE && details.family === 'IPv4' && details.internal === false) {
-              address = details.address
-            }
-          })
-        })
-      }
-      return address
+      return sails.hooks.ssdp.advertiseIP()
     },
 
     ssdpAdvertisePort: function () {
-      var port = process.env.DEVICE_ADVERTISE
-      if (port === undefined) {
-        port = sails.config.port
-      }
-      return port
+      return sails.hooks.ssdp.advertisePort()
     },
 
     ssdpAdvertiseMAC: function () {
-      macaddress.one(LISTEN_INTERFACE, (err, mac) => {
-        if (err) {
-          throw err
-        }
-        return mac.toUpperCase().replace(/:/g, '')
-      })
+      return sails.hooks.ssdp.advertiseMAC()
     },
 
     ssdpAdvertise: function () {
