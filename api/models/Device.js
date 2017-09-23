@@ -156,7 +156,6 @@ module.exports = {
 
     sendSmartThingsUpdate: function () {
       var body = { device: this.toJSON(), data: this.getStatus() }
-      console.log(body)
 
       if (!this.smartThingsToken) {
         return null
