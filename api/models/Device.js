@@ -154,9 +154,9 @@ module.exports = {
         smart_things_name: this.smartThingsName(),
         smart_things_label: this.smartThingsLabel(),
         smart_things_device_handler: this.smartThingsDeviceHandler(),
-        ip: this.ssdpAdvertiseIP(),
-        port: this.ssdpAdvertisePort(),
-        mac: this.ssdpAdvertiseMAC()
+        mac_address: this.ssdpAdvertiseMAC(),
+        ip_address: this.ssdpAdvertiseIP(),
+        ip_port: this.ssdpAdvertisePort()
       }
     },
 
