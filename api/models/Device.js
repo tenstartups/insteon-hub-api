@@ -85,17 +85,15 @@ module.exports = {
     smartThingsDeviceHandler: function () {
       switch (this.isyType) {
         case 'DimmableLight':
-          return 'Insteon Dimmer'
+          return 'ISY Insteon Dimmer'
         case 'Light':
-          return 'Insteon Switch'
+          return 'ISY Insteon Switch'
         case 'Fan':
-          return 'Insteon Fan Controller'
+          return 'ISY Insteon Fan'
         case 'Outlet':
-          return 'Insteon Switch'
+          return 'ISY Insteon Switch'
         case 'Scene':
-          return 'Insteon Scene'
-        default:
-          return 'Unknown'
+          return 'ISY Insteon Scene'
       }
     },
 
