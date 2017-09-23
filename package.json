@@ -1,5 +1,5 @@
 {
-  "name": "insteon-server",
+  "name": "isy-smartthings-server",
   "private": true,
   "version": "0.0.0",
   "description": "Insteon Hub (2245) API server for integration with a SmartThing controller",
@@ -21,6 +21,7 @@
     "grunt-sync": "*",
     "home-controller": "*",
     "include-all": "*",
+    "isy-js": "*",
     "js-yaml": "*",
     "lodash": "*",
     "macaddress": "*",
@@ -39,7 +40,7 @@
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/tenstartups/insteon-server.git"
+    "url": "git://github.com/tenstartups/isy-smartthings-server.git"
   },
   "author": "Marc Lennox <marc.lennox@gmail.com>",
   "license": "*"

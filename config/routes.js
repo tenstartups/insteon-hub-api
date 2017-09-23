@@ -46,19 +46,10 @@ module.exports.routes = {
   *                                                                          *
   ***************************************************************************/
 
-  // SmartThingsAccess controller actions
-  'patch /api/smart_things/token/:token': 'SmartThingsController.token',
-
   // Device controller actions
   'get /api/devices': 'DeviceController.index',
-  'get /api/device/:insteonId': 'DeviceController.show',
-  'post /api/:type/:insteonId': 'DeviceController.create',
-  'patch /api/device/:insteonId': 'DeviceController.update',
-  'delete /api/device/:insteonId': 'DeviceController.destroy',
-
-  // Links controller actions
-  'get /api/device/:insteonId/links': 'LinkController.show',
-  'post /api/device/:insteonId/link': 'LinkController.create',
+  'get /api/device/:id': 'DeviceController.show',
+  'patch /api/device/:id': 'DeviceController.update',
 
   // Switch controller actions
   'get /api/switch/:insteonId/status': 'SwitchController.status',

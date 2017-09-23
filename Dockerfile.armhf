@@ -1,7 +1,7 @@
 #
-# Insteon Server
+# ISY994i device server for integration with the SmartThings Hub
 #
-# http://github.com/tenstartups/insteon-server
+# http://github.com/tenstartups/smartthings-isy-bridge
 #
 
 FROM resin/raspberrypi3-alpine-node:latest

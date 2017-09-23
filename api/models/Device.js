@@ -1,27 +1,54 @@
-/**
- * Device.js
- *
- * @description :: TODO: You might write a short summary of how this model works and what it represents here.
- * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
- */
+var macaddress = require('macaddress')
+var request = require('request-promise-native')
+var SSDP = require('node-ssdp').Server
+const camelCase = require('uppercamelcase')
+const uuidv4 = require('uuid/v4')
+const LISTEN_INTERFACE = process.env.LISTEN_INTERFACE || 'eth0'
+
+function loadSmartThingsAppEndpoints (token) {
+  return new Promise((resolve, reject) => {
+    var options = {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      uri: 'https://graph.api.smartthings.com/api/smartapps/endpoints',
+      json: true
+    }
+    request(options)
+    .then(result => {
+      console.log(result)
+      resolve(result)
+    })
+    .catch(reason => {
+      reject(reason)
+    })
+  })
+}
 
 module.exports = {
 
-  tableName: 'device',
-
   attributes: {
 
-    insteonId: {
+    id: {
       type: 'string',
       primaryKey: true,
-      required: true,
-      unique: true
+      defaultsTo: function () { return uuidv4() },
+      unique: true,
+      index: true,
+      uuidv4: true
     },
 
-    type: {
+    isyType: {
       type: 'string',
-      enum: ['switch', 'dimmer', 'fan'],
+      enum: ['Light', 'DimmableLight', 'Fan', 'Outlet', 'Scene'],
       required: true
+    },
+
+    isyAddress: {
+      type: 'string',
+      required: true,
+      unique: true,
+      index: true
     },
 
     name: {
@@ -29,8 +56,9 @@ module.exports = {
       required: true
     },
 
-    description: {
-      type: 'text'
+    isAdvertised: {
+      type: 'boolean',
+      defaultsTo: true
     },
 
     refreshSeconds: {
@@ -38,105 +66,180 @@ module.exports = {
       defaultsTo: 300
     },
 
-    getLinks: function () {
-      return new Promise((resolve, reject) => {
-        this.hub().insteonClient().links(this.insteonId)
-        .then((result) => {
-          resolve(result)
-        }, reason => {
-          reject(reason)
-        })
-      })
+    smartThingsToken: {
+      type: 'string'
     },
 
-    linkToHub: function () {
-      return new Promise((resolve, reject) => {
-        this.hub().insteonClient().link(this.hub().insteonId, [this.insteonId])
-        .then((result) => {
-          resolve(result)
-        }, reason => {
-          reject(reason)
-        })
-      })
+    isyAddressCompact: function () {
+      return this.isyAddress.replace(/[ ]/g, '')
     },
 
-    server: function () {
-      return sails.hooks.server.singleton()
+    smartThingsNeworkId: function () {
+      return `${process.env.INSTANCE_ID || '01'}${this.isyAddressCompact()}`
     },
 
-    hub: function () {
-      return sails.hooks.hub.singleton()
-    },
-
-    discovery: function () {
-      return sails.hooks.discovery.singleton()
-    },
-
-    udn: function () {
-      return `insteon:${this.server().instanceId}:hub:${this.hub().insteonId}:${this.type}:${this.insteonId}`
-    },
-
-    networkId: function () {
-      return `${this.server().instanceId}${this.hub().insteonId}${this.insteonId}`
+    smartThingsName: function () {
+      return `${this.smartThingsDeviceHandler()} [${this.isyAddress}]`
     },
 
     smartThingsDeviceHandler: function () {
-      switch (this.type) {
-        case 'dimmer':
+      switch (this.isyType) {
+        case 'DimmableLight':
           return 'Insteon Dimmer'
-        case 'switch':
+        case 'Light':
           return 'Insteon Switch'
-        case 'fan':
+        case 'Fan':
           return 'Insteon Fan Controller'
+        case 'Outlet':
+          return 'Insteon Switch'
+        case 'Scene':
+          return 'Insteon Scene'
         default:
           return 'Unknown'
       }
     },
 
-    smartThingsName: function () {
-      return `${this.smartThingsDeviceHandler()} [${this.insteonId}]`
-    },
-
     toJSON: function () {
       return {
-        type: this.type,
-        insteon_id: this.insteonId,
-        udn: this.udn(),
-        network_id: this.networkId(),
-        name: this.smartThingsName(),
-        label: this.name,
+        id: this.id,
+        isy_type: this.isyType,
+        isy_address: this.isyAddress,
+        name: `${process.env.DEVICE_NAME_PREFIX || ''} ${this.name} ${process.env.DEVICE_NAME_SUFFIX || ''}`.trim(),
         description: this.description,
-        device_handler: this.smartThingsDeviceHandler(),
-        ip: this.server().advertiseIP(),
-        port: this.server().advertisePort(),
-        mac: this.server().advertiseMAC()
+        smart_things_network_id: this.smartThingsNeworkId(),
+        smart_things_name: this.smartThingsName(),
+        smart_things_device_handler: this.smartThingsDeviceHandler(),
+        refresh_seconds: this.refreshSeconds,
+        is_advertised: this.isAdvertised,
+        udn: this.ssdpUDN(),
+        ip: this.ssdpAdvertiseIP(),
+        port: this.ssdpAdvertisePort(),
+        mac: this.ssdpAdvertiseMAC()
       }
     },
 
-    insteonClient: function () {
-      return this.hub().insteonClient().light(this.insteonId)
+    isyDevice: function () {
+      return sails.hooks.isy.connection().getDevice(this.isyAddress)
     },
 
-    sendSmartThingsUpdate: function (event) {
-      this.server().sendSmartThingsUpdate(this, event)
+    stateChanged: function () {
+      this.sendSmartThingsUpdate(
+        { status: this.isyDevice().getCurrentLightState() ? 'on' : 'off' }
+      )
+    },
+
+    resetSmartThingsEndpoints: function () {
+      this._smartThingsWebhookURIs = null
+    },
+
+    sendSmartThingsUpdate: function (data) {
+      if (!this.smartThingsToken) {
+        return null
+      }
+      if (!this._smartThingsWebhookURIs) {
+        loadSmartThingsAppEndpoints(this.smartThingsToken).then(result => {
+          this._smartThingsWebhookURIs = result.map(r => { return r.uri })
+        })
+      }
+      this._smartThingsWebhookURIs.forEach(endpoint => {
+        var options = {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${this.smartThingsToken}`
+          },
+          uri: `${endpoint.uri}/update`,
+          body: { device: this.toJSON(), data: data },
+          json: true
+        }
+        request(options)
+        .then(result => {
+          console.log(`Successfully sent update ${JSON.stringify(data)} to ${endpoint.uri}/update`)
+        })
+        .catch(reason => {
+          console.log(`Error sending update ${JSON.stringify(data)} to ${endpoint.uri}/update`)
+        })
+      })
+    },
+
+    ssdpUSN: function () {
+      return `urn:schemas-upnp-org:device:isy:Insteon${this.isyType}:1`
+    },
+
+    ssdpUDN: function () {
+      return `uuid:${this.id}`
+    },
+
+    ssdpLocation: function () {
+      return `http://${this.ssdpAdvertiseIP()}:${this.ssdpAdvertisePort()}/api/device/${this.id}`
+    },
+
+    ssdpAdvertiseIP: function () {
+      var address = process.env.DEVICE_ADVERTISE_IP
+      if (address === undefined) {
+        address = require('ip').address()
+        var ifaces = require('os').networkInterfaces()
+        Object.keys(ifaces).forEach(dev => {
+          ifaces[dev].filter(details => {
+            if (dev === LISTEN_INTERFACE && details.family === 'IPv4' && details.internal === false) {
+              address = details.address
+            }
+          })
+        })
+      }
+      return address
+    },
+
+    ssdpAdvertisePort: function () {
+      var port = process.env.DEVICE_ADVERTISE
+      if (port === undefined) {
+        port = sails.config.port
+      }
+      return port
+    },
+
+    ssdpAdvertiseMAC: function () {
+      macaddress.one(LISTEN_INTERFACE, (err, mac) => {
+        if (err) {
+          throw err
+        }
+        return mac.toUpperCase().replace(/:/g, '')
+      })
+    },
+
+    ssdpAdvertise: function () {
+      console.log(`Starting SSDP server advertising for USN: ${this.ssdpUSN()}, UDN: ${this.ssdpUDN()}, Location: ${this.ssdpLocation()}...`)
+
+      var ssdp = new SSDP(
+        {
+          location: this.ssdpLocation(),
+          udn: this.ssdpUDN(),
+          sourcePort: 1900
+        }
+      )
+
+      ssdp.addUSN(this.ssdpUSN())
+
+      ssdp.on('advertise-alive', (headers) => {
+        // Expire old devices from your cache.
+        // Register advertising device somewhere (as designated in http headers heads)
+        // console.log(`Advertise alive for USN: ${usn}, UDN: ${device.ssdpUDN()}, Location: ${location}`)
+      })
+
+      ssdp.on('advertise-bye', (headers) => {
+        // Remove specified device from cache.
+        // console.log(`Advertise bye for USN: ${usn}, UDN: ${device.ssdpUDN()}, Location: ${location}`)
+      })
+
+      ssdp.start()
+
+      process.on('exit', () => {
+        // Advertise shutting down and stop listening
+        ssdp.stop()
+      })
+
+      console.log(`Started SSDP server advertising for USN: ${this.ssdpUSN()}, UDN: ${this.ssdpUDN()}, Location: ${this.ssdpLocation()}`)
+
+      return ssdp
     }
-  },
-
-  beforeSave: function (device, cb) {
-    sails.hooks.hub.singleton().insteonClient().info(device.insteonId)
-    .then(deviceInfo => {
-      if (deviceInfo === undefined) {
-        cb(`Device with Insteon ID ${device.insteonId} unknown to hub`)
-      }
-      cb()
-    }, reason => {
-      cb(`Error getting device information for Insteon ID ${device.insteonId}`)
-    })
-  },
-
-  afterCreate: function (device, cb) {
-    //sails.hooks.discovery.singleton().startFor(device)
-    // device.subscribeEvents()
-    cb()
   }
 }
