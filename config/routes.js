@@ -69,13 +69,8 @@ module.exports.routes = {
   // Fan controller actions
   'get /api/fan/:id/status': 'FanController.status',
   'post /api/fan/:id/refresh': 'FanController.refresh',
-  'post /api/fan/:id/light_on': 'FanController.lightOn',
-  'post /api/fan/:id/light_off': 'FanController.lightOff',
-  'post /api/fan/:id/light_level/:level': 'FanController.lightLevel',
-  'post /api/fan/:id/brighten_light': 'FanController.brightenLight',
-  'post /api/fan/:id/dim_light': 'FanController.dimLight',
-  'post /api/fan/:id/fan_off': 'FanController.fanOff',
-  'post /api/fan/:id/fan_low': 'FanController.fanLow',
-  'post /api/fan/:id/fan_medium': 'FanController.fanMedium',
-  'post /api/fan/:id/fan_high': 'FanController.fanHigh'
+  'post /api/fan/:id/off': 'FanController.off',
+  'post /api/fan/:id/low': 'FanController.low',
+  'post /api/fan/:id/medium': 'FanController.medium ',
+  'post /api/fan/:id/high': 'FanController.high'
 }

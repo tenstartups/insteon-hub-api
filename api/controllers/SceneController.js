@@ -1,7 +1,7 @@
 module.exports = {
 
   status: (req, res) => {
-    Fan.findOne(req.params.id).exec((err, dimmer) => {
+    Scene.findOne(req.params.id).exec((err, dimmer) => {
       if (err) {
         return res.serverError(err)
       }
@@ -13,7 +13,7 @@ module.exports = {
   },
 
   refresh: (req, res) => {
-    Fan.findOne(req.params.id).exec((err, dimmer) => {
+    Scene.findOne(req.params.id).exec((err, dimmer) => {
       if (err) {
         return res.serverError(err)
       }

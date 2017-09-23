@@ -1,64 +1,50 @@
 module.exports = {
+
   status: (req, res) => {
-    var insteonId = req.params.insteonId
-    console.log(`[${insteonId}] Retrieving switch status...`)
-    Switch.findOne({ insteonId: insteonId }).exec((err, device) => {
+    Switch.findOne(req.params.id).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
       if (!device) {
-        return res.notFound({ error: `Switch with Insteon ID ${insteonId} not found` })
+        return res.notFound({ error: `Switch with id ${req.params.id} not found` })
       }
-      device.getStatus().then(result => {
-        return res.json({ device: device, result: result })
-      }, reason => {
-        return res.serverError(reason)
-      })
+      return res.json({ device: device, result: device.getStatus() })
     })
   },
 
   refresh: (req, res) => {
-    var insteonId = req.params.insteonId
-    console.log(`[${insteonId}] Sending switch refresh command...`)
-    Switch.findOne({ insteonId: insteonId }).exec((err, device) => {
+    Switch.findOne(req.params.id).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
       if (!device) {
-        return res.notFound({ error: `Switch with Insteon ID ${insteonId} not found` })
+        return res.notFound({ error: `Switch with id ${req.params.id} not found` })
       }
-      device.refresh()
-      return res.json({ insteon_id: insteonId, command: req.options.action })
+      return res.json({ device: device, result: device.refreshStatus() })
     })
   },
 
   on: (req, res) => {
-    var insteonId = req.params.insteonId
-    console.log(`[${insteonId}] Turning switch ON...`)
-    Switch.findOne({ insteonId: insteonId }).exec((err, device) => {
+    Switch.findOne(req.params.id).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
       if (!device) {
-        return res.notFound({ error: `Switch with Insteon ID ${insteonId} not found` })
+        return res.notFound({ error: `Switch with id ${req.params.id} not found` })
       }
-      device.turnOn()
-      return res.json({ insteon_id: insteonId, command: req.options.action })
+      return res.json({ device: device, result: device.turnOn() })
     })
   },
 
   off: (req, res) => {
-    var insteonId = req.params.insteonId
-    console.log(`[${insteonId}] Turning switch OFF...`)
-    Switch.findOne({ insteonId: insteonId }).exec((err, device) => {
+    Switch.findOne(req.params.id).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
       if (!device) {
-        return res.notFound({ error: `Switch with Insteon ID ${insteonId} not found` })
+        return res.notFound({ error: `Switch with id ${req.params.id} not found` })
       }
-      device.turnOff()
-      return res.json({ insteon_id: insteonId, command: req.options.action })
+      return res.json({ device: device, result: device.turnOff() })
     })
   }
 }

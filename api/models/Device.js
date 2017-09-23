@@ -3,6 +3,11 @@ var SSDP = require('node-ssdp').Server
 const camelCase = require('uppercamelcase')
 const uuidv4 = require('uuid/v4')
 
+const settings = require('js-yaml')
+                 .safeLoad(require('fs')
+                 .readFileSync(process.env.SETTINGS_FILE, 'utf8'))
+                 .devices
+
 function loadSmartThingsAppEndpoints (token) {
   return new Promise((resolve, reject) => {
     var options = {
@@ -128,9 +133,8 @@ module.exports = {
         id: this.id,
         isy_type: this.isyType,
         isy_address: this.isyAddress,
-        name: `${process.env.DEVICE_NAME_PREFIX || ''} ${this.name} ${process.env.DEVICE_NAME_SUFFIX || ''}`.trim(),
+        name: `${settings.name_prefix || ''} ${this.name} ${settings.name_suffix || ''}`.trim(),
         description: this.description,
-        smart_things_network_id: this.smartThingsNeworkId(),
         smart_things_name: this.smartThingsName(),
         smart_things_device_handler: this.smartThingsDeviceHandler(),
         refresh_seconds: this.refreshSeconds,
