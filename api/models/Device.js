@@ -6,7 +6,6 @@ const uuidv4 = require('uuid/v4')
 const settings = require('js-yaml')
                  .safeLoad(require('fs')
                  .readFileSync(process.env.SETTINGS_FILE, 'utf8'))
-                 .devices
 
 function loadSmartThingsAppEndpoints (token) {
   return new Promise((resolve, reject) => {
@@ -34,27 +33,11 @@ module.exports = {
 
   findTypedDevice: function (isyDevice) {
     return new Promise((resolve, reject) => {
-      var deviceType
-      switch (isyDevice.deviceType) {
-        case 'Light':
-          deviceType = Switch
-          break
-        case 'DimmableLight':
-          deviceType = Dimmer
-          break
-        case 'Fan':
-          deviceType = Fan
-          break
-        case 'Outlet':
-          deviceType = Switch
-          break
-        case 'Scene':
-          deviceType = Scene
-          break
-      }
-      deviceType.findOne({ isyAddress: isyDevice.address }).exec((err, device) => {
+      eval(isyDevice.deviceType).findOne(
+        { isyType: isyDevice.deviceType, isyAddress: isyDevice.address }
+      ).exec((err, device) => {
         if (err) {
-          console.log(`Error fetching device record for ${device.address}`)
+          console.log(`Error fetching ${isyDevice.deviceType} device with ISY address ${isyDevice.address}`)
           reject(err)
         }
         resolve(device)
@@ -86,7 +69,17 @@ module.exports = {
       index: true
     },
 
+    model: {
+      type: 'string',
+      required: false
+    },
+
     name: {
+      type: 'string',
+      required: true
+    },
+
+    description: {
       type: 'string',
       required: true
     },
@@ -96,7 +89,7 @@ module.exports = {
       defaultsTo: true
     },
 
-    refreshSeconds: {
+    statusRefreshInterval: {
       type: 'integer',
       defaultsTo: 300
     },
@@ -105,27 +98,48 @@ module.exports = {
       type: 'string'
     },
 
-    isyAddressCompact: function () {
-      return this.isyAddress.replace(/[ ]/g, '')
+    isyTypeCode: function () {
+      return this.isyType.replace(/(?:^|\.?)([A-Z])/g, function (x, y) { return '-' + y.toLowerCase() }).replace(/^-/, '')
+    },
+
+    smartThingsId: function () {
+      return `isy:${settings.isy.id || '01'}:${this.isyTypeCode()}:${this.isyAddress.replace(/[ ]/g, '-')}`
     },
 
     smartThingsName: function () {
       return `${this.smartThingsDeviceHandler()} [${this.isyAddress}]`
     },
 
+    smartThingsLabel: function () {
+      return `${settings.devices.name_prefix || ''} ${this.name} ${settings.devices.name_suffix || ''}`.trim()
+    },
+
     smartThingsDeviceHandler: function () {
-      switch (this.isyType) {
-        case 'DimmableLight':
-          return 'ISY Insteon Dimmer'
-        case 'Light':
-          return 'ISY Insteon Switch'
-        case 'Fan':
-          return 'ISY Insteon Fan'
-        case 'Outlet':
-          return 'ISY Insteon Switch'
-        case 'Scene':
-          return 'ISY Insteon Scene'
-      }
+      return `ISY ${this.isyType}`
+    },
+
+    ssdpUSN: function () {
+      return `urn:schemas-upnp-org:device:${this.isyType}:1`
+    },
+
+    ssdpUDN: function () {
+      return `isy:${settings.isy.id || '01'}:${this.isyTypeCode()}:${this.isyAddress.replace(/[ ]/g, '-')}`
+    },
+
+    ssdpLocation: function () {
+      return `http://${this.ssdpAdvertiseIP()}:${this.ssdpAdvertisePort()}/api/device/${this.id}`
+    },
+
+    ssdpAdvertiseIP: function () {
+      return sails.hooks.ssdp.advertiseIP()
+    },
+
+    ssdpAdvertisePort: function () {
+      return sails.hooks.ssdp.advertisePort()
+    },
+
+    ssdpAdvertiseMAC: function () {
+      return sails.hooks.ssdp.advertiseMAC()
     },
 
     toJSON: function () {
@@ -133,13 +147,13 @@ module.exports = {
         id: this.id,
         isy_type: this.isyType,
         isy_address: this.isyAddress,
-        name: `${settings.name_prefix || ''} ${this.name} ${settings.name_suffix || ''}`.trim(),
+        model: this.model,
+        name: this.name,
         description: this.description,
+        smart_things_id: this.smartThingsId(),
         smart_things_name: this.smartThingsName(),
+        smart_things_label: this.smartThingsLabel(),
         smart_things_device_handler: this.smartThingsDeviceHandler(),
-        refresh_seconds: this.refreshSeconds,
-        is_advertised: this.isAdvertised,
-        udn: this.ssdpUDN(),
         ip: this.ssdpAdvertiseIP(),
         port: this.ssdpAdvertisePort(),
         mac: this.ssdpAdvertiseMAC()
@@ -185,30 +199,6 @@ module.exports = {
           console.log(`Error sending update ${JSON.stringify(data)} to ${endpoint.uri}/update`)
         })
       })
-    },
-
-    ssdpUSN: function () {
-      return `urn:schemas-upnp-org:device:isy:Insteon${this.isyType}:1`
-    },
-
-    ssdpUDN: function () {
-      return `uuid:${this.id}`
-    },
-
-    ssdpLocation: function () {
-      return `http://${this.ssdpAdvertiseIP()}:${this.ssdpAdvertisePort()}/api/device/${this.id}`
-    },
-
-    ssdpAdvertiseIP: function () {
-      return sails.hooks.ssdp.advertiseIP()
-    },
-
-    ssdpAdvertisePort: function () {
-      return sails.hooks.ssdp.advertisePort()
-    },
-
-    ssdpAdvertiseMAC: function () {
-      return sails.hooks.ssdp.advertiseMAC()
     },
 
     ssdpAdvertise: function () {

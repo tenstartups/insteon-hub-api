@@ -51,26 +51,32 @@ module.exports.routes = {
   'get /api/device/:id': 'DeviceController.show',
   'patch /api/device/:id': 'DeviceController.update',
 
-  // Switch controller actions
-  'get /api/switch/:id/status': 'SwitchController.status',
-  'post /api/switch/:id/refresh': 'SwitchController.refresh',
-  'post /api/switch/:id/on': 'SwitchController.on',
-  'post /api/switch/:id/off': 'SwitchController.off',
+  // Light controller actions
+  'get /api/light/:id/status': 'SwitchController.status',
+  'post /api/light/:id/refresh': 'SwitchController.refresh',
+  'post /api/light/:id/on': 'SwitchController.on',
+  'post /api/light/:id/off': 'SwitchController.off',
 
-  // Dimmer controller actions
-  'get /api/dimmer/:id/status': 'DimmerController.status',
-  'post /api/dimmer/:id/refresh': 'DimmerController.refresh',
-  'post /api/dimmer/:id/on': 'DimmerController.on',
-  'post /api/dimmer/:id/off': 'DimmerController.off',
-  'post /api/dimmer/:id/level/:level': 'DimmerController.level',
-  'post /api/dimmer/:id/brighten': 'DimmerController.brighten',
-  'post /api/dimmer/:id/dim': 'DimmerController.dim',
+  // Dimmable light controller actions
+  'get /api/dimmable_light/:id/status': 'DimmableLightController.status',
+  'post /api/dimmable_light/:id/refresh': 'DimmableLightController.refresh',
+  'post /api/dimmable_light/:id/on': 'DimmableLightController.on',
+  'post /api/dimmable_light/:id/off': 'DimmableLightController.off',
+  'post /api/dimmable_light/:id/level/:level': 'DimmableLightController.level',
+  'post /api/dimmable_light/:id/brighten': 'DimmableLightController.brighten',
+  'post /api/dimmable_light/:id/dim': 'DimmableLightController.dim',
 
   // Fan controller actions
   'get /api/fan/:id/status': 'FanController.status',
   'post /api/fan/:id/refresh': 'FanController.refresh',
   'post /api/fan/:id/off': 'FanController.off',
   'post /api/fan/:id/low': 'FanController.low',
-  'post /api/fan/:id/medium': 'FanController.medium ',
-  'post /api/fan/:id/high': 'FanController.high'
+  'post /api/fan/:id/medium': 'FanController.medium',
+  'post /api/fan/:id/high': 'FanController.high',
+
+  // Outlet controller actions
+  'get /api/outlet/:id/status': 'OutletController.status',
+  'post /api/outlet/:id/refresh': 'OutletController.refresh',
+  'post /api/outlet/:id/on': 'OutletController.on',
+  'post /api/outlet/:id/off': 'OutletController.off'
 }
