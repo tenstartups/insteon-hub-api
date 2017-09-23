@@ -119,7 +119,7 @@ module.exports = {
     },
 
     ssdpUSN: function () {
-      return `urn:schemas-upnp-org:device:${this.isyType}:1`
+      return `urn:schemas-upnp-org:device:isy:${this.isyType}:1`
     },
 
     ssdpUDN: function () {
