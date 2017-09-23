@@ -45,14 +45,14 @@ module.exports =  _.merge(_.cloneDeep(Device), {
     },
 
     brighten: function () {
-      var level = Math.min(this.level() + 5, 100
-      this.isyDevice().sendLightDimCommand(level), success => {})
+      var level = Math.min(this.level() + 5, 100)
+      this.isyDevice().sendLightDimCommand(level, success => {})
       return { command: 'brighten' }
     },
 
     dim: function () {
-      var level = Math.max(this.level() - 5, 1
-      this.isyDevice().sendLightDimCommand(level), success => {})
+      var level = Math.max(this.level() - 5, 1)
+      this.isyDevice().sendLightDimCommand(level, success => {})
       return { command: 'dim' }
     }
   }
