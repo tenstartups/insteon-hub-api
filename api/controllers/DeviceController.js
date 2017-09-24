@@ -29,9 +29,6 @@ module.exports = {
     if (req.param('is_advertised') != null) {
       attrs['isAdvertised'] = req.param('is_advertised')
     }
-    if (req.param('smart_things_token') != null) {
-      attrs['smartThingsToken'] = req.param('smart_things_token')
-    }
     Device.update(req.params.id, attrs).exec((err, devices) => {
       if (err) {
         return res.serverError(err)
@@ -40,6 +37,32 @@ module.exports = {
         return res.notFound({ error: `Device with id ${req.params.id} not found` })
       }
       return res.json({ device: devices[0] })
+    })
+  },
+
+  token: (req, res) => {
+    Device.findOne(req.params.id).exec((err, device) => {
+      if (err) {
+        return res.serverError(err)
+      }
+      if (!device) {
+        return res.notFound({ error: `Device with id ${req.params.id} not found` })
+      }
+      device.smartThingsToken = req.param.token
+      device.loadSmartThingsAppEndpoints().then(result => {
+        device.smartThingsAppEndpoints.join(',')
+        device.save().exec((err, devices) => {
+          if (err) {
+            return res.serverError(err)
+          }
+          if (devices.length !== 1) {
+            return res.notFound({ error: `Device with id ${req.params.id} not found` })
+          }
+          return res.json({ device: devices[0] })
+        })
+      }).catch(reason => {
+        return res.serverError(err)
+      })
     })
   }
 }

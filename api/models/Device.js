@@ -8,26 +8,6 @@ const settings = require('js-yaml')
                  .safeLoad(require('fs')
                  .readFileSync(process.env.SETTINGS_FILE, 'utf8'))
 
-function loadSmartThingsAppEndpoints (token) {
-  return new Promise((resolve, reject) => {
-    var options = {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      uri: 'https://graph.api.smartthings.com/api/smartapps/endpoints',
-      json: true
-    }
-    request(options)
-    .then(result => {
-      console.log(result)
-      resolve(result)
-    })
-    .catch(reason => {
-      reject(reason)
-    })
-  })
-}
-
 module.exports = {
 
   tableName: 'device',
@@ -99,6 +79,10 @@ module.exports = {
       type: 'string'
     },
 
+    smartThingsAppCallbackURIs: {
+      type: 'array'
+    },
+
     networkId: function () {
       var key = `isy:${settings.isy.id || '01'}:${this.isyType}:${this.isyAddress}`
       return crypto.createHash('md5').update(key).digest('hex')
@@ -110,6 +94,10 @@ module.exports = {
 
     displayName: function () {
       return `${settings.devices.name_prefix || ''} ${this.name} ${settings.devices.name_suffix || ''}`.trim()
+    },
+
+    deviceHandler: function () {
+      return `ISY${this.isyType.replace(/([A-Z])/g, ' $1').replace(/^./, function (str) { return str.toUpperCase() })}`
     },
 
     ssdpUSN: function () {
@@ -145,6 +133,7 @@ module.exports = {
         name: this.name,
         description: this.description,
         network_id: this.networkId(),
+        device_handler: this.deviceHandler(),
         display_type: this.displayType(),
         display_name: this.displayName(),
         mac_address: this.ssdpAdvertiseMAC(),
@@ -157,24 +146,34 @@ module.exports = {
       return sails.hooks.isy.connection().getDevice(this.isyAddress)
     },
 
-    resetSmartThingsEndpoints: function () {
-      this._smartThingsWebhookURIs = null
+    loadSmartThingsAppEndpoints: function () {
+      return new Promise((resolve, reject) => {
+        var options = {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          uri: 'https://graph.api.smartthings.com/api/smartapps/endpoints',
+          json: true
+        }
+        request(options)
+        .then(result => {
+          console.log(result)
+          resolve(result)
+        })
+        .catch(reason => {
+          reject(reason)
+        })
+      })
     },
 
     sendSmartThingsUpdate: function () {
       var body = { device: this.toJSON(), data: this.getStatus() }
 
-      if (!this.smartThingsToken) {
+      if (!this.smartThingsToken || !this.smartThingsAppCallbackURIs) {
         return null
       }
 
-      if (!this._smartThingsWebhookURIs) {
-        loadSmartThingsAppEndpoints(this.smartThingsToken).then(result => {
-          this._smartThingsWebhookURIs = result.map(r => { return r.uri })
-        })
-      }
-
-      this._smartThingsWebhookURIs.forEach(endpoint => {
+      this.smartThingsAppCallbackURIs.forEach(endpoint => {
         var options = {
           method: 'POST',
           headers: {
