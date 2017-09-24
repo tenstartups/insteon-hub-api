@@ -99,7 +99,7 @@ module.exports = {
       type: 'string'
     },
 
-    externalId: function () {
+    networkId: function () {
       var key = `isy:${settings.isy.id || '01'}:${this.isyType}:${this.isyAddress}`
       return crypto.createHash('md5').update(key).digest('hex')
     },
@@ -117,7 +117,7 @@ module.exports = {
     },
 
     ssdpUDN: function () {
-      return `uid:${this.externalId()}`
+      return `uid:${this.networkId()}`
     },
 
     ssdpLocation: function () {
@@ -144,7 +144,7 @@ module.exports = {
         model: this.model,
         name: this.name,
         description: this.description,
-        external_id: this.externalId(),
+        network_id: this.networkId(),
         display_type: this.displayType(),
         display_name: this.displayName(),
         mac_address: this.ssdpAdvertiseMAC(),
