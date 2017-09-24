@@ -175,6 +175,8 @@ module.exports = {
         return null
       }
 
+      console.log(`Sending ${JSON.stringify(body.data)} update for device ${this.name}`)
+
       this.smartThingsAppCallbackURIs.forEach(endpoint => {
         var options = {
           method: 'POST',
