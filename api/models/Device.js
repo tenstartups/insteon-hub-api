@@ -171,31 +171,28 @@ module.exports = {
     sendSmartThingsUpdate: function () {
       var body = { device: this.toJSON(), data: this.getStatus() }
 
-console.log(this.smartThingsToken)
-console.log(this.smartThingsAppCallbackURIs)
-console.log(!this.smartThingsAppCallbackURIs)
       if (!this.smartThingsToken || !this.smartThingsAppCallbackURIs) {
         return null
       }
 
       console.log(`Sending ${JSON.stringify(body.data)} update for device ${this.name}`)
 
-      this.smartThingsAppCallbackURIs.forEach(endpoint => {
+      this.smartThingsAppCallbackURIs.forEach(uri => {
         var options = {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${this.smartThingsToken}`
           },
-          uri: `${endpoint.uri}/update`,
+          uri: `${uri}/update`,
           body: body,
           json: true
         }
         request(options)
         .then(result => {
-          console.log(`Successfully sent update ${JSON.stringify(body.data)} to ${endpoint.uri}/update`)
+          console.log(`Successfully sent update ${JSON.stringify(body.data)} to ${uri}/update`)
         })
         .catch(reason => {
-          console.log(`Error sending update ${JSON.stringify(body.data)} to ${endpoint.uri}/update`)
+          console.log(`Error sending update ${JSON.stringify(body.data)} to ${uri}/update`)
         })
       })
     },
