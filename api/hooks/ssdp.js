@@ -8,8 +8,8 @@ const SSDP_SETTINGS = require('js-yaml')
                       .safeLoad(require('fs')
                       .readFileSync(process.env.SETTINGS_FILE, 'utf8'))
                       .ssdp || {}
-const USN = SSDP_SETTINGS.usn || 'uuid:c3c3c35a-4216-4079-84ae-e6d306ff9d7b'
-const UDN = `${SSDP_SETTINGS.udn_prefix || 'urn:schemas-upnp-org:service:ISYDeviceManager'}:${SERVER_SETTINGS.instance_number || 1}`
+const USN = `${SSDP_SETTINGS.usn_prefix || 'urn:schemas-upnp-org:service:ISYDeviceManager'}:${SERVER_SETTINGS.instance_number || 1}`
+const UDN = SSDP_SETTINGS.udn || 'uuid:c3c3c35a-4216-4079-84ae-e6d306ff9d7b'
 
 module.exports = (sails) => {
   var server
