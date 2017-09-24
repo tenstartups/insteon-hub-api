@@ -50,7 +50,7 @@ module.exports = {
       }
       device.smartThingsToken = req.params.token
       device.loadSmartThingsAppEndpoints().then(result => {
-        device.smartThingsAppEndpoints = result
+        device.smartThingsAppCallbackURIs = result
         device.save(err => {
           if (err) {
             return res.serverError(err)
