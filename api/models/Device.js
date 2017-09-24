@@ -171,6 +171,9 @@ module.exports = {
     sendSmartThingsUpdate: function () {
       var body = { device: this.toJSON(), data: this.getStatus() }
 
+console.log(this.smartThingsToken)
+console.log(this.smartThingsAppCallbackURIs)
+console.log(!this.smartThingsAppCallbackURIs)
       if (!this.smartThingsToken || !this.smartThingsAppCallbackURIs) {
         return null
       }
