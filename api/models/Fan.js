@@ -4,13 +4,13 @@ module.exports =  _.merge(_.cloneDeep(Device), {
   attributes: {
     status: function () {
       switch (this.isyDevice().getCurrentFanState()) {
-        case ISYFanDevice.FAN_OFF:
+        case 'Off':
           return 'off'
-        case ISYFanDevice.FAN_LEVEL_LOW:
+        case 'Low':
           return 'low'
-        case ISYFanDevice.FAN_LEVEL_MEDIUM:
+        case 'Medium':
           return 'medium'
-        case ISYFanDevice.FAN_LEVEL_HIGH:
+        case 'High':
           return 'high'
       }
     },

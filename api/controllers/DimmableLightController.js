@@ -8,6 +8,7 @@ module.exports = {
       if (!dimmableLight) {
         return res.notFound({ error: `Dimmable light with id ${req.params.id} not found` })
       }
+      console.log(`STATUS requested for ${dimmableLight.name}`)
       return res.json({ device: dimmableLight, result: dimmableLight.getStatus() })
     })
   },
@@ -20,6 +21,7 @@ module.exports = {
       if (!dimmableLight) {
         return res.notFound({ error: `Dimmable light with id ${req.params.id} not found` })
       }
+      console.log(`REFRESH command received for ${dimmableLight.name}`)
       return res.json({ device: dimmableLight, result: dimmableLight.refreshStatus() })
     })
   },
@@ -32,6 +34,7 @@ module.exports = {
       if (!dimmableLight) {
         return res.notFound({ error: `Dimmable light with id ${req.params.id} not found` })
       }
+      console.log(`ON command received for ${dimmableLight.name}`)
       return res.json({ device: dimmableLight, result: dimmableLight.turnOn() })
     })
   },
@@ -44,6 +47,7 @@ module.exports = {
       if (!dimmableLight) {
         return res.notFound({ error: `Dimmable light with id ${req.params.id} not found` })
       }
+      console.log(`OFF command received for ${dimmableLight.name}`)
       return res.json({ device: dimmableLight, result: dimmableLight.turnOff() })
     })
   },
@@ -56,6 +60,7 @@ module.exports = {
       if (!dimmableLight) {
         return res.notFound({ error: `Dimmable light with id ${req.params.id} not found` })
       }
+      console.log(`LEVEL (${req.params.level}) command received for ${dimmableLight.name}`)
       return res.json({ device: dimmableLight, result: dimmableLight.setLevel(req.params.level) })
     })
   },
@@ -68,6 +73,7 @@ module.exports = {
       if (!dimmableLight) {
         return res.notFound({ error: `Dimmable light with id ${req.params.id} not found` })
       }
+      console.log(`BRIGHTEN command received for ${dimmableLight.name}`)
       return res.json({ device: dimmableLight, result: dimmableLight.brighten() })
     })
   },
@@ -80,6 +86,7 @@ module.exports = {
       if (!dimmableLight) {
         return res.notFound({ error: `Dimmable light with id ${req.params.id} not found` })
       }
+      console.log(`DIM command received for ${dimmableLight.name}`)
       return res.json({ device: dimmableLight, result: dimmableLight.dim() })
     })
   }
