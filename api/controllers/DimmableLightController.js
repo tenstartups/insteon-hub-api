@@ -27,7 +27,6 @@ module.exports = {
   },
 
   on: (req, res) => {
-    console.log("HERE")
     DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, dimmableLight) => {
       if (err) {
         return res.serverError(err)
