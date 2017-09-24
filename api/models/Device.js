@@ -175,7 +175,7 @@ module.exports = {
         return null
       }
 
-      console.log(`Sending ${JSON.stringify(body.data)} update for device ${this.name}`)
+      console.log(`Sending ${JSON.stringify(body.data)} update for ${this.name}`)
 
       this.smartThingsAppCallbackURIs.forEach(uri => {
         var options = {
@@ -189,10 +189,11 @@ module.exports = {
         }
         request(options)
         .then(result => {
-          console.log(`Successfully sent update ${JSON.stringify(body.data)} to ${uri}/update`)
+          console.log(`Successfully sent update for ${this.name}`)
         })
         .catch(reason => {
-          console.log(`Error sending update ${JSON.stringify(body.data)} to ${uri}/update`)
+          console.log(`Error sending update for ${this.name}`)
+          console.log(reason)
         })
       })
     },
