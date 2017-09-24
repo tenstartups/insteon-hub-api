@@ -1,24 +1,26 @@
 var camelCase = require('uppercamelcase')
 var crypto = require('crypto');
 var request = require('request-promise-native')
-var SSDP = require('node-ssdp').Server
 const uuidv4 = require('uuid/v4')
 
-const settings = require('js-yaml')
-                 .safeLoad(require('fs')
-                 .readFileSync(process.env.SETTINGS_FILE, 'utf8'))
+const SERVER_SETTINGS = require('js-yaml')
+                        .safeLoad(require('fs')
+                        .readFileSync(process.env.SETTINGS_FILE, 'utf8'))
+                        .server || {}
+const DEVICES_SETTINGS = require('js-yaml')
+                         .safeLoad(require('fs')
+                         .readFileSync(process.env.SETTINGS_FILE, 'utf8'))
+                         .devices || {}
 
 module.exports = {
 
   tableName: 'device',
 
-  findTypedDevice: function (isyDevice) {
+  findTyped: function (options) {
     return new Promise((resolve, reject) => {
-      eval(isyDevice.deviceType).findOne(
-        { isyType: isyDevice.deviceType, isyAddress: isyDevice.address }
-      ).exec((err, device) => {
+      eval(options.type).findOne(options).exec((err, device) => {
         if (err) {
-          console.log(`Error fetching ${isyDevice.deviceType} device with ISY address ${isyDevice.address}`)
+          console.log(`Error fetching ${options.type} device with criteria ${JSON.stringify(options)}`)
           reject(err)
         }
         resolve(device)
@@ -37,13 +39,13 @@ module.exports = {
       uuidv4: true
     },
 
-    isyType: {
+    type: {
       type: 'string',
       enum: ['Light', 'DimmableLight', 'Fan', 'Outlet', 'Scene'],
       required: true
     },
 
-    isyAddress: {
+    address: {
       type: 'string',
       required: true,
       unique: true,
@@ -70,11 +72,6 @@ module.exports = {
       defaultsTo: true
     },
 
-    statusRefreshInterval: {
-      type: 'integer',
-      defaultsTo: 300
-    },
-
     smartThingsToken: {
       type: 'string'
     },
@@ -84,32 +81,12 @@ module.exports = {
     },
 
     networkId: function () {
-      var key = `isy:${settings.isy.id || '01'}:${this.isyType}:${this.isyAddress}`
+      var key = `isy:${SERVER_SETTINGS.instance_number || '01'}:${this.type}:${this.address}`
       return crypto.createHash('md5').update(key).digest('hex')
     },
 
-    displayType: function () {
-      return `ISY ${this.isyType} [${this.isyAddress}]`
-    },
-
     displayName: function () {
-      return `${settings.devices.name_prefix || ''} ${this.name} ${settings.devices.name_suffix || ''}`.trim()
-    },
-
-    deviceHandler: function () {
-      return `ISY${this.isyType.replace(/([A-Z])/g, ' $1').replace(/^./, function (str) { return str.toUpperCase() })}`
-    },
-
-    ssdpUSN: function () {
-      return `urn:schemas-upnp-org:device:isy:${this.isyType}:1`
-    },
-
-    ssdpUDN: function () {
-      return `uid:${this.networkId()}`
-    },
-
-    ssdpLocation: function () {
-      return `http://${this.ssdpAdvertiseIP()}:${this.ssdpAdvertisePort()}/api/device/${this.id}`
+      return `${DEVICES_SETTINGS.name_prefix || ''} ${this.name} ${DEVICES_SETTINGS.name_suffix || ''}`.trim()
     },
 
     ssdpAdvertiseIP: function () {
@@ -120,30 +97,22 @@ module.exports = {
       return sails.hooks.ssdp.advertisePort()
     },
 
-    ssdpAdvertiseMAC: function () {
-      return sails.hooks.ssdp.advertiseMAC()
-    },
-
     toJSON: function () {
       return {
         id: this.id,
-        isy_type: this.isyType,
-        isy_address: this.isyAddress,
+        type: this.type,
+        address: this.address,
         model: this.model,
-        name: this.name,
+        name: this.displayName(),
         description: this.description,
         network_id: this.networkId(),
-        device_handler: this.deviceHandler(),
-        display_type: this.displayType(),
-        display_name: this.displayName(),
-        mac_address: this.ssdpAdvertiseMAC(),
         ip_address: this.ssdpAdvertiseIP(),
         ip_port: this.ssdpAdvertisePort()
       }
     },
 
     isyDevice: function () {
-      return sails.hooks.isy.connection().getDevice(this.isyAddress)
+      return sails.hooks.isy.connection().getDevice(this.address)
     },
 
     loadSmartThingsAppEndpoints: function () {
@@ -196,42 +165,6 @@ module.exports = {
           console.log(reason)
         })
       })
-    },
-
-    ssdpAdvertise: function () {
-      console.log(`Starting SSDP server advertising for USN: ${this.ssdpUSN()}, UDN: ${this.ssdpUDN()}, Location: ${this.ssdpLocation()}...`)
-
-      var ssdp = new SSDP(
-        {
-          location: this.ssdpLocation(),
-          udn: this.ssdpUDN(),
-          sourcePort: 1900
-        }
-      )
-
-      ssdp.addUSN(this.ssdpUSN())
-
-      ssdp.on('advertise-alive', (headers) => {
-        // Expire old devices from your cache.
-        // Register advertising device somewhere (as designated in http headers heads)
-        // console.log(`Advertise alive for USN: ${usn}, UDN: ${device.ssdpUDN()}, Location: ${location}`)
-      })
-
-      ssdp.on('advertise-bye', (headers) => {
-        // Remove specified device from cache.
-        // console.log(`Advertise bye for USN: ${usn}, UDN: ${device.ssdpUDN()}, Location: ${location}`)
-      })
-
-      ssdp.start()
-
-      process.on('exit', () => {
-        // Advertise shutting down and stop listening
-        ssdp.stop()
-      })
-
-      console.log(`Started SSDP server advertising for USN: ${this.ssdpUSN()}, UDN: ${this.ssdpUDN()}, Location: ${this.ssdpLocation()}`)
-
-      return ssdp
     }
   }
 }

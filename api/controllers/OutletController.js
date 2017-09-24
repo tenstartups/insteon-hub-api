@@ -1,7 +1,7 @@
 module.exports = {
 
   status: (req, res) => {
-    Outlet.findOne({ id: req.params.id, isyType: 'Outlet' }).exec((err, outlet) => {
+    Outlet.findOne({ id: req.params.id, type: 'Outlet' }).exec((err, outlet) => {
       if (err) {
         return res.serverError(err)
       }
@@ -13,7 +13,7 @@ module.exports = {
   },
 
   refresh: (req, res) => {
-    Outlet.findOne({ id: req.params.id, isyType: 'Outlet' }).exec((err, outlet) => {
+    Outlet.findOne({ id: req.params.id, type: 'Outlet' }).exec((err, outlet) => {
       if (err) {
         return res.serverError(err)
       }
@@ -25,7 +25,7 @@ module.exports = {
   },
 
   on: (req, res) => {
-    Outlet.findOne({ id: req.params.id, isyType: 'Outlet' }).exec((err, outlet) => {
+    Outlet.findOne({ id: req.params.id, type: 'Outlet' }).exec((err, outlet) => {
       if (err) {
         return res.serverError(err)
       }
@@ -37,7 +37,7 @@ module.exports = {
   },
 
   off: (req, res) => {
-    Outlet.findOne({ id: req.params.id, isyType: 'Outlet' }).exec((err, outlet) => {
+    Outlet.findOne({ id: req.params.id, type: 'Outlet' }).exec((err, outlet) => {
       if (err) {
         return res.serverError(err)
       }

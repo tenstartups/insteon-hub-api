@@ -17,7 +17,7 @@ module.exports = (sails) => {
         var deviceList = sails.hooks.isy.connection().getDeviceList()
         var updatePromises = deviceList.map(d => {
           return new Promise((resolve, reject) => {
-            Device.update({ isyAddress: d.address }, { name: d.name }).exec((err, records) => {
+            Device.update({ address: d.address }, { name: d.name }).exec((err, records) => {
               if (err) {
                 console.log(`Error updating device ${d.name}`)
                 reject(err)
@@ -27,7 +27,7 @@ module.exports = (sails) => {
           })
         })
         Promise.all(updatePromises).then(results => {
-          var updated = results.reduce(function(pv, cv) { return pv + cv }, 0)
+          var updated = results.reduce(function (pv, cv) { return pv + cv }, 0)
           console.log(`Updated ${updated} device records`)
           return cb()
         }, reason => {

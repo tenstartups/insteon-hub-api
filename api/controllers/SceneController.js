@@ -1,7 +1,7 @@
 module.exports = {
 
   status: (req, res) => {
-    Scene.findOne({ id: req.params.id, isyType: 'Scene' }).exec((err, scene) => {
+    Scene.findOne({ id: req.params.id, type: 'Scene' }).exec((err, scene) => {
       if (err) {
         return res.serverError(err)
       }
@@ -13,7 +13,7 @@ module.exports = {
   },
 
   refresh: (req, res) => {
-    Scene.findOne({ id: req.params.id, isyType: 'Scene' }).exec((err, scene) => {
+    Scene.findOne({ id: req.params.id, type: 'Scene' }).exec((err, scene) => {
       if (err) {
         return res.serverError(err)
       }

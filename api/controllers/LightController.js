@@ -1,7 +1,7 @@
 module.exports = {
 
   status: (req, res) => {
-    Light.findOne({ id: req.params.id, isyType: 'Light' }).exec((err, light) => {
+    Light.findOne({ id: req.params.id, type: 'Light' }).exec((err, light) => {
       if (err) {
         return res.serverError(err)
       }
@@ -14,7 +14,7 @@ module.exports = {
   },
 
   refresh: (req, res) => {
-    Light.findOne({ id: req.params.id, isyType: 'Light' }).exec((err, light) => {
+    Light.findOne({ id: req.params.id, type: 'Light' }).exec((err, light) => {
       if (err) {
         return res.serverError(err)
       }
@@ -27,7 +27,7 @@ module.exports = {
   },
 
   on: (req, res) => {
-    Light.findOne({ id: req.params.id, isyType: 'Light' }).exec((err, light) => {
+    Light.findOne({ id: req.params.id, type: 'Light' }).exec((err, light) => {
       if (err) {
         return res.serverError(err)
       }
@@ -40,7 +40,7 @@ module.exports = {
   },
 
   off: (req, res) => {
-    Light.findOne({ id: req.params.id, isyType: 'Light' }).exec((err, light) => {
+    Light.findOne({ id: req.params.id, type: 'Light' }).exec((err, light) => {
       if (err) {
         return res.serverError(err)
       }

@@ -1,7 +1,7 @@
 module.exports = {
 
   index: (req, res) => {
-    Device.find().exec((err, devices) => {
+    Device.find({ isAdvertised: true }).exec((err, devices) => {
       if (err) {
         return res.serverError(err)
       }
@@ -21,15 +21,8 @@ module.exports = {
     })
   },
 
-  update: (req, res) => {
-    var attrs = {}
-    if (req.param('refresh_seconds') != null) {
-      attrs['refreshSeconds'] = req.param('refresh_seconds')
-    }
-    if (req.param('is_advertised') != null) {
-      attrs['isAdvertised'] = req.param('is_advertised')
-    }
-    Device.update(req.params.id, attrs).exec((err, devices) => {
+  advertise: (req, res) => {
+    Device.update(req.params.id, { isAdvertised: true }).exec((err, devices) => {
       if (err) {
         return res.serverError(err)
       }
@@ -40,7 +33,19 @@ module.exports = {
     })
   },
 
-  token: (req, res) => {
+  stopAdvertising: (req, res) => {
+    Device.update(req.params.id, { isAdvertised: false }).exec((err, devices) => {
+      if (err) {
+        return res.serverError(err)
+      }
+      if (devices.length !== 1) {
+        return res.notFound({ error: `Device with id ${req.params.id} not found` })
+      }
+      return res.json({ device: devices[0] })
+    })
+  },
+
+  setToken: (req, res) => {
     Device.findOne(req.params.id).exec((err, device) => {
       if (err) {
         return res.serverError(err)
@@ -60,6 +65,18 @@ module.exports = {
       }).catch(reason => {
         return res.serverError(reason)
       })
+    })
+  },
+
+  deleteToken: (req, res) => {
+    Device.update(req.params.id, { smartThingsToken: null, smartThingsAppCallbackURIs: null }).exec((err, devices) => {
+      if (err) {
+        return res.serverError(err)
+      }
+      if (devices.length !== 1) {
+        return res.notFound({ error: `Device with id ${req.params.id} not found` })
+      }
+      return res.json({ device: devices[0] })
     })
   }
 }

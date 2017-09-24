@@ -14,7 +14,7 @@ module.exports = (sails) => {
         console.log('Deleting obsolete device records...')
         var deviceList = sails.hooks.isy.connection().getDeviceList()
         Device.destroy(
-          { isyAddress: { '!': deviceList.map(d => { return d.address }) } }
+          { address: { '!': deviceList.map(d => { return d.address }) } }
         ).exec((err, records) => {
           if (err) {
             console.log('Error deleting obsolete device records')

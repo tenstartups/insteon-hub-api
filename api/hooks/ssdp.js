@@ -1,29 +1,28 @@
-require('events').EventEmitter.defaultMaxListeners = 255
-var macaddress = require('macaddress')
-
+const SSDP = require('node-ssdp').Server
 const LISTEN_INTERFACE = process.env.LISTEN_INTERFACE || 'eth0'
+const SERVER_SETTINGS = require('js-yaml')
+                        .safeLoad(require('fs')
+                        .readFileSync(process.env.SETTINGS_FILE, 'utf8'))
+                        .server || {}
+const SSDP_SETTINGS = require('js-yaml')
+                      .safeLoad(require('fs')
+                      .readFileSync(process.env.SETTINGS_FILE, 'utf8'))
+                      .ssdp || {}
+const USN = SSDP_SETTINGS.usn || 'uuid:c3c3c35a-4216-4079-84ae-e6d306ff9d7b'
+const UDN = `${SSDP_SETTINGS.udn_prefix || 'urn:schemas-upnp-org:service:ISYDeviceManager'}:${SERVER_SETTINGS.instance_number || 1}`
 
 module.exports = (sails) => {
-  var servers = new Map()
+  var server
   var advertiseIP
   var advertisePort
-  var advertiseMAC
 
   return {
-    servers: () => {
-      return servers
-    },
-
     advertiseIP: function () {
       return advertiseIP
     },
 
     advertisePort: function () {
       return advertisePort
-    },
-
-    advertiseMAC: function () {
-      return advertiseMAC
     },
 
     configure: () => {
@@ -55,26 +54,41 @@ module.exports = (sails) => {
           advertisePort = sails.config.port
         }
 
-        macaddress.one(LISTEN_INTERFACE, (err, mac) => {
-          if (err) {
-            throw err
+        var location = `http://${advertiseIP}:${advertisePort}/api/devices`
+
+        console.log(`Starting SSDP server advertising for USN: ${USN}, UDN: ${UDN}, Location: ${location}...`)
+
+        server = new SSDP(
+          {
+            location: location,
+            udn: UDN,
+            sourcePort: 1900
           }
-          advertiseMAC = mac.toUpperCase().replace(/:/g, '')
+        )
 
-          console.log('Starting device SSDP advertisement servers...')
-          Device.find({ isAdvertised: true }).exec((err, devices) => {
-            if (err) {
-              console.log('Error retrieving device records')
-              throw err
-            }
-            devices.forEach(device => {
-              servers[device.id] = device.ssdpAdvertise()
-            })
-            console.log('Started device SSDP advertisement servers')
+        server.addUSN(USN)
 
-            return cb()
-          })
+        server.on('advertise-alive', (headers) => {
+          // Expire old devices from your cache.
+          // Register advertising device somewhere (as designated in http headers heads)
+          // console.log(`Advertise alive for USN: ${USN}, UDN: ${UDN}, Location: ${location}`)
         })
+
+        server.on('advertise-bye', (headers) => {
+          // Remove specified device from cache.
+          // console.log(`Advertise bye for USN: ${USN}, UDN: ${UDN}, Location: ${location}`)
+        })
+
+        server.start()
+
+        process.on('exit', () => {
+          // Advertise shutting down and stop listening
+          server.stop()
+        })
+
+        console.log(`Started SSDP server advertising for USN: ${USN}, UDN: ${UDN}, Location: ${location}`)
+
+        return cb()
       })
     }
   }

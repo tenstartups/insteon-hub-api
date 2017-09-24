@@ -1,7 +1,7 @@
 module.exports = {
 
   status: (req, res) => {
-    DimmableLight.findOne({ id: req.params.id, isyType: 'DimmableLight' }).exec((err, dimmableLight) => {
+    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, dimmableLight) => {
       if (err) {
         return res.serverError(err)
       }
@@ -14,7 +14,7 @@ module.exports = {
   },
 
   refresh: (req, res) => {
-    DimmableLight.findOne({ id: req.params.id, isyType: 'DimmableLight' }).exec((err, dimmableLight) => {
+    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, dimmableLight) => {
       if (err) {
         return res.serverError(err)
       }
@@ -27,7 +27,7 @@ module.exports = {
   },
 
   on: (req, res) => {
-    DimmableLight.findOne({ id: req.params.id, isyType: 'DimmableLight' }).exec((err, dimmableLight) => {
+    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, dimmableLight) => {
       if (err) {
         return res.serverError(err)
       }
@@ -40,7 +40,7 @@ module.exports = {
   },
 
   off: (req, res) => {
-    DimmableLight.findOne({ id: req.params.id, isyType: 'DimmableLight' }).exec((err, dimmableLight) => {
+    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, dimmableLight) => {
       if (err) {
         return res.serverError(err)
       }
@@ -53,7 +53,7 @@ module.exports = {
   },
 
   level: (req, res) => {
-    DimmableLight.findOne({ id: req.params.id, isyType: 'DimmableLight' }).exec((err, dimmableLight) => {
+    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, dimmableLight) => {
       if (err) {
         return res.serverError(err)
       }
@@ -66,7 +66,7 @@ module.exports = {
   },
 
   brighten: (req, res) => {
-    DimmableLight.findOne({ id: req.params.id, isyType: 'DimmableLight' }).exec((err, dimmableLight) => {
+    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, dimmableLight) => {
       if (err) {
         return res.serverError(err)
       }
@@ -79,7 +79,7 @@ module.exports = {
   },
 
   dim: (req, res) => {
-    DimmableLight.findOne({ id: req.params.id, isyType: 'DimmableLight' }).exec((err, dimmableLight) => {
+    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, dimmableLight) => {
       if (err) {
         return res.serverError(err)
       }

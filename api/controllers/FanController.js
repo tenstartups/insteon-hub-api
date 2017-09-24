@@ -1,7 +1,7 @@
 module.exports = {
 
   status: (req, res) => {
-    Fan.findOne({ id: req.params.id, isyType: 'Fan' }).exec((err, fan) => {
+    Fan.findOne({ id: req.params.id, type: 'Fan' }).exec((err, fan) => {
       if (err) {
         return res.serverError(err)
       }
@@ -14,7 +14,7 @@ module.exports = {
   },
 
   refresh: (req, res) => {
-    Fan.findOne({ id: req.params.id, isyType: 'Fan' }).exec((err, fan) => {
+    Fan.findOne({ id: req.params.id, type: 'Fan' }).exec((err, fan) => {
       if (err) {
         return res.serverError(err)
       }
@@ -27,7 +27,7 @@ module.exports = {
   },
 
   off: (req, res) => {
-    Fan.findOne({ id: req.params.id, isyType: 'Fan' }).exec((err, fan) => {
+    Fan.findOne({ id: req.params.id, type: 'Fan' }).exec((err, fan) => {
       if (err) {
         return res.serverError(err)
       }
@@ -40,7 +40,7 @@ module.exports = {
   },
 
   low: (req, res) => {
-    Fan.findOne({ id: req.params.id, isyType: 'Fan' }).exec((err, fan) => {
+    Fan.findOne({ id: req.params.id, type: 'Fan' }).exec((err, fan) => {
       if (err) {
         return res.serverError(err)
       }
@@ -53,7 +53,7 @@ module.exports = {
   },
 
   medium: (req, res) => {
-    Fan.findOne({ id: req.params.id, isyType: 'Fan' }).exec((err, fan) => {
+    Fan.findOne({ id: req.params.id, type: 'Fan' }).exec((err, fan) => {
       if (err) {
         return res.serverError(err)
       }
@@ -66,7 +66,7 @@ module.exports = {
   },
 
   high: (req, res) => {
-    Fan.findOne({ id: req.params.id, isyType: 'Fan' }).exec((err, fan) => {
+    Fan.findOne({ id: req.params.id, type: 'Fan' }).exec((err, fan) => {
       if (err) {
         return res.serverError(err)
       }

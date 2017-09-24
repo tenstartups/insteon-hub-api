@@ -49,8 +49,10 @@ module.exports.routes = {
   // Device controller actions
   'get /api/devices': 'DeviceController.index',
   'get /api/device/:id': 'DeviceController.show',
-  'patch /api/device/:id': 'DeviceController.update',
-  'patch /api/device/:id/token/:token': 'DeviceController.token',
+  'post /api/device/:id/advertise': 'DeviceController.advertise',
+  'delete /api/device/:id/advertise': 'DeviceController.stopAdvertising',
+  'post /api/device/:id/token/:token': 'DeviceController.setToken',
+  'delete /api/device/:id/token/:token': 'DeviceController.deleteToken',
 
   // Light controller actions
   'get /api/light/:id/status': 'SwitchController.status',

@@ -16,8 +16,8 @@ module.exports = (sails) => {
         console.log('Initializing device records...')
         var deviceList = sails.hooks.isy.connection().getDeviceList()
         Device.findOrCreate(
-          deviceList.map(d => { return { isyAddress: d.address } }),
-          deviceList.map(d => { return { isyAddress: d.address, isyType: d.deviceType, name: d.name } })
+          deviceList.map(d => { return { address: d.address } }),
+          deviceList.map(d => { return { address: d.address, type: d.deviceType, name: d.name } })
         ).exec((err, records) => {
           if (err) {
             console.log(`Error initializing device records`)
