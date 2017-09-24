@@ -187,10 +187,10 @@ module.exports = {
         }
         request(options)
         .then(result => {
-          console.log(`Successfully sent update ${JSON.stringify(data)} to ${endpoint.uri}/update`)
+          console.log(`Successfully sent update ${JSON.stringify(body.data)} to ${endpoint.uri}/update`)
         })
         .catch(reason => {
-          console.log(`Error sending update ${JSON.stringify(data)} to ${endpoint.uri}/update`)
+          console.log(`Error sending update ${JSON.stringify(body.data)} to ${endpoint.uri}/update`)
         })
       })
     },
