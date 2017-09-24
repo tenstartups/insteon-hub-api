@@ -1,6 +1,7 @@
+var camelCase = require('uppercamelcase')
+var crypto = require('crypto');
 var request = require('request-promise-native')
 var SSDP = require('node-ssdp').Server
-const camelCase = require('uppercamelcase')
 const uuidv4 = require('uuid/v4')
 
 const settings = require('js-yaml')
@@ -98,24 +99,17 @@ module.exports = {
       type: 'string'
     },
 
-    isyTypeCode: function () {
-      return this.isyType.replace(/(?:^|\.?)([A-Z])/g, function (x, y) { return '-' + y.toLowerCase() }).replace(/^-/, '')
+    externalId: function () {
+      var key = `isy:${settings.isy.id || '01'}:${this.isyType}:${this.isyAddress}`
+      return crypto.createHash('md5').update(key).digest('hex')
     },
 
-    smartThingsId: function () {
-      return `isy:${settings.isy.id || '01'}:${this.isyTypeCode()}:${this.isyAddress.replace(/[ ]/g, '-')}`
+    displayType: function () {
+      return `ISY ${this.isyType} [${this.isyAddress}]`
     },
 
-    smartThingsName: function () {
-      return `${this.smartThingsDeviceHandler()} [${this.isyAddress}]`
-    },
-
-    smartThingsLabel: function () {
+    displayName: function () {
       return `${settings.devices.name_prefix || ''} ${this.name} ${settings.devices.name_suffix || ''}`.trim()
-    },
-
-    smartThingsDeviceHandler: function () {
-      return `ISY ${this.isyType}`
     },
 
     ssdpUSN: function () {
@@ -123,7 +117,7 @@ module.exports = {
     },
 
     ssdpUDN: function () {
-      return `isy:${settings.isy.id || '01'}:${this.isyTypeCode()}:${this.isyAddress.replace(/[ ]/g, '-')}`
+      return `uid:${this.externalId()}`
     },
 
     ssdpLocation: function () {
@@ -150,10 +144,9 @@ module.exports = {
         model: this.model,
         name: this.name,
         description: this.description,
-        smart_things_id: this.smartThingsId(),
-        smart_things_name: this.smartThingsName(),
-        smart_things_label: this.smartThingsLabel(),
-        smart_things_device_handler: this.smartThingsDeviceHandler(),
+        external_id: this.externalId(),
+        display_type: this.displayType(),
+        display_name: this.displayName(),
         mac_address: this.ssdpAdvertiseMAC(),
         ip_address: this.ssdpAdvertiseIP(),
         ip_port: this.ssdpAdvertisePort()
