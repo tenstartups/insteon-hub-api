@@ -25,22 +25,22 @@ module.exports =  _.merge(_.cloneDeep(Device), {
     },
 
     turnOff: function () {
-      this.isyDevice().sendFanCommand(ISYFanDevice.FAN_OFF, success => {})
+      this.isyDevice().sendFanCommand('Off', success => {})
       return { command: 'turn_off' }
     },
 
     setLow: function () {
-      this.isyDevice().sendLightCommand(ISYFanDevice.FAN_LEVEL_LOW, success => {})
+      this.isyDevice().sendLightCommand('Low', success => {})
       return { command: 'set_low' }
     },
 
     setMedium: function () {
-      this.isyDevice().sendLightCommand(ISYFanDevice.FAN_LEVEL_MEDIUM, success => {})
+      this.isyDevice().sendLightCommand('Medium', success => {})
       return { command: 'set_medium' }
     },
 
     setHigh: function () {
-      this.isyDevice().sendLightCommand(ISYFanDevice.FAN_LEVEL_HIGH, success => {})
+      this.isyDevice().sendLightCommand('High', success => {})
       return { command: 'set_high' }
     }
   }

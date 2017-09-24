@@ -44,7 +44,7 @@ module.exports = {
       if (!fan) {
         return res.notFound({ error: `Fan with id ${req.params.id} not found` })
       }
-      return res.json({ device: fan, result: fan.turnLow() })
+      return res.json({ device: fan, result: fan.setLow() })
     })
   },
 
@@ -56,7 +56,7 @@ module.exports = {
       if (!fan) {
         return res.notFound({ error: `Fan with id ${req.params.id} not found` })
       }
-      return res.json({ device: fan, result: fan.turnMedium() })
+      return res.json({ device: fan, result: fan.setMedium() })
     })
   },
 
@@ -68,7 +68,7 @@ module.exports = {
       if (!fan) {
         return res.notFound({ error: `Fan with id ${req.params.id} not found` })
       }
-      return res.json({ device: fan, result: fan.turnHigh() })
+      return res.json({ device: fan, result: fan.setHigh() })
     })
   }
 }
