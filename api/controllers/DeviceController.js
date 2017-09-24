@@ -48,20 +48,17 @@ module.exports = {
       if (!device) {
         return res.notFound({ error: `Device with id ${req.params.id} not found` })
       }
-      device.smartThingsToken = req.param.token
+      device.smartThingsToken = req.params.token
       device.loadSmartThingsAppEndpoints().then(result => {
-        device.smartThingsAppEndpoints.join(',')
-        device.save().exec((err, devices) => {
+        device.smartThingsAppEndpoints = result
+        device.save(err => {
           if (err) {
             return res.serverError(err)
           }
-          if (devices.length !== 1) {
-            return res.notFound({ error: `Device with id ${req.params.id} not found` })
-          }
-          return res.json({ device: devices[0] })
+          return res.json({ device: device })
         })
       }).catch(reason => {
-        return res.serverError(err)
+        return res.serverError(reason)
       })
     })
   }

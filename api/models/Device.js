@@ -148,17 +148,19 @@ module.exports = {
 
     loadSmartThingsAppEndpoints: function () {
       return new Promise((resolve, reject) => {
+        if (!this.smartThingsToken) {
+          reject(new Error('Token not set'))
+        }
         var options = {
           headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${this.smartThingsToken}`
           },
           uri: 'https://graph.api.smartthings.com/api/smartapps/endpoints',
           json: true
         }
         request(options)
         .then(result => {
-          console.log(result)
-          resolve(result)
+          resolve(result.map(e => { return e.uri }))
         })
         .catch(reason => {
           reject(reason)

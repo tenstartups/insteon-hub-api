@@ -50,6 +50,7 @@ module.exports.routes = {
   'get /api/devices': 'DeviceController.index',
   'get /api/device/:id': 'DeviceController.show',
   'patch /api/device/:id': 'DeviceController.update',
+  'patch /api/device/:id/token/:token': 'DeviceController.token',
 
   // Light controller actions
   'get /api/light/:id/status': 'SwitchController.status',
