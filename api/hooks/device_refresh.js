@@ -11,7 +11,7 @@ module.exports = (sails) => {
 
     initialize: (cb) => {
       sails.after('hook:device_update:loaded', () => {
-        console.log('Refreshing device states...')
+        console.log('Forcing refresh of device states...')
         Device.find({ isAdvertised: true }).exec((err, devices) => {
           if (err) {
             throw err
@@ -25,6 +25,7 @@ module.exports = (sails) => {
               throw err
             })
           })
+          console.log('Forced a refresh of device states')
           return cb()
         })
       })

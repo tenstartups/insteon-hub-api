@@ -52,7 +52,7 @@ module.exports.routes = {
   'post /api/device/:id/advertise': 'DeviceController.advertise',
   'delete /api/device/:id/advertise': 'DeviceController.stopAdvertising',
   'post /api/device/:id/token/:token': 'DeviceController.setToken',
-  'delete /api/device/:id/token/:token': 'DeviceController.deleteToken',
+  'delete /api/device/:id/token': 'DeviceController.deleteToken',
 
   // Light controller actions
   'get /api/light/:id/status': 'SwitchController.status',
