@@ -14,47 +14,47 @@
  *
  */
 definition(
-		name: "ISY Device Manager",
-		namespace: "TenStartups",
-		author: "Marc Lennox (marc.lennox@gmail.com)",
-		description: "Integrate SmartThings with an ISY994i home automation controller in order to control and receive events from your ISY lights, dimmers, outlets, fans and scenes.",
-		category: "My Apps",
-		iconUrl: "http://www.smarthome.com.au/media/extendware/ewimageopt/media/template/12/e/insteon-home-automation-system.png",
-		iconX2Url: "http://www.smarthome.com.au/media/extendware/ewimageopt/media/template/12/e/insteon-home-automation-system.png",
-		iconX3Url: "http://www.smarthome.com.au/media/extendware/ewimageopt/media/template/12/e/insteon-home-automation-system.png")
+  name: "ISY Device Manager",
+  namespace: "TenStartups",
+  author: "Marc Lennox (marc.lennox@gmail.com)",
+  description: "Integrate SmartThings with an ISY994i home automation controller in order to control and receive events from your ISY lights, dimmers, outlets, fans and scenes.",
+  category: "My Apps",
+  iconUrl: "http://www.smarthome.com.au/media/extendware/ewimageopt/media/template/12/e/insteon-home-automation-system.png",
+  iconX2Url: "http://www.smarthome.com.au/media/extendware/ewimageopt/media/template/12/e/insteon-home-automation-system.png",
+  iconX3Url: "http://www.smarthome.com.au/media/extendware/ewimageopt/media/template/12/e/insteon-home-automation-system.png")
 
 preferences {
 	page(name: "deviceDiscovery", title: "ISY994i Discovery", content: "deviceDiscovery")
 }
 
 mappings {
-    path("/update") {
-        action: [POST: "processUpdate"]
-    }
+  path("/update") {
+    action: [POST: "processUpdate"]
+  }
 }
 
 def ssdpUSN() {
-    return "urn:schemas-upnp-org:service:ISYDeviceManager:1"        
+  return "urn:schemas-upnp-org:service:ISYDeviceManager:1"
 }
 
 def deviceDiscovery() {
 	def lightDevices = lightChoices()
 	def dimmableLightDevices = dimmableLightChoices()
-    def outletDevices = outletChoices()
+  def outletDevices = outletChoices()
 	def fanDevices = fanChoices()
 	def sceneDevices = sceneChoices()
 
-    ssdpSubscribe()
+  ssdpSubscribe()
 	ssdpDiscover()
 
  	return dynamicPage(name: "deviceDiscovery", title: "Started ISY device discovery...", nextPage: "", refreshInterval: 5, install: true, uninstall: true) {
-		section("Please wait while we discover your ISY devices. Select the devices you want to control in SmartThings below once they have been discovered.") {
-			input "selectedLights", "enum", required: false, title: "Light devices (${lightDevices.size() ?: 0} found)", multiple: true, options: lightDevices
-			input "selectedDimmableLights", "enum", required: false, title: "Dimmable light devices (${dimmableLightDevices.size() ?: 0} found)", multiple: true, options: dimmableLightDevices
-			input "selectedOutlets", "enum", required: false, title: "Outlet devices (${outletDevices.size() ?: 0} found)", multiple: true, options: outletDevices
-			input "selectedFans", "enum", required: false, title: "Fan devices (${fanDevices.size() ?: 0} found)", multiple: true, options: fanDevices
-			input "selectedScenes", "enum", required: false, title: "Scene devices (${sceneDevices.size() ?: 0} found)", multiple: true, options: sceneDevices
-		}
+    section("Please wait while we discover your ISY devices. Select the devices you want to control in SmartThings below once they have been discovered.") {
+    	input "selectedLights", "enum", required: false, title: "Light devices (${lightDevices.size() ?: 0} found)", multiple: true, options: lightDevices
+    	input "selectedDimmableLights", "enum", required: false, title: "Dimmable light devices (${dimmableLightDevices.size() ?: 0} found)", multiple: true, options: dimmableLightDevices
+    	input "selectedOutlets", "enum", required: false, title: "Outlet devices (${outletDevices.size() ?: 0} found)", multiple: true, options: outletDevices
+    	input "selectedFans", "enum", required: false, title: "Fan devices (${fanDevices.size() ?: 0} found)", multiple: true, options: fanDevices
+    	input "selectedScenes", "enum", required: false, title: "Scene devices (${sceneDevices.size() ?: 0} found)", multiple: true, options: sceneDevices
+    }
 	}
 }
 
@@ -79,101 +79,101 @@ def initialize() {
 	unschedule()
 	ssdpSubscribe()
 	createSelectedDevices()
-    deleteUnselectedDevices()
+  deleteUnselectedDevices()
 	runEvery5Minutes("ssdpDiscover")
 }
 
 def selectedDevices() {
 	def selected = []
-    if (selectedLights) {
-    	selected += selectedLights
+  if (selectedLights) {
+  	selected += selectedLights
 	}
-    if (selectedDimmableLights) {
-    	selected += selectedDimmableLights
-	}
-    if (selectedOutlets) {
-    	selected += selectedOutlets
-	}
-    if (selectedFans) {
-    	selected += selectedFans
-	}
-    if (selectedScenes) {
-    	selected += selectedScenes
-	}
-    selected
+  if (selectedDimmableLights) {
+  	selected += selectedDimmableLights
+  }
+  if (selectedOutlets) {
+  	selected += selectedOutlets
+  }
+  if (selectedFans) {
+  	selected += selectedFans
+  }
+  if (selectedScenes) {
+  	selected += selectedScenes
+  }
+  selected
 }
 
 def discoveredLightDevices() {
 	if (!state.discoveredLightDevices) {
-		state.discoveredLightDevices = [:]
+    state.discoveredLightDevices = [:]
 	}
 	state.discoveredLightDevices
 }
 
 def discoveredDimmableLightDevices() {
 	if (!state.discoveredDimmableLightDevices) {
-		state.discoveredDimmableLightDevices = [:]
+    state.discoveredDimmableLightDevices = [:]
 	}
 	state.discoveredDimmableLightDevices
 }
 
 def discoveredOutletDevices() {
 	if (!state.discoveredOutletDevices) {
-		state.discoveredOutletDevices = [:]
+    state.discoveredOutletDevices = [:]
 	}
 	state.discoveredOutletDevices
 }
 
 def discoveredFanDevices() {
 	if (!state.discoveredFanDevices) {
-		state.discoveredFanDevices = [:]
+    state.discoveredFanDevices = [:]
 	}
 	state.discoveredFanDevices
 }
 
 def discoveredSceneDevices() {
 	if (!state.discoveredSceneDevices) {
-		state.discoveredSceneDevices = [:]
+    state.discoveredSceneDevices = [:]
 	}
 	state.discoveredSceneDevices
 }
 
 Map lightChoices() {
 	def map = [:]
-    discoveredLightDevices().sort({ it.value.label }).each {
-		map[it.value.dni] = it.value.label
+  discoveredLightDevices().sort({ it.value.label }).each {
+    map[it.value.dni] = it.value.label
 	}
 	map
 }
 
 Map dimmableLightChoices() {
 	def map = [:]
-    discoveredDimmableLightDevices().sort({ it.value.label }).each {
-		map[it.value.dni] = it.value.label
+  discoveredDimmableLightDevices().sort({ it.value.label }).each {
+    map[it.value.dni] = it.value.label
 	}
 	map
 }
 
 Map outletChoices() {
 	def map = [:]
-    discoveredOutletDevices().sort({ it.value.label }).each {
-		map[it.value.dni] = it.value.label
+  discoveredOutletDevices().sort({ it.value.label }).each {
+    map[it.value.dni] = it.value.label
 	}
 	map
 }
 
 Map fanChoices() {
 	def map = [:]
-    discoveredFanDevices().sort({ it.value.label }).each {
-		map[it.value.dni] = it.value.label
+  discoveredFanDevices().sort({ it.value.label }).each {
+    map[it.value.dni] = it.value.label
 	}
 	map
 }
 
 Map sceneChoices() {
 	def map = [:]
-    discoveredSceneDevices().sort({ it.value.label }).each {
-		map[it.value.dni] = it.value.label
+  discoveredSceneDevices().sort({ it.value.label }).each {
+    map[it.value.dni] = it.value.label
 	}
 	map
 }
@@ -184,19 +184,19 @@ void ssdpSubscribe() {
 
 void ssdpDiscover() {
 	sendHubCommand(new physicalgraph.device.HubAction("lan discovery ${ssdpUSN()}", physicalgraph.device.Protocol.LAN))
-}  
+}
 
 void ssdpDiscoveryHandler(event) {
 	def parsedEvent = parseLanMessage(event?.description)
     String ipAddress = convertHexToIP(parsedEvent?.networkAddress)
     int ipPort = convertHexToInt(parsedEvent?.deviceAddress)
     sendHubCommand(
-        new physicalgraph.device.HubAction(
-            """GET ${parsedEvent.ssdpPath} HTTP/1.1\r\nHOST: ${ipAddress}:${ipPort}\r\n\r\n""",
-            physicalgraph.device.Protocol.LAN,
-            null,
-            [callback: ssdpDescriptionHandler]
-        )
+      new physicalgraph.device.HubAction(
+        """GET ${parsedEvent.ssdpPath} HTTP/1.1\r\nHOST: ${ipAddress}:${ipPort}\r\n\r\n""",
+        physicalgraph.device.Protocol.LAN,
+        null,
+        [ callback: ssdpDescriptionHandler ]
+      )
     )
 }
 
@@ -206,162 +206,162 @@ void ssdpDescriptionHandler(physicalgraph.device.HubResponse hubResponse) {
 	def discoveredDevices = hubResponse.json?.device
 
 	def discoveredLights = [:]
-    def discoveredDimmableLights = [:]
-    def discoveredOutlets = [:]
-    def discoveredFans = [:]
-    def discoveredScenes = [:]
+  def discoveredDimmableLights = [:]
+  def discoveredOutlets = [:]
+  def discoveredFans = [:]
+  def discoveredScenes = [:]
 
 	discoveredDevices.each { device ->
-        def deviceAttrs = [
-        	hubId: hubResponse.hubId,
-            dni: device.network_id,
-            label: device.name,
-            externalId: device.id,
-            isyAddress: device.address,
-            ipAddress: device.ip_address,
-            ipPort: device.ip_port,
-        ]
-        switch (device.type) {
-            case 'Light':
-	            deviceAttrs << [name: 'ISY Light Device', handler: 'ISY Light']
-    	        discoveredLights[device.network_id] = deviceAttrs
-        	    break
-            case 'DimmableLight':
-                deviceAttrs << [name: 'ISY Dimmable Light Device', handler: 'ISY Dimmable Light']
-                discoveredDimmableLights[device.network_id] = deviceAttrs
-                break
-            case 'Outlet':
-                deviceAttrs << [name: 'ISY Outlet Device', handler: 'ISY Outlet']
-                discoveredOutlets[device.network_id] = deviceAttrs
-                break
-            case 'Fan':
-                deviceAttrs << [name: 'ISY Fan Device', handler: 'ISY Fan']
-                discoveredFans[device.network_id] = deviceAttrs
-                break
-            case 'Scene':
-                deviceAttrs << [name: 'ISY Scene Device', handler: 'ISY Scene']
-                discoveredScenes[device.network_id] = deviceAttrs
-                break
-        }
-        def childDevice = getChildDevice(deviceAttrs.dni)
-        if (childDevice) {
-			refreshChildDevice(childDevice, deviceAttrs)
-        }
+    def deviceAttrs = [
+    	hubId: hubResponse.hubId,
+        dni: device.network_id,
+        label: device.name,
+        externalId: device.id,
+        isyAddress: device.address,
+        ipAddress: device.ip_address,
+        ipPort: device.ip_port,
+    ]
+    switch (device.type) {
+      case 'Light':
+        deviceAttrs << [ name: 'ISY Light Device', handler: 'ISY Light' ]
+        discoveredLights[device.network_id] = deviceAttrs
+  	    break
+      case 'DimmableLight':
+          deviceAttrs << [ name: 'ISY Dimmable Light Device', handler: 'ISY Dimmable Light' ]
+          discoveredDimmableLights[device.network_id] = deviceAttrs
+          break
+      case 'Outlet':
+          deviceAttrs << [ name: 'ISY Outlet Device', handler: 'ISY Outlet' ]
+          discoveredOutlets[device.network_id] = deviceAttrs
+          break
+      case 'Fan':
+          deviceAttrs << [ name: 'ISY Fan Device', handler: 'ISY Fan' ]
+          discoveredFans[device.network_id] = deviceAttrs
+          break
+      case 'Scene':
+          deviceAttrs << [ name: 'ISY Scene Device', handler: 'ISY Scene' ]
+          discoveredScenes[device.network_id] = deviceAttrs
+          break
+    }
+    def childDevice = getChildDevice(deviceAttrs.dni)
+    if (childDevice) {
+	     refreshChildDevice(childDevice, deviceAttrs)
+    }
 	}
-     
-    // Reset state maps
-    state.discoveredLightDevices = discoveredLights
-    state.discoveredDimmableLightDevices = discoveredDimmableLights
-    state.discoveredOutletDevices = discoveredOutlets
-    state.discoveredFanDevices = discoveredFans
-    state.discoveredSceneDevices = discoveredScenes
- }
+
+  // Reset state maps
+  state.discoveredLightDevices = discoveredLights
+  state.discoveredDimmableLightDevices = discoveredDimmableLights
+  state.discoveredOutletDevices = discoveredOutlets
+  state.discoveredFanDevices = discoveredFans
+  state.discoveredSceneDevices = discoveredScenes
+}
 
 void refreshChildDevice(childDevice, deviceAttrs) {
 	syncDeviceNameAndLabel(childDevice, deviceAttrs.name, deviceAttrs.label)
-    syncDeviceDataValue(childDevice, "externalId", deviceAttrs.externalId)
-    syncDeviceDataValue(childDevice, "ipAddress", deviceAttrs.ipAddress)
-    syncDeviceDataValue(childDevice, "ipPort", deviceAttrs.ipPort)
+  syncDeviceDataValue(childDevice, "externalId", deviceAttrs.externalId)
+  syncDeviceDataValue(childDevice, "ipAddress", deviceAttrs.ipAddress)
+  syncDeviceDataValue(childDevice, "ipPort", deviceAttrs.ipPort)
 }
 
 void updateChildDeviceToken(childDevice) {
-    sendHubCommand(
-        new physicalgraph.device.HubAction(
-            method: "POST",
-            path: "/api/device/${childDevice.getDataValue("externalId")}/token/${state.accessToken}",
-            headers: [HOST: "${childDevice.getDataValue("ipAddress")}:${childDevice.getDataValue("ipPort")}"]
-        )
+  sendHubCommand(
+    new physicalgraph.device.HubAction(
+      method: "POST",
+      path: "/api/device/${childDevice.getDataValue("externalId")}/token/${state.accessToken}",
+      headers: [ HOST: "${childDevice.getDataValue("ipAddress")}:${childDevice.getDataValue("ipPort")}" ]
     )
+  )
 }
 
 void deleteChildDeviceToken(childDevice) {
-    sendHubCommand(
-        new physicalgraph.device.HubAction(
-            method: "DELETE",
-            path: "/api/device/${childDevice.getDataValue("externalId")}/token",
-            headers: [HOST: "${childDevice.getDataValue("ipAddress")}:${childDevice.getDataValue("ipPort")}"]
-        )
+  sendHubCommand(
+    new physicalgraph.device.HubAction(
+      method: "DELETE",
+      path: "/api/device/${childDevice.getDataValue("externalId")}/token",
+      headers: [ HOST: "${childDevice.getDataValue("ipAddress")}:${childDevice.getDataValue("ipPort")}" ]
     )
+  )
 }
 
 def createSelectedDevices(devices) {
 	def selectedDevices = selectedLights.collect { dni -> discoveredLightDevices()[dni] } +
-                          selectedDimmableLights.collect { dni -> discoveredDimmableLightDevices()[dni] } +
-                          selectedOutlets.collect { dni -> discoveredOutletDevices()[dni] } +
-                          selectedFans.collect { dni -> discoveredFanDevices()[dni] } +
-                          selectedScenes.collect { dni -> discoveredSceneDevices()[dni] }
+                        selectedDimmableLights.collect { dni -> discoveredDimmableLightDevices()[dni] } +
+                        selectedOutlets.collect { dni -> discoveredOutletDevices()[dni] } +
+                        selectedFans.collect { dni -> discoveredFanDevices()[dni] } +
+                        selectedScenes.collect { dni -> discoveredSceneDevices()[dni] }
 
 	selectedDevices.each { device ->
-		def childDevice = getChildDevice(device.dni)
-		if (!childDevice) {
-            log.debug("Adding child device ${device.label}")
-            childDevice = addChildDevice(
-                "TenStartups", device.handler, device.dni, device.hubId, [
-                    "name": device.name,
-                    "label": device.label,
-                    "data": [
-                        "externalId": device.externalId,
-                        "ipAddress": device.ipAddress,
-                        "ipPort": device.ipPort,
-                    ],
-                    completedSetup: true
-                ]
-            )
-        }
-        updateChildDeviceToken(childDevice)
+    def childDevice = getChildDevice(device.dni)
+    if (!childDevice) {
+      log.debug("Adding child device ${device.label}")
+      childDevice = addChildDevice(
+        "TenStartups", device.handler, device.dni, device.hubId, [
+          "name": device.name,
+          "label": device.label,
+          "data": [
+            "externalId": device.externalId,
+            "ipAddress": device.ipAddress,
+            "ipPort": device.ipPort,
+          ],
+          completedSetup: true
+        ]
+      )
+    }
+    updateChildDeviceToken(childDevice)
 	}
 }
 
 def deleteUnselectedDevices(devices) {
 	(getChildDevices().collect { it.deviceNetworkId } - selectedDevices()).each { dni ->
-		def childDevice = getChildDevice(dni)
-		if (!childDevice) {
-        	return
-        }
-	    log.debug("Removing child device ${childDevice.label}")
-        deleteChildDeviceToken(childDevice)
-        deleteChildDevice(dni)
+    def childDevice = getChildDevice(dni)
+    if (!childDevice) {
+    	return
+    }
+    log.debug("Removing child device ${childDevice.label}")
+    deleteChildDeviceToken(childDevice)
+    deleteChildDevice(dni)
 	}
 }
 
 def syncDeviceNameAndLabel(device, name, label) {
-    if (name && device.name != name) {
-    	console.log("Changing device name from '${device.name}' to '${name}'")
-        device.name = name
-    }
-    if (label && device.label != label) {
-    	console.log("Changing device label from '${device.label}' to '${label}'")
-        device.label = label
-    }
+  if (name && device.name != name) {
+  	console.log("Changing device name from '${device.name}' to '${name}'")
+    device.name = name
+  }
+  if (label && device.label != label) {
+  	console.log("Changing device label from '${device.label}' to '${label}'")
+    device.label = label
+  }
 }
 
 def syncDeviceDataValue(device, name, value) {
-    if (value && device.getDataValue(name) != value) {
-    	console.log("Changing data value '${name}' name from '${device.getDataValue(name)}' to '${value}'")
-        device.setDataValue(name, value)
-    }
+  if (value && device.getDataValue(name) != value) {
+  	console.log("Changing data value '${name}' name from '${device.getDataValue(name)}' to '${value}'")
+    device.setDataValue(name, value)
+  }
 }
 
 def processUpdate() {
 	log.debug("Received update message ${request.JSON}")
 
 	if (!request.JSON?.device?.network_id) {
-    	return httpError(422, "Missing device attributes in update message")
-    }
+  	return httpError(422, "Missing device attributes in update message")
+  }
 
 	if (!request.JSON?.data) {
-    	return httpError(400, "Missing data in update message")
-    }
+  	return httpError(400, "Missing data in update message")
+  }
 
 	def childDevice = getChildDevice(request.JSON.device.network_id)
 
 	if (childDevice) {
-        childDevice.processStatusUpdate(request.JSON.data)
-        return [ status: 'OK', data: request.JSON.data ]
-    } else {
-        log.debug("Device ${request.JSON.device.network_id} not found, deleting remote token")
-        return httpError(404, "Device with network ID ${request.JSON.device.network_id} does not exist")
-    }
+    childDevice.processStatusUpdate(request.JSON.data)
+    return [ status: 'OK', data: request.JSON.data ]
+  } else {
+    log.debug("Device ${request.JSON.device.network_id} not found, deleting remote token")
+    return httpError(404, "Device with network ID ${request.JSON.device.network_id} does not exist")
+  }
 }
 
 private Integer convertHexToInt(hex) {
