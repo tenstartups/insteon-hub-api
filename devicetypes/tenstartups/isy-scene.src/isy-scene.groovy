@@ -14,7 +14,7 @@
  *
  */
 import groovy.json.JsonSlurper
- 
+
 metadata {
     definition (name: "ISY Scene", author: "marclennox", namespace: "TenStartups") {
         capability "Switch"
@@ -28,26 +28,26 @@ metadata {
 
     // UI tile definitions
     tiles(scale:2) {
-       multiAttributeTile(name:"switch", type: "lighting", width: 6, height: 4, canChangeIcon: true){
+       multiAttributeTile(name: "switch", type: "lighting", width: 6, height: 4, canChangeIcon: true) {
             tileAttribute ("device.switch", key: "PRIMARY_CONTROL") {
-                attributeState "on", label:'${name}', action:"switch.off", icon:"st.switches.switch.on", backgroundColor:"#79b821", nextState:"turningOff"
-                attributeState "off", label:'${name}', action:"switch.on", icon:"st.switches.switch.off", backgroundColor:"#ffffff", nextState:"turningOn"
-                attributeState "turningOn", label:'${name}', action:"switch.off", icon:"st.switches.switch.on", backgroundColor:"#79b821", nextState:"turningOff"
-                attributeState "turningOff", label:'${name}', action:"switch.on", icon:"st.switches.switch.off", backgroundColor:"#ffffff", nextState:"turningOn"
+                attributeState "on", label:'${name}', action: "switch.off", icon: "st.Lighting.light11", backgroundColor: "#79b821", nextState: "turningOff"
+                attributeState "off", label:'${name}', action: "switch.on", icon: "st.Lighting.light13", backgroundColor: "#ffffff", nextState: "turningOn"
+                attributeState "turningOn", label:'${name}', action: "switch.off", icon: "st.Lighting.light11", backgroundColor: "#79b821", nextState: "turningOff"
+                attributeState "turningOff", label:'${name}', action: "switch.on", icon: "st.Lighting.light13", backgroundColor: "#ffffff", nextState: "turningOn"
             }
-            
+
            tileAttribute ("device.level", key: "SLIDER_CONTROL") {
-               attributeState "level", action:"switch level.setLevel"
+               attributeState "level", action: "switch level.setLevel"
            }
 
         }
-        
+
         standardTile("refresh", "device.switch", width: 2, height: 2, inactiveLabel: false, decoration: "flat") {
-            state "default", label:'', action:"refresh.refresh", icon:"st.secondary.refresh"
+            state "default", label:'', action: "refresh.refresh", icon: "st.secondary.refresh"
         }
 
         valueTile("level", "device.level", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
-            state "level", label:'${currentValue} %', unit:"%", backgroundColor:"#ffffff"
+            state "level", label:'${currentValue} %', unit: "%", backgroundColor: "#ffffff"
         }
 
         main(["switch"])
