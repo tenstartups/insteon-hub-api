@@ -325,15 +325,18 @@ def deleteUnselectedDevices(devices) {
 
 def syncDeviceNameAndLabel(device, name, label) {
     if (name && device.name != name) {
+    	console.log("Changing device name from '${device.name}' to '${name}'")
         device.name = name
     }
     if (label && device.label != label) {
+    	console.log("Changing device label from '${device.label}' to '${label}'")
         device.label = label
     }
 }
 
 def syncDeviceDataValue(device, name, value) {
     if (value && device.getDataValue(name) != value) {
+    	console.log("Changing data value '${name}' name from '${device.getDataValue(name)}' to '${value}'")
         device.setDataValue(name, value)
     }
 }
