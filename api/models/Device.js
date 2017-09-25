@@ -18,13 +18,29 @@ module.exports = {
 
   findTyped: function (options) {
     return new Promise((resolve, reject) => {
-      eval(options.type).findOne(options).exec((err, device) => {
-        if (err) {
-          console.log(`Error fetching ${options.type} device with criteria ${JSON.stringify(options)}`)
-          reject(err)
-        }
-        resolve(device)
-      })
+      if (options.type) {
+        eval(options.type).findOne(options).exec((err, device) => {
+          if (err) {
+            console.log(`Error fetching ${options.type} device with criteria ${JSON.stringify(options)}`)
+            reject(err)
+          }
+          resolve(device)
+        })
+      } else {
+        Device.findOne(options).exec((err, device) => {
+          if (err) {
+            console.log(`Error fetching ${options.type} device with criteria ${JSON.stringify(options)}`)
+            reject(err)
+          }
+          eval(options.type).findOne(options).exec((err, device) => {
+            if (err) {
+              console.log(`Error fetching ${options.type} device with criteria ${JSON.stringify(options)}`)
+              reject(err)
+            }
+            resolve(device)
+          })
+        })
+      }
     })
   },
 

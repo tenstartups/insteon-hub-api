@@ -46,10 +46,7 @@ module.exports = {
   },
 
   setToken: (req, res) => {
-    Device.findOne(req.params.id).exec((err, device) => {
-      if (err) {
-        return res.serverError(err)
-      }
+    Device.findTyped({ id: req.params.id }).then(device => {
       if (!device) {
         return res.notFound({ error: `Device with id ${req.params.id} not found` })
       }
@@ -60,11 +57,12 @@ module.exports = {
           if (err) {
             return res.serverError(err)
           }
+          device.sendSmartThingsUpdate()
           return res.json({ device: device })
         })
-      }).catch(reason => {
-        return res.serverError(reason)
       })
+    }).catch(reason => {
+      return res.serverError(reason)
     })
   },
 
