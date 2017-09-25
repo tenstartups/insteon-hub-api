@@ -187,7 +187,6 @@ void ssdpDiscover() {
 }  
 
 void ssdpDiscoveryHandler(event) {
-    state.hubId = event?.hubId
 	def parsedEvent = parseLanMessage(event?.description)
     String ipAddress = convertHexToIP(parsedEvent?.networkAddress)
     int ipPort = convertHexToInt(parsedEvent?.deviceAddress)
@@ -214,7 +213,7 @@ void ssdpDescriptionHandler(physicalgraph.device.HubResponse hubResponse) {
 
 	discoveredDevices.each { device ->
         def deviceAttrs = [
-        	hubId: state.hubId,
+        	hubId: hubResponse.hubId,
             dni: device.network_id,
             label: device.name,
             externalId: device.id,
@@ -247,7 +246,7 @@ void ssdpDescriptionHandler(physicalgraph.device.HubResponse hubResponse) {
         def childDevice = getChildDevice(deviceAttrs.dni)
         if (childDevice) {
 			refreshChildDevice(childDevice, deviceAttrs)
- 			updateChildDeviceToken(childDevice)
+// 			updateChildDeviceToken(childDevice)
         }
 	}
      
@@ -276,12 +275,12 @@ void updateChildDeviceToken(childDevice) {
     )
 }
 
-void deleteChildDeviceToken(childDevice) {
+void deleteChildDeviceToken(deviceAttrs) {
     sendHubCommand(
         new physicalgraph.device.HubAction(
             method: "DELETE",
-            path: "/api/device/${childDevice.getDataValue("externalId")}/token",
-            headers: [HOST: "${childDevice.getDataValue("ipAddress")}:${childDevice.getDataValue("ipPort")}"]
+            path: "/api/device/${deviceAttrs.id}/token",
+            headers: [HOST: "${deviceAttrs.ip_address}:${deviceAttrs.ip_port}"]
         )
     )
 }
@@ -297,18 +296,20 @@ def createSelectedDevices(devices) {
 		def childDevice = getChildDevice(device.dni)
 		if (!childDevice) {
             log.debug("Adding child device ${device.label}")
-            childDevice = addChildDevice("TenStartups", device.handler, device.dni, device.hubId, [
-                "name": device.name,
-                "label": device.label,
-                "data": [
-                    "externalId": device.externalId,
-                    "ipAddress": device.ipAddress,
-                    "ipPort": device.ipPort,
-                ],
-                completedSetup: true
-            ])
+            childDevice = addChildDevice(
+                "TenStartups", device.handler, device.dni, device.hubId, [
+                    "name": device.name,
+                    "label": device.label,
+                    "data": [
+                        "externalId": device.externalId,
+                        "ipAddress": device.ipAddress,
+                        "ipPort": device.ipPort,
+                    ],
+                    completedSetup: true
+                ]
+            )
+            updateChildDeviceToken(childDevice)
         }
-        updateChildDeviceToken(childDevice)
 	}
 }
 
@@ -351,7 +352,7 @@ def processUpdate() {
     }
     def child = getChildDevice(request.JSON.device.network_id)
 	if (!child) {
-    	deleteChildDeviceToken()
+    	deleteChildDeviceToken(request.JSON?.device)
     	httpError(404, "Device ${request.JSON.device.network_id} not found")
     }
 
