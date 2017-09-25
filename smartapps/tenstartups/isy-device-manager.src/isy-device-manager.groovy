@@ -17,7 +17,7 @@ definition(
 		name: "ISY Device Manager",
 		namespace: "TenStartups",
 		author: "Marc Lennox (marc.lennox@gmail.com)",
-		description: "Integrate SmartThings with an ISY994i home automation controller in order to control and receive events from your Insteon Switches, Dimmers, Outlets and Fan Controllers.",
+		description: "Integrate SmartThings with an ISY994i home automation controller in order to control and receive events from your ISY lights, dimmers, outlets, fans and scenes.",
 		category: "My Apps",
 		iconUrl: "http://www.smarthome.com.au/media/extendware/ewimageopt/media/template/12/e/insteon-home-automation-system.png",
 		iconX2Url: "http://www.smarthome.com.au/media/extendware/ewimageopt/media/template/12/e/insteon-home-automation-system.png",
@@ -46,12 +46,13 @@ def deviceDiscovery() {
     ssdpSubscribe()
 	ssdpDiscover()
 
- 	return dynamicPage(name: "deviceDiscovery", title: "ISY Device Discovery Started...", nextPage: "", refreshInterval: 5, install: true, uninstall: true) {
-		section("Please wait while we discover your ISY devices. Select your devices below once they have been discovered.") {
-			input "selectedLights", "enum", required: false, title: "Select light devices (${lightDevices.size() ?: 0} found)", multiple: true, options: lightDevices
-			input "selectedDimmableLights", "enum", required: false, title: "Select dimmable light devices (${dimmableLightDevices.size() ?: 0} found)", multiple: true, options: dimmableLightDevices
-			input "selectedFans", "enum", required: false, title: "Select fan devices (${fanDevices.size() ?: 0} found)", multiple: true, options: fanDevices
-			input "selectedScenes", "enum", required: false, title: "Select scene devices (${sceneDevices.size() ?: 0} found)", multiple: true, options: sceneDevices
+ 	return dynamicPage(name: "deviceDiscovery", title: "Started ISY device discovery...", nextPage: "", refreshInterval: 5, install: true, uninstall: true) {
+		section("Please wait while we discover your ISY devices. Select the devices you want to control in SmartThings below once they have been discovered.") {
+			input "selectedLights", "enum", required: false, title: "Light devices (${lightDevices.size() ?: 0} found)", multiple: true, options: lightDevices
+			input "selectedDimmableLights", "enum", required: false, title: "Dimmable light devices (${dimmableLightDevices.size() ?: 0} found)", multiple: true, options: dimmableLightDevices
+			input "selectedOutlets", "enum", required: false, title: "Outlet devices (${outletDevices.size() ?: 0} found)", multiple: true, options: outletDevices
+			input "selectedFans", "enum", required: false, title: "Fan devices (${fanDevices.size() ?: 0} found)", multiple: true, options: fanDevices
+			input "selectedScenes", "enum", required: false, title: "Scene devices (${sceneDevices.size() ?: 0} found)", multiple: true, options: sceneDevices
 		}
 	}
 }
@@ -188,6 +189,7 @@ void ssdpDescriptionHandler(physicalgraph.device.HubResponse hubResponse) {
 
 	def discoveredLights = [:]
     def discoveredDimmableLights = [:]
+    def discoveredOutlets = [:]
     def discoveredFans = [:]
     def discoveredScenes = [:]
 
@@ -210,6 +212,10 @@ void ssdpDescriptionHandler(physicalgraph.device.HubResponse hubResponse) {
                 deviceAttrs << [name: 'ISY Dimmable Light Device', handler: 'ISY Dimmable Light']
                 discoveredDimmableLights[device.network_id] = deviceAttrs
                 break
+            case 'Outlet':
+                deviceAttrs << [name: 'ISY Outlet Device', handler: 'ISY Outlet']
+                discoveredOutlets[device.network_id] = deviceAttrs
+                break
             case 'Fan':
                 deviceAttrs << [name: 'ISY Fan Device', handler: 'ISY Fan']
                 discoveredFans[device.network_id] = deviceAttrs
@@ -229,6 +235,7 @@ void ssdpDescriptionHandler(physicalgraph.device.HubResponse hubResponse) {
     // Reset state maps
     state.discoveredLightDevices = discoveredLights
     state.discoveredDimmableLightDevices = discoveredDimmableLights
+    state.discoveredOutletDevices = discoveredOutlets
     state.discoveredFanDevices = discoveredFans
     state.discoveredSceneDevices = discoveredScenes
  }
@@ -263,6 +270,7 @@ void deleteChildDeviceToken(childDevice) {
 def createSelectedDevices(devices) {
 	def selectedDevices = selectedLights.collect { dni -> discoveredLightDevices()[dni] } +
                           selectedDimmableLights.collect { dni -> discoveredDimmableLightDevices()[dni] } +
+                          selectedOutlets.collect { dni -> discoveredOutletDevices()[dni] } +
                           selectedFans.collect { dni -> discoveredFanDevices()[dni] } +
                           selectedScenes.collect { dni -> discoveredSceneDevices()[dni] }
 
