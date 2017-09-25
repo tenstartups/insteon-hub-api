@@ -7,7 +7,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
     },
 
     level: function () {
-      return this.isyDevice().getCurrentLightDimState()
+      return Math.round(this.isyDevice().getCurrentLightDimState())
     },
 
     getStatus: function () {
@@ -30,7 +30,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
     },
 
     setLevel: function (level) {
-      if (level <  1) {
+      if (level < 1) {
         level = 0
       }
       if (level > 100) {
