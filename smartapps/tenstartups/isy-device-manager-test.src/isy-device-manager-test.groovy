@@ -352,8 +352,9 @@ def processUpdate() {
     }
     def child = getChildDevice(request.JSON.device.network_id)
 	if (!child) {
+        log.debug("Device ${request.JSON.device.network_id} not found, deleting remote token")
     	deleteChildDeviceToken(request.JSON?.device)
-    	httpError(404, "Device ${request.JSON.device.network_id} not found")
+        return [ error: "Device ${request.JSON.device.network_id} not found" ]
     }
 
 	return child.processStatusUpdate(request.JSON.data)

@@ -246,7 +246,6 @@ void ssdpDescriptionHandler(physicalgraph.device.HubResponse hubResponse) {
         def childDevice = getChildDevice(deviceAttrs.dni)
         if (childDevice) {
 			refreshChildDevice(childDevice, deviceAttrs)
-// 			updateChildDeviceToken(childDevice)
         }
 	}
      
@@ -275,12 +274,12 @@ void updateChildDeviceToken(childDevice) {
     )
 }
 
-void deleteChildDeviceToken(deviceAttrs) {
+void deleteChildDeviceToken(childDevice) {
     sendHubCommand(
         new physicalgraph.device.HubAction(
             method: "DELETE",
-            path: "/api/device/${deviceAttrs.id}/token",
-            headers: [HOST: "${deviceAttrs.ip_address}:${deviceAttrs.ip_port}"]
+            path: "/api/device/${childDevice.getDataValue("externalId")}/token",
+            headers: [HOST: "${childDevice.getDataValue("ipAddress")}:${childDevice.getDataValue("ipPort")}"]
         )
     )
 }
@@ -308,8 +307,8 @@ def createSelectedDevices(devices) {
                     completedSetup: true
                 ]
             )
-            updateChildDeviceToken(childDevice)
         }
+        updateChildDeviceToken(childDevice)
 	}
 }
 
@@ -320,6 +319,7 @@ def deleteUnselectedDevices(devices) {
         	return
         }
 	    log.debug("Removing child device ${childDevice.label}")
+        deleteChildDeviceToken(childDevice)
         deleteChildDevice(dni)
 	}
 }
@@ -343,20 +343,25 @@ def syncDeviceDataValue(device, name, value) {
 }
 
 def processUpdate() {
+	log.debug("Received update message ${request.JSON}")
+
 	if (!request.JSON?.device?.network_id) {
-    	httpError(400, "Device network ID not provided")
-    }
-	log.debug("Received update ${request.JSON}")
-	if (!request.JSON?.data) {
-    	httpError(400, "Update data not provided")
-    }
-    def child = getChildDevice(request.JSON.device.network_id)
-	if (!child) {
-    	deleteChildDeviceToken(request.JSON?.device)
-    	httpError(404, "Device ${request.JSON.device.network_id} not found")
+    	return httpError(422, "Missing device attributes in update message")
     }
 
-	return child.processStatusUpdate(request.JSON.data)
+	if (!request.JSON?.data) {
+    	return httpError(400, "Missing data in update message")
+    }
+
+	def childDevice = getChildDevice(request.JSON.device.network_id)
+
+	if (childDevice) {
+        childDevice.processStatusUpdate(request.JSON.data)
+        return [ status: 'OK', data: request.JSON.data ]
+    } else {
+        log.debug("Device ${request.JSON.device.network_id} not found, deleting remote token")
+        return httpError(404, "Device with network ID ${request.JSON.device.network_id} does not exist")
+    }
 }
 
 private Integer convertHexToInt(hex) {
