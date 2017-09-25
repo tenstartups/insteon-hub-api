@@ -138,7 +138,7 @@ def sendCommand(String commandPath) {
        headers: [ HOST: "${getDataValue("ipAddress")}:${getDataValue("ipPort")}" ]
     ],
     null,
-    sendCommandResponseHandler
+    [ callback: sendCommandResponseHandler ]
   )
 }
 
