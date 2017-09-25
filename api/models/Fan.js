@@ -2,46 +2,41 @@ var Device = require('./Device')
 
 module.exports =  _.merge(_.cloneDeep(Device), {
   attributes: {
-    status: function () {
+    currentState: function () {
       switch (this.isyDevice().getCurrentFanState()) {
         case 'Off':
-          return 'off'
+          return { status: 'off' }
         case 'Low':
-          return 'low'
+          return { status: 'low' }
         case 'Medium':
-          return 'medium'
+          return { status: 'medium' }
         case 'High':
-          return 'high'
+          return { status: 'high' }
       }
     },
 
-    getStatus: function () {
-      return { status: this.status() }
-    },
-
-    refreshStatus: function () {
-      this.sendSmartThingsUpdate()
-      return { command: 'refresh_status' }
-    },
-
     turnOff: function () {
-      this.isyDevice().sendFanCommand('Off', success => {})
-      return { command: 'turn_off' }
+      return this.sendCommand('off', 'Off')
     },
 
     setLow: function () {
-      this.isyDevice().sendFanCommand('Low', success => {})
-      return { command: 'set_low' }
+      return this.sendCommand('low', 'Low')
     },
 
     setMedium: function () {
-      this.isyDevice().sendFanCommand('Medium', success => {})
-      return { command: 'set_medium' }
+      return this.sendCommand('medium', 'Medium')
     },
 
     setHigh: function () {
-      this.isyDevice().sendFanCommand('High', success => {})
-      return { command: 'set_high' }
+      return this.sendCommand('high', 'High')
+    },
+
+    sendCommand: function (commandCode, fanCommand) {
+      return new Promise((resolve, reject) => {
+        this.isyDevice().sendFanCommand(fanCommand, success => {
+          resolve(Object.assign({ command: commandCode, success: success }, this.currentState()))
+        })
+      })
     }
   }
 })

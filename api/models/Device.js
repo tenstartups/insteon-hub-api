@@ -131,6 +131,12 @@ module.exports = {
       return sails.hooks.isy.connection().getDevice(this.address)
     },
 
+    getStatus: function () {
+      return new Promise((resolve, reject) => {
+        resolve(Object.assign({ command: 'status' }, this.currentState()))
+      })
+    },
+
     loadSmartThingsAppEndpoints: function () {
       return new Promise((resolve, reject) => {
         if (!this.smartThingsToken) {

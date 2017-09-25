@@ -65,7 +65,6 @@ module.exports.routes = {
 
   // Fan controller actions
   'get /api/fan/:id/status': 'FanController.status',
-  'post /api/fan/:id/refresh': 'FanController.refresh',
   'post /api/fan/:id/off': 'FanController.off',
   'post /api/fan/:id/low': 'FanController.low',
   'post /api/fan/:id/medium': 'FanController.medium',
@@ -84,11 +83,8 @@ module.exports.routes = {
   'post /api/outlet/:id/off': 'OutletController.off',
 
   // Dimmable light controller actions
-  'get /api/scene/:id/status': 'SController.status',
+  'get /api/scene/:id/status': 'SceneController.status',
   'post /api/scene/:id/refresh': 'SceneController.refresh',
   'post /api/scene/:id/on': 'SceneController.on',
-  'post /api/scene/:id/off': 'SceneController.off',
-  'post /api/scene/:id/level/:level': 'SceneController.level',
-  'post /api/scene/:id/brighten': 'SceneController.brighten',
-  'post /api/scene/:id/dim': 'SceneController.dim'
+  'post /api/scene/:id/off': 'SceneController.off'
 }
