@@ -46,7 +46,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
     sendLightCommand: function (commandCode, on) {
       return new Promise((resolve, reject) => {
         this.isyDevice().sendLightCommand(on, async success => {
-          await this.snooze(1000)
+          await this.snooze(500)
           resolve(Object.assign({ command: commandCode, success: success }, this.currentState()))
         })
       })
@@ -55,7 +55,7 @@ module.exports =  _.merge(_.cloneDeep(Device), {
     sendLightDimCommand: function (commandCode, level) {
       return new Promise((resolve, reject) => {
         this.isyDevice().sendLightDimCommand(level, async success => {
-          await this.snooze(1000)
+          await this.snooze(500)
           resolve(Object.assign({ command: commandCode, success: success }, this.currentState()))
         })
       })
