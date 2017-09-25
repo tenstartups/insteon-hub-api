@@ -81,7 +81,7 @@ module.exports.routes = {
   'get /api/outlet/:id/status': 'OutletController.status',
   'post /api/outlet/:id/refresh': 'OutletController.refresh',
   'post /api/outlet/:id/on': 'OutletController.on',
-  'post /api/outlet/:id/off': 'OutletController.off'
+  'post /api/outlet/:id/off': 'OutletController.off',
 
   // Dimmable light controller actions
   'get /api/scene/:id/status': 'SController.status',
@@ -90,5 +90,5 @@ module.exports.routes = {
   'post /api/scene/:id/off': 'SceneController.off',
   'post /api/scene/:id/level/:level': 'SceneController.level',
   'post /api/scene/:id/brighten': 'SceneController.brighten',
-  'post /api/scene/:id/dim': 'SceneController.dim',
+  'post /api/scene/:id/dim': 'SceneController.dim'
 }
