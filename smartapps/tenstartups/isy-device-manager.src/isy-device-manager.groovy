@@ -40,6 +40,7 @@ def ssdpUSN() {
 def deviceDiscovery() {
 	def lightDevices = lightChoices()
 	def dimmableLightDevices = dimmableLightChoices()
+    def outletDevices = outletChoices()
 	def fanDevices = fanChoices()
 	def sceneDevices = sceneChoices()
 
@@ -90,6 +91,9 @@ def selectedDevices() {
     if (selectedDimmableLights) {
     	selected += selectedDimmableLights
 	}
+    if (selectedOutlets) {
+    	selected += selectedOutlets
+	}
     if (selectedFans) {
     	selected += selectedFans
 	}
@@ -111,6 +115,13 @@ def discoveredDimmableLightDevices() {
 		state.discoveredDimmableLightDevices = [:]
 	}
 	state.discoveredDimmableLightDevices
+}
+
+def discoveredOutletDevices() {
+	if (!state.discoveredOutletDevices) {
+		state.discoveredOutletDevices = [:]
+	}
+	state.discoveredOutletDevices
 }
 
 def discoveredFanDevices() {
@@ -138,6 +149,14 @@ Map lightChoices() {
 Map dimmableLightChoices() {
 	def map = [:]
     discoveredDimmableLightDevices().sort({ it.value.label }).each {
+		map[it.value.dni] = it.value.label
+	}
+	map
+}
+
+Map outletChoices() {
+	def map = [:]
+    discoveredOutletDevices().sort({ it.value.label }).each {
 		map[it.value.dni] = it.value.label
 	}
 	map
