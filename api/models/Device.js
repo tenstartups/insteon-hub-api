@@ -16,25 +16,25 @@ module.exports = {
 
   tableName: 'device',
 
-  findTyped: function (options) {
+  findTyped: function (criteria) {
     return new Promise((resolve, reject) => {
-      if (options.type) {
-        eval(options.type).findOne(options).exec((err, device) => {
+      if (criteria.type) {
+        eval(criteria.type).findOne(criteria).exec((err, device) => {
           if (err) {
-            console.log(`Error fetching ${options.type} device with criteria ${JSON.stringify(options)}`)
+            console.log(`Error fetching ${criteria.type} device with criteria ${JSON.stringify(criteria)}`)
             reject(err)
           }
           resolve(device)
         })
       } else {
-        Device.findOne(options).exec((err, device) => {
+        Device.findOne(criteria).exec((err, device) => {
           if (err) {
-            console.log(`Error fetching ${options.type} device with criteria ${JSON.stringify(options)}`)
+            console.log(`Error fetching device with criteria ${JSON.stringify(criteria)}`)
             reject(err)
           }
-          eval(options.type).findOne(options).exec((err, device) => {
+          eval(device.type).findOne(criteria).exec((err, device) => {
             if (err) {
-              console.log(`Error fetching ${options.type} device with criteria ${JSON.stringify(options)}`)
+              console.log(`Error fetching ${device.type} device with criteria ${JSON.stringify(criteria)}`)
               reject(err)
             }
             resolve(device)
