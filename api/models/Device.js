@@ -96,6 +96,10 @@ module.exports = {
       type: 'array'
     },
 
+    snooze: function (ms) {
+      return new Promise(resolve => setTimeout(resolve, ms))
+    },
+
     networkId: function () {
       var key = `isy:${SERVER_SETTINGS.instance_number || '01'}:${this.type}:${this.address}`
       return crypto.createHash('md5').update(key).digest('hex')

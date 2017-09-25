@@ -1,93 +1,104 @@
 module.exports = {
 
   status: (req, res) => {
-    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, dimmableLight) => {
+    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!dimmableLight) {
+      if (!device) {
         return res.notFound({ error: `Dimmable light with id ${req.params.id} not found` })
       }
-      console.log(`STATUS requested for ${dimmableLight.name}`)
-      return res.json({ device: dimmableLight, result: dimmableLight.getStatus() })
-    })
-  },
-
-  refresh: (req, res) => {
-    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, dimmableLight) => {
-      if (err) {
-        return res.serverError(err)
-      }
-      if (!dimmableLight) {
-        return res.notFound({ error: `Dimmable light with id ${req.params.id} not found` })
-      }
-      console.log(`REFRESH command received for ${dimmableLight.name}`)
-      return res.json({ device: dimmableLight, result: dimmableLight.refreshStatus() })
+      console.log(`STATUS requested for ${device.type} (${device.name})`)
+      device.getStatus().then(result => {
+        return res.json({ device: device, result: result })
+      }).catch(reason => {
+        return res.serverError(reason)
+      })
     })
   },
 
   on: (req, res) => {
-    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, dimmableLight) => {
+    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!dimmableLight) {
+      if (!device) {
         return res.notFound({ error: `Dimmable light with id ${req.params.id} not found` })
       }
-      console.log(`ON command received for ${dimmableLight.name}`)
-      return res.json({ device: dimmableLight, result: dimmableLight.turnOn() })
+      console.log(`ON command received for ${device.type} (${device.name})`)
+      device.turnOn().then(result => {
+        return res.json({ device: device, result: result })
+      }).catch(reason => {
+        return res.serverError(reason)
+      })
     })
   },
 
   off: (req, res) => {
-    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, dimmableLight) => {
+    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!dimmableLight) {
+      if (!device) {
         return res.notFound({ error: `Dimmable light with id ${req.params.id} not found` })
       }
-      console.log(`OFF command received for ${dimmableLight.name}`)
-      return res.json({ device: dimmableLight, result: dimmableLight.turnOff() })
+      console.log(`OFF command received for ${device.type} (${device.name})`)
+      device.turnOff().then(result => {
+        return res.json({ device: device, result: result })
+      }).catch(reason => {
+        return res.serverError(reason)
+      })
     })
   },
 
   level: (req, res) => {
-    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, dimmableLight) => {
+    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!dimmableLight) {
+      if (!device) {
         return res.notFound({ error: `Dimmable light with id ${req.params.id} not found` })
       }
-      console.log(`LEVEL (${req.params.level}) command received for ${dimmableLight.name}`)
-      return res.json({ device: dimmableLight, result: dimmableLight.setLevel(req.params.level) })
+      console.log(`LEVEL (${req.params.level}) command received for ${device.type} (${device.name})`)
+      device.setLevel(req.params.level).then(result => {
+        return res.json({ device: device, result: result })
+      }).catch(reason => {
+        return res.serverError(reason)
+      })
     })
   },
 
   brighten: (req, res) => {
-    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, dimmableLight) => {
+    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!dimmableLight) {
+      if (!device) {
         return res.notFound({ error: `Dimmable light with id ${req.params.id} not found` })
       }
-      console.log(`BRIGHTEN command received for ${dimmableLight.name}`)
-      return res.json({ device: dimmableLight, result: dimmableLight.brighten() })
+      console.log(`BRIGHTEN command received for ${device.type} (${device.name})`)
+      device.brighten().then(result => {
+        return res.json({ device: device, result: result })
+      }).catch(reason => {
+        return res.serverError(reason)
+      })
     })
   },
 
   dim: (req, res) => {
-    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, dimmableLight) => {
+    DimmableLight.findOne({ id: req.params.id, type: 'DimmableLight' }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!dimmableLight) {
+      if (!device) {
         return res.notFound({ error: `Dimmable light with id ${req.params.id} not found` })
       }
-      console.log(`DIM command received for ${dimmableLight.name}`)
-      return res.json({ device: dimmableLight, result: dimmableLight.dim() })
+      console.log(`DIM command received for ${device.type} (${device.name})`)
+      device.dim().then(result => {
+        return res.json({ device: device, result: result })
+      }).catch(reason => {
+        return res.serverError(reason)
+      })
     })
   }
 }

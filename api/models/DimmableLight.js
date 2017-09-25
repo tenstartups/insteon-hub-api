@@ -2,31 +2,23 @@ var Device = require('./Device')
 
 module.exports =  _.merge(_.cloneDeep(Device), {
   attributes: {
-    status: function () {
-      return this.isyDevice().getCurrentLightState() ? 'on' : 'off'
-    },
-
-    level: function () {
+    currentLevel: function () {
       return Math.round(this.isyDevice().getCurrentLightDimState())
     },
 
-    getStatus: function () {
-      return { status: this.status(), level: this.level() }
-    },
-
-    refreshStatus: function () {
-      this.sendSmartThingsUpdate()
-      return { command: 'refresh_status' }
+    currentState: function () {
+      return {
+        status: this.isyDevice().getCurrentLightState() ? 'on' : 'off',
+        level: this.currentLevel()
+      }
     },
 
     turnOn: function () {
-      this.isyDevice().sendLightCommand(true, success => {})
-      return { command: 'turn_on' }
+      return this.sendLightCommand('on', true)
     },
 
     turnOff: function () {
-      this.isyDevice().sendLightCommand(false, success => {})
-      return { command: 'turn_off' }
+      return this.sendLightCommand('off', false)
     },
 
     setLevel: function (level) {
@@ -37,23 +29,36 @@ module.exports =  _.merge(_.cloneDeep(Device), {
         level = 100
       }
       if (level === 0) {
-        this.isyDevice().sendLightCommand(false, success => {})
+        return this.sendLightCommand('level', false)
       } else {
-        this.isyDevice().sendLightDimCommand(level, success => {})
+        return this.sendLightDimCommand('level', level)
       }
-      return { command: 'set_level', level: level }
     },
 
     brighten: function () {
-      var level = Math.min(this.level() + 5, 100)
-      this.isyDevice().sendLightDimCommand(level, success => {})
-      return { command: 'brighten' }
+      return this.sendLightDimCommand('brighten', Math.min(this.currentLevel() + 5, 100))
     },
 
     dim: function () {
-      var level = Math.max(this.level() - 5, 1)
-      this.isyDevice().sendLightDimCommand(level, success => {})
-      return { command: 'dim' }
+      return this.sendLightDimCommand('dim', Math.max(this.currentLevel() - 5, 1))
+    },
+
+    sendLightCommand: function (commandCode, on) {
+      return new Promise((resolve, reject) => {
+        this.isyDevice().sendLightCommand(on, async success => {
+          await this.snooze(1000)
+          resolve(Object.assign({ command: commandCode, success: success }, this.currentState()))
+        })
+      })
+    },
+
+    sendLightDimCommand: function (commandCode, level) {
+      return new Promise((resolve, reject) => {
+        this.isyDevice().sendLightDimCommand(level, async success => {
+          await this.snooze(1000)
+          resolve(Object.assign({ command: commandCode, success: success }, this.currentState()))
+        })
+      })
     }
   }
 })

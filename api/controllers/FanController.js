@@ -1,16 +1,16 @@
 module.exports = {
 
   status: (req, res) => {
-    Fan.findOne({ id: req.params.id, type: 'Fan' }).exec((err, fan) => {
+    Fan.findOne({ id: req.params.id, type: 'Fan' }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!fan) {
+      if (!device) {
         return res.notFound({ error: `Fan with id ${req.params.id} not found` })
       }
-      console.log(`STATUS requested for ${fan.name}`)
-      fan.getStatus().then(result => {
-        return res.json({ device: fan, result: result })
+      console.log(`STATUS requested for ${device.type} (${device.name})`)
+      device.getStatus().then(result => {
+        return res.json({ device: device, result: result })
       }).catch(reason => {
         return res.serverError(reason)
       })
@@ -18,16 +18,16 @@ module.exports = {
   },
 
   off: (req, res) => {
-    Fan.findOne({ id: req.params.id, type: 'Fan' }).exec((err, fan) => {
+    Fan.findOne({ id: req.params.id, type: 'Fan' }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!fan) {
+      if (!device) {
         return res.notFound({ error: `Fan with id ${req.params.id} not found` })
       }
-      console.log(`OFF command received for ${fan.name}`)
-      fan.turnOff().then(result => {
-        return res.json({ device: fan, result: result })
+      console.log(`OFF command received for ${device.type} (${device.name})`)
+      device.turnOff().then(result => {
+        return res.json({ device: device, result: result })
       }).catch(reason => {
         return res.serverError(reason)
       })
@@ -35,16 +35,16 @@ module.exports = {
   },
 
   low: (req, res) => {
-    Fan.findOne({ id: req.params.id, type: 'Fan' }).exec((err, fan) => {
+    Fan.findOne({ id: req.params.id, type: 'Fan' }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!fan) {
+      if (!device) {
         return res.notFound({ error: `Fan with id ${req.params.id} not found` })
       }
-      console.log(`LOW command received for ${fan.name}`)
-      fan.setLow().then(result => {
-        return res.json({ device: fan, result: result })
+      console.log(`LOW command received for ${device.type} (${device.name})`)
+      device.setLow().then(result => {
+        return res.json({ device: device, result: result })
       }).catch(reason => {
         return res.serverError(reason)
       })
@@ -52,16 +52,16 @@ module.exports = {
   },
 
   medium: (req, res) => {
-    Fan.findOne({ id: req.params.id, type: 'Fan' }).exec((err, fan) => {
+    Fan.findOne({ id: req.params.id, type: 'Fan' }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!fan) {
+      if (!device) {
         return res.notFound({ error: `Fan with id ${req.params.id} not found` })
       }
-      console.log(`MEDIUM command received for ${fan.name}`)
-      fan.setMedium().then(result => {
-        return res.json({ device: fan, result: result })
+      console.log(`MEDIUM command received for ${device.type} (${device.name})`)
+      device.setMedium().then(result => {
+        return res.json({ device: device, result: result })
       }).catch(reason => {
         return res.serverError(reason)
       })
@@ -69,16 +69,16 @@ module.exports = {
   },
 
   high: (req, res) => {
-    Fan.findOne({ id: req.params.id, type: 'Fan' }).exec((err, fan) => {
+    Fan.findOne({ id: req.params.id, type: 'Fan' }).exec((err, device) => {
       if (err) {
         return res.serverError(err)
       }
-      if (!fan) {
+      if (!device) {
         return res.notFound({ error: `Fan with id ${req.params.id} not found` })
       }
-      console.log(`HIGH command received for ${fan.name}`)
-      fan.setHigh().then(result => {
-        return res.json({ device: fan, result: result })
+      console.log(`HIGH command received for ${device.type} (${device.name})`)
+      device.setHigh().then(result => {
+        return res.json({ device: device, result: result })
       }).catch(reason => {
         return res.serverError(reason)
       })

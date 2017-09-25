@@ -16,24 +16,25 @@ module.exports =  _.merge(_.cloneDeep(Device), {
     },
 
     turnOff: function () {
-      return this.sendCommand('off', 'Off')
+      return this.sendFanCommand('off', 'Off')
     },
 
     setLow: function () {
-      return this.sendCommand('low', 'Low')
+      return this.sendFanCommand('low', 'Low')
     },
 
     setMedium: function () {
-      return this.sendCommand('medium', 'Medium')
+      return this.sendFanCommand('medium', 'Medium')
     },
 
     setHigh: function () {
-      return this.sendCommand('high', 'High')
+      return this.sendFanCommand('high', 'High')
     },
 
-    sendCommand: function (commandCode, fanCommand) {
+    sendFanCommand: function (commandCode, fanCommand) {
       return new Promise((resolve, reject) => {
-        this.isyDevice().sendFanCommand(fanCommand, success => {
+        this.isyDevice().sendFanCommand(fanCommand, async success => {
+          await this.snooze(1000)
           resolve(Object.assign({ command: commandCode, success: success }, this.currentState()))
         })
       })
