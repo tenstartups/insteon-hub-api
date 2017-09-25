@@ -22,7 +22,6 @@
     "include-all": "*",
     "isy-js": "*",
     "js-yaml": "*",
-    "macaddress": "*",
     "node-ssdp": "*",
     "rc": "*",
     "request": "*",
