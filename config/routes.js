@@ -56,6 +56,7 @@ module.exports.routes = {
 
   // Dimmable light controller actions
   'get /api/dimmable_light/:id/status': 'DimmableLightController.status',
+  'post /api/dimmable_light/:id/status': 'DimmableLightController.status',
   'post /api/dimmable_light/:id/on': 'DimmableLightController.on',
   'post /api/dimmable_light/:id/off': 'DimmableLightController.off',
   'post /api/dimmable_light/:id/level/:level': 'DimmableLightController.level',
@@ -64,6 +65,7 @@ module.exports.routes = {
 
   // Fan controller actions
   'get /api/fan/:id/status': 'FanController.status',
+  'post /api/fan/:id/status': 'FanController.status',
   'post /api/fan/:id/off': 'FanController.off',
   'post /api/fan/:id/low': 'FanController.low',
   'post /api/fan/:id/medium': 'FanController.medium',
@@ -71,16 +73,19 @@ module.exports.routes = {
 
   // Light controller actions
   'get /api/light/:id/status': 'LightController.status',
+  'post /api/light/:id/status': 'LightController.status',
   'post /api/light/:id/on': 'LightController.on',
   'post /api/light/:id/off': 'LightController.off',
 
   // Outlet controller actions
   'get /api/outlet/:id/status': 'OutletController.status',
+  'post /api/outlet/:id/status': 'OutletController.status',
   'post /api/outlet/:id/on': 'OutletController.on',
   'post /api/outlet/:id/off': 'OutletController.off',
 
   // Dimmable light controller actions
   'get /api/scene/:id/status': 'SceneController.status',
+  'post /api/scene/:id/status': 'SceneController.status',
   'post /api/scene/:id/on': 'SceneController.on',
   'post /api/scene/:id/off': 'SceneController.off'
 }

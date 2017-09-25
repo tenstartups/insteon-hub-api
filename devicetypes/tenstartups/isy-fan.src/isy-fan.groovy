@@ -77,7 +77,7 @@ metadata {
     standardTile("fanOff", "device.fanMode", inactiveLabel: false, width:2, height:2) {
       state "default", label: "OFF", action: "fanOff", icon: "https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/OnOff175xfinal.png", backgroundColor: "#ffffff", nextState: "turningOff"
       state "fanOff", label: "OFF", action: "", icon: "https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/OnOff175xfinal.png", backgroundColor: "#79b821", nextState: "turningOff"
-      state "turningOff", label: "TURNINGOFF", action: "fanOff", icon: "st.Home.home30", backgroundColor: "#2179b8"
+      state "turningOff", label: "TURNINGOFF", action: "fanOff", icon: "https://raw.githubusercontent.com/dcoffing/SmartThingsPublic/master/devicetypes/dcoffing/hampton-bay-universal-ceiling-fan-light-controller.src/OnOff175xfinal.png", backgroundColor: "#2179b8"
     }
 
     standardTile("refresh", "device.refresh", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
