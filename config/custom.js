@@ -13,5 +13,7 @@ module.exports = {
 
   orm: {
     skipProductionWarnings: true
-  }
+  },
+
+  keepResponseErrors: true
 }
