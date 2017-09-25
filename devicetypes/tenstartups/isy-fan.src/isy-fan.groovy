@@ -106,12 +106,21 @@ def updated() {
 
 def sendCommand(String commandPath) {
 	new physicalgraph.device.HubAction(
-        method: "POST",
-        path: "/api/fan/${getDataValue("externalId")}/${commandPath}",
-        headers: [
-            HOST: "${getDataValue("ipAddress")}:${getDataValue("ipPort")}"
-        ]
+        [
+            method: "POST",
+            path: "/api/fan/${getDataValue("externalId")}/${commandPath}",
+            headers: [
+                HOST: "${getDataValue("ipAddress")}:${getDataValue("ipPort")}"
+            ]
+        ],
+        null,
+        sendCommandResponseHandler
     )
+}
+
+def sendCommandResponseHandler(physicalgraph.device.HubResponse hubResponse) {
+	log.debug("Received command response")
+    processStatusUpdate(hubResponse.json?.result)
 }
 
 def fanOff() {
@@ -137,11 +146,10 @@ def fanHigh() {
 def refresh()
 {
     log.debug "Refreshing fan status..."
-    sendCommand("refresh")
+    sendCommand("status")
 }
 
 def processStatusUpdate(data) {
-log.debug(data)
     if (data.status != null) {
 	    log.debug "Fan speed is ${data.status.toUpperCase()}"
 	    sendEvent(name: "fanMode", value: "fan${data.status.capitalize()}")
