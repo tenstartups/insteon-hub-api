@@ -37,7 +37,15 @@ module.exports = (sails) => {
       sails.after('hook:orm:loaded', () => {
         console.log('Connecting to ISY994i home automation controller...')
 
-        eventQ = QUEUE({ concurrency: 1 })
+        eventQ = QUEUE({ concurrency: 10 })
+
+        IntervalTimerService.interval(() => {
+          eventQ.start(err => {
+            if (err) {
+              throw err
+            }
+          })
+        }, 100)
 
         connection = new ISY.ISY(
           ISY_SETTINGS.address,
@@ -52,7 +60,6 @@ module.exports = (sails) => {
                 resolve()
               })
             })
-            eventQ.start()
           },
           ISY_SETTINGS.useSSL,
           true, // Include scenes in the device list
@@ -61,12 +68,6 @@ module.exports = (sails) => {
         )
 
         connection.initialize(() => {
-          eventQ.start(err => {
-            if (err) {
-              throw err
-            }
-            console.log('Drained event queue')
-          })
           console.log('Connected to ISY994i home automation controller')
           return cb()
         })

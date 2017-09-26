@@ -138,7 +138,7 @@ module.exports = (sails) => {
             console.log('Connected to ISY994i home automation controller')
             await synchronizeDevices()
           })
-        }, 300000, 10)
+        }, 300000)
         return cb()
       })
     }
