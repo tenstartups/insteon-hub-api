@@ -133,9 +133,11 @@ module.exports = (sails) => {
     initialize: (cb) => {
       sails.after('hook:isy:loaded', async () => {
         await synchronizeDevices()
-        await synchronizeDevices()
         IntervalTimerService.interval(() => {
-          synchronizeDevices()
+          sails.hooks.isy.connection().initialize(async () => {
+            console.log('Connected to ISY994i home automation controller')
+            await synchronizeDevices()
+          })
         }, 60000, 10)
         return cb()
       })

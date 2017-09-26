@@ -20,7 +20,7 @@
     "grunt-sails-linker": "*",
     "grunt-sync": "*",
     "include-all": "*",
-    "isy-js": "*",
+    "isy-js": "tenstartups/isy-js#master",
     "js-yaml": "*",
     "node-ssdp": "*",
     "rc": "*",

@@ -184,12 +184,12 @@ module.exports = {
         }
         request(options)
         .then(result => {
-          console.log(`Successfully sent update for ${this.name}`)
+          console.log(`Successfully sent update for [${this.type}] ${this.name}`)
         })
         .catch(reason => {
           switch (reason.statusCode) {
             case 404:
-              console.log(`Device not found sending update for ${this.name}`)
+              console.log(`Device not found sending update for [${this.type}] ${this.name}`)
               this.smartThingsToken = null
               this.smartThingsAppCallbackURIs = null
               this.save(err => {
@@ -199,11 +199,11 @@ module.exports = {
               })
               break
             case 429:
-              console.log(`Rate limit sending update for ${this.name}`)
+              console.log(`Rate limit sending update for [${this.type}] ${this.name}`)
               console.log(JSON.stringify(reason.error))
               break
             default:
-              console.log(`Error sending update for ${this.name}`)
+              console.log(`Error sending update for [${this.type}] ${this.name}`)
               console.log(JSON.stringify(reason.error))
               break
           }
