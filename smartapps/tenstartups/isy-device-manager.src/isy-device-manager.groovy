@@ -309,6 +309,7 @@ def createSelectedDevices(devices) {
             )
         }
         updateChildDeviceToken(childDevice)
+        childDevice.refresh()
     }
 }
 

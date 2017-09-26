@@ -57,7 +57,6 @@ module.exports = {
           if (err) {
             return res.serverError(err)
           }
-          device.sendSmartThingsUpdate()
           return res.json({ device: device })
         })
       })
