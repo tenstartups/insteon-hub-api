@@ -180,25 +180,28 @@ module.exports = {
           },
           uri: `${uri}/update`,
           body: body,
-          json: true
+          json: true,
+          resolveWithFullResponse: true
         }
         request(options)
         .then(result => {
-          // console.log(
-          //   JSON.stringify(
-          //     {
-          //       'X-RateLimit-Limit': result.headers['X-RateLimit-Limit'],
-          //       'X-RateLimit-Current': result.headers['X-RateLimit-Current'],
-          //       'X-RateLimit-TTL': result.headers['X-RateLimit-TTL']
-          //     }
-          //   )
-          // )
-          console.log(`Successfully sent update for [${this.type}] ${this.name}`)
+          var rateLimitHeaders = {
+            'X-RateLimit-Limit': result.headers['x-ratelimit-current'],
+            'X-RateLimit-Current': result.headers['x-ratelimit-limit'],
+            'X-RateLimit-TTL': result.headers['x-ratelimit-ttl']
+          }
+          console.log(`Successfully sent update for [${this.type}] ${this.name} - ${JSON.stringify(rateLimitHeaders)}`)
         })
         .catch(reason => {
+          var rateLimitHeaders = {
+            'X-RateLimit-Limit': reason.response.headers['x-ratelimit-current'],
+            'X-RateLimit-Current': reason.response.headers['x-ratelimit-limit'],
+            'X-RateLimit-TTL': reason.response.headers['x-ratelimit-ttl']
+          }
           switch (reason.statusCode) {
             case 404:
-              console.log(`Device not found sending update for [${this.type}] ${this.name}`)
+              console.log(`Device not found sending update for [${this.type}] ${this.name} - ${JSON.stringify(rateLimitHeaders)}`)
+              console.log(JSON.stringify(reason.error))
               this.smartThingsToken = null
               this.smartThingsAppCallbackURIs = null
               this.save(err => {
@@ -208,11 +211,13 @@ module.exports = {
               })
               break
             case 429:
-              console.log(`Rate limit sending update for [${this.type}] ${this.name}`)
+              console.log(`Rate limit sending update for [${this.type}] ${this.name} - ${JSON.stringify(rateLimitHeaders)}`)
               console.log(JSON.stringify(reason.error))
               break
+            case undefined:
+              throw reason
             default:
-              console.log(`Error sending update for [${this.type}] ${this.name}`)
+              console.log(`Error sending update for [${this.type}] ${this.name} - ${JSON.stringify(rateLimitHeaders)}`)
               console.log(JSON.stringify(reason.error))
               break
           }
