@@ -167,7 +167,7 @@ module.exports = {
       var body = { device: this.toJSON(), data: this.currentState() }
 
       if (!this.smartThingsToken || !this.smartThingsAppCallbackURIs) {
-        return null
+        return false
       }
 
       console.log(`Sending ${JSON.stringify(body.data)} update for ${this.name}`)
@@ -187,10 +187,30 @@ module.exports = {
           console.log(`Successfully sent update for ${this.name}`)
         })
         .catch(reason => {
-          console.log(`Error sending update for ${this.name}`)
-          console.log(reason)
+          switch (reason.statusCode) {
+            case 404:
+              console.log(`Device not found sending update for ${this.name}`)
+              this.smartThingsToken = null
+              this.smartThingsAppCallbackURIs = null
+              this.save(err => {
+                if (err) {
+                  throw err
+                }
+              })
+              break
+            case 429:
+              console.log(`Rate limit sending update for ${this.name}`)
+              console.log(JSON.stringify(reason.error))
+              break
+            default:
+              console.log(`Error sending update for ${this.name}`)
+              console.log(JSON.stringify(reason.error))
+              break
+          }
         })
       })
+
+      return true
     }
   }
 }
