@@ -184,6 +184,15 @@ module.exports = {
         }
         request(options)
         .then(result => {
+          console.log(
+            JSON.stringify(
+              {
+                'X-RateLimit-Limit': result.headers['X-RateLimit-Limit'],
+                'X-RateLimit-Current': result.headers['X-RateLimit-Current'],
+                'X-RateLimit-TTL': result.headers['X-RateLimit-TTL']
+              }
+            )
+          )
           console.log(`Successfully sent update for [${this.type}] ${this.name}`)
         })
         .catch(reason => {
