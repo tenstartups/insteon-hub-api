@@ -23,6 +23,7 @@
     "isy-js": "tenstartups/isy-js#master",
     "js-yaml": "*",
     "node-ssdp": "*",
+    "queue": "*",
     "rc": "*",
     "request": "*",
     "request-promise-native": "*",

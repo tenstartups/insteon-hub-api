@@ -1,11 +1,23 @@
-var ISY = require('isy-js')
+const ISY = require('isy-js')
+const QUEUE = require('queue')
 const ISY_SETTINGS = require('js-yaml')
                      .safeLoad(require('fs')
                      .readFileSync(process.env.SETTINGS_FILE, 'utf8'))
                      .isy || {}
 
+function processEvent (isyDevice) {
+  Device.findTyped({ type: isyDevice.deviceType, address: isyDevice.address })
+  .then(device => {
+    device.sendSmartThingsUpdate()
+  })
+  .catch(err => {
+    throw err
+  })
+}
+
 module.exports = (sails) => {
   var connection
+  var eventQ
 
   return {
     connection: () => {
@@ -25,19 +37,22 @@ module.exports = (sails) => {
       sails.after('hook:orm:loaded', () => {
         console.log('Connecting to ISY994i home automation controller...')
 
+        eventQ = QUEUE({ concurrency: 1 })
+
         connection = new ISY.ISY(
           ISY_SETTINGS.address,
           ISY_SETTINGS.user,
           ISY_SETTINGS.password,
           false, // No support for ELK
-          (isy, device) => {
-            Device.findTyped({ type: device.deviceType, address: device.address })
-            .then(device => {
-              device.sendSmartThingsUpdate()
+          (isy, isyDevice) => {
+            eventQ.push(() => {
+              return new Promise((resolve, reject) => {
+                console.log(`Processing event for ${isyDevice.deviceType} [${isyDevice.address}]`)
+                processEvent(isyDevice)
+                resolve()
+              })
             })
-            .catch(err => {
-              throw err
-            })
+            eventQ.start()
           },
           ISY_SETTINGS.useSSL,
           true, // Include scenes in the device list
@@ -46,6 +61,12 @@ module.exports = (sails) => {
         )
 
         connection.initialize(() => {
+          eventQ.start(err => {
+            if (err) {
+              throw err
+            }
+            console.log('Drained event queue')
+          })
           console.log('Connected to ISY994i home automation controller')
           return cb()
         })
