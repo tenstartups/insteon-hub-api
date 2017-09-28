@@ -35,7 +35,7 @@ module.exports = (sails) => {
     },
 
     initialize: (cb) => {
-      sails.after('hook:device_init:loaded', () => {
+      sails.after('hook:device_sync:loaded', () => {
         advertiseIP = process.env.DEVICE_ADVERTISE_IP
         if (advertiseIP === undefined) {
           advertiseIP = require('ip').address()
