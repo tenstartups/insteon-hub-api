@@ -30,12 +30,12 @@ module.exports = (sails) => {
 
     defaults: {
        __configKey__: {
-          _hookTimeout: 30000
+          _hookTimeout: 120000
        }
     },
 
     initialize: (cb) => {
-      sails.after('hook:device_sync:loaded', () => {
+      sails.after('hook:devsync:loaded', () => {
         advertiseIP = process.env.DEVICE_ADVERTISE_IP
         if (advertiseIP === undefined) {
           advertiseIP = require('ip').address()

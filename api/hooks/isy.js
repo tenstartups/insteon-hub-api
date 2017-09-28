@@ -29,7 +29,7 @@ module.exports = (sails) => {
 
     defaults: {
        __configKey__: {
-          _hookTimeout: 30000
+          _hookTimeout: 120000
        }
     },
 
