@@ -114,10 +114,12 @@ module.exports = (sails) => {
   }
 
   async function synchronizeDevices () {
+    console.log('Synchronizing devices from ISY994i home automation controller...')
     await deleteObsolete()
     await createMissing()
     await updateExisting()
     await sendCurrentStatus()
+    console.log('Synchronized devices from ISY994i home automation controller')
   }
 
   return {
@@ -135,7 +137,6 @@ module.exports = (sails) => {
         await synchronizeDevices()
         IntervalTimerService.interval(() => {
           sails.hooks.isy.connection().initialize(async () => {
-            console.log('Connected to ISY994i home automation controller')
             await synchronizeDevices()
           })
         }, 300000)
