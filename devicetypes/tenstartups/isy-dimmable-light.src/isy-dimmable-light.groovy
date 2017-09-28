@@ -80,7 +80,7 @@ def setLevel(level) {
 def refresh()
 {
     log.debug "Refreshing dimmable light status..."
-    sendCommand("refresh")
+    sendCommand("status")
 }
 
 def sendCommand(String commandPath) {

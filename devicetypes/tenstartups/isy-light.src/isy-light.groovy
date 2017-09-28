@@ -74,7 +74,7 @@ def off() {
 def refresh()
 {
     log.debug "Refreshing light status..."
-    sendCommand("refresh")
+    sendCommand("status")
 }
 
 def sendCommand(String commandPath) {

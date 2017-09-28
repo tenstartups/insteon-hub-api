@@ -71,7 +71,7 @@ def off() {
 def refresh()
 {
     log.debug "Refreshing scene status..."
-    sendCommand("refresh")
+    sendCommand("status")
 }
 
 def sendCommand(String commandPath) {
