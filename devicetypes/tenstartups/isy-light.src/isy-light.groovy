@@ -40,10 +40,6 @@ metadata {
             state "default", label:'', action: "refresh.refresh", icon: "st.secondary.refresh"
         }
 
-        valueTile("level", "device.level", inactiveLabel: false, decoration: "flat", width: 2, height: 2) {
-            state "level", label:'${currentValue} %', unit: "%", backgroundColor: "#ffffff"
-        }
-
         main(["switch"])
         details(["switch", "level", "refresh"])
     }
