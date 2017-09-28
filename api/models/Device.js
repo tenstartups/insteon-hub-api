@@ -132,7 +132,7 @@ module.exports = {
     },
 
     isyDevice: function () {
-      return sails.hooks.isy.connection().getDevice(this.address)
+      return sails.hooks.isy.device(this.address)
     },
 
     getStatus: function () {

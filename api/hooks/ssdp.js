@@ -88,7 +88,7 @@ module.exports = (sails) => {
 
         console.log(`Started SSDP server advertising for USN: ${USN}, UDN: ${UDN}, Location: ${location}`)
 
-        return cb()
+        cb()
       })
     }
   }

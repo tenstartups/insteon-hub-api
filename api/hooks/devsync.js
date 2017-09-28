@@ -2,9 +2,8 @@ module.exports = (sails) => {
   function deleteObsolete () {
     return new Promise((resolve, reject) => {
       console.log('Deleting obsolete device records...')
-      var deviceList = sails.hooks.isy.connection().getDeviceList()
       Device.destroy(
-        { address: { '!': deviceList.map(d => { return d.address }) } }
+        { address: { '!': sails.hooks.isy.devices().map(d => { return d.address }) } }
       ).exec((err, records) => {
         if (err) {
           console.log('Error deleting obsolete device records')
@@ -19,13 +18,12 @@ module.exports = (sails) => {
   function createMissing () {
     return new Promise((resolve, reject) => {
       console.log('Creating missing device records...')
-      var deviceList = sails.hooks.isy.connection().getDeviceList()
       Device.find().exec((err, devices) => {
         if (err) {
           console.log('Error loading existing device records')
           reject(err)
         }
-        var missingDevices = deviceList.filter(isyDevice => {
+        var missingDevices = sails.hooks.isy.devices().filter(isyDevice => {
           return !devices.find(record => {
             return record.address === isyDevice.address
           })
@@ -52,13 +50,12 @@ module.exports = (sails) => {
   function updateExisting () {
     return new Promise((resolve, reject) => {
       console.log('Updating device names...')
-      var deviceList = sails.hooks.isy.connection().getDeviceList()
       Device.find().exec((err, devices) => {
         if (err) {
           console.log('Error loading existing device records')
           reject(err)
         }
-        var staleDevices = deviceList.filter(isyDevice => {
+        var staleDevices = sails.hooks.isy.devices().filter(isyDevice => {
           var existingDevice = devices.find(record => {
             return record.address === isyDevice.address
           })
@@ -135,12 +132,10 @@ module.exports = (sails) => {
     initialize: (cb) => {
       sails.after('hook:isy:loaded', async () => {
         await synchronizeDevices()
-        IntervalTimerService.interval(() => {
-          sails.hooks.isy.connection().initialize(async () => {
-            await synchronizeDevices()
-          })
-        }, 300000)
-        return cb()
+        IntervalTimerService.interval(async () => {
+          await synchronizeDevices()
+        }, 30000)
+        cb()
       })
     }
   }

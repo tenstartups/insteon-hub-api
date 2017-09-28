@@ -17,11 +17,24 @@ function processEvent (isyDevice) {
 
 module.exports = (sails) => {
   var connection
+  var devices
   var eventQ
 
+  function loadDevices () {
+    var newDevices = {}
+    connection.getDeviceList().forEach(device => {
+      newDevices[device.address] = device
+    })
+    devices = newDevices
+  }
+
   return {
-    connection: () => {
-      return connection
+    devices: () => {
+      return Object.values(devices)
+    },
+
+    device: (address) => {
+      return devices[address]
     },
 
     configure: () => {
@@ -67,10 +80,22 @@ module.exports = (sails) => {
           (isy, device) => {} // Variable changed callback
         )
 
+        // Initialize the connection then load the device list
         connection.initialize(() => {
           console.log('Connected to ISY994i home automation controller')
-          return cb()
+          loadDevices()
+          console.log(`Loaded ${Object.keys(devices).length} devices from ISY994i home automation controller...`)
+          cb()
         })
+
+        // Start a timer to periodically reload the device list
+        IntervalTimerService.interval(async () => {
+          console.log('Reloading devices from ISY994i home automation controller...')
+          connection.initialize(async () => {
+            loadDevices()
+            console.log(`Reloaded ${Object.keys(devices).length} devices from ISY994i home automation controller...`)
+          })
+        }, 300000)
       })
     }
   }
