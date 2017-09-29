@@ -134,7 +134,7 @@ module.exports = (sails) => {
         await synchronizeDevices()
         IntervalTimerService.interval(async () => {
           await synchronizeDevices()
-        }, 30000)
+        }, 300000)
         cb()
       })
     }
