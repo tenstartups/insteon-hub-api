@@ -88,7 +88,7 @@ module.exports = (sails) => {
           cb()
         })
 
-        Start a timer to periodically reload the device list
+        // Start a timer to periodically reload the device list
         IntervalTimerService.interval(async () => {
           console.log('Reloading devices from ISY994i home automation controller...')
           connection.initialize(async () => {
