@@ -339,7 +339,7 @@ def syncDeviceNameAndLabel(device, name, label) {
 def syncDeviceDataValue(device, name, value) {
     if (value && device.getDataValue(name) != value) {
         log.debug("Changing data value '${name}' name from '${device.getDataValue(name)}' to '${value}'")
-        device.setDataValue(name, value)
+        device.updateDataValue(name, value)
     }
 }
 
