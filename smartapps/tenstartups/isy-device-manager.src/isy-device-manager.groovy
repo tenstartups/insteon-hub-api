@@ -292,6 +292,9 @@ def createSelectedDevices(devices) {
                     selectedScenes.collect { dni -> discoveredSceneDevices()[dni] }
 
     selectedDevices.each { device ->
+        if(device == null){
+            return
+        }
         def childDevice = getChildDevice(device.dni)
         if (!childDevice) {
             log.debug("Adding child device ${device.label}")
