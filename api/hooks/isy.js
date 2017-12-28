@@ -6,6 +6,7 @@ const ISY_SETTINGS = require('js-yaml')
                      .isy || {}
 
 function processEvent (isyDevice) {
+  console.log(`Processing event for ${isyDevice.deviceType} [${isyDevice.address}]`)
   Device.findTyped({ type: isyDevice.deviceType, address: isyDevice.address })
   .then(device => {
     device.sendSmartThingsUpdate()
@@ -68,7 +69,6 @@ module.exports = (sails) => {
           (isy, isyDevice) => {
             eventQ.push(() => {
               return new Promise((resolve, reject) => {
-                console.log(`Processing event for ${isyDevice.deviceType} [${isyDevice.address}]`)
                 processEvent(isyDevice)
                 resolve()
               })
