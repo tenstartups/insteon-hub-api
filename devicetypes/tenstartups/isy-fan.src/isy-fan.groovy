@@ -25,7 +25,7 @@ metadata {
         command "fanMedium"
         command "fanHigh"
 
-        attribute "fanMode", "string"
+        attribute "fanMode", "enum", ["default", "fanOff", "turningOff", "fanLow", "turningLow", "fanMedium", "turningMedium", "fanHigh", "turningHigh"]
     }
 
     tiles(scale: 2) {
