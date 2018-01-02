@@ -1,8 +1,8 @@
 {
-  "name": "isy-smartthings-server",
+  "name": "smartthings-isy-bridge",
   "private": true,
-  "version": "0.0.0",
-  "description": "Insteon Hub (2245) API server for integration with a SmartThing controller",
+  "version": "1.0.0",
+  "description": "SmartThings integration bridge server for an ISY994i home automation controller",
   "keywords": [],
   "dependencies": {
     "decamelize": "*",
@@ -20,7 +20,7 @@
     "grunt-sails-linker": "*",
     "grunt-sync": "*",
     "include-all": "*",
-    "isy-js": "tenstartups/isy-js#master",
+    "isy-js": "github:tenstartups/isy-js#master",
     "js-yaml": "*",
     "node-ssdp": "*",
     "queue": "*",
@@ -38,7 +38,7 @@
   "main": "app.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/tenstartups/isy-smartthings-server.git"
+    "url": "git://github.com/tenstartups/smartthings-isy-bridge.git"
   },
   "author": "Marc Lennox <marc.lennox@gmail.com>",
   "license": "*"
