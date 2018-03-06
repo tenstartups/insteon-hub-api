@@ -1,5 +1,5 @@
 /**
-*  ISY Light
+*  ISY Outlet
 *
 *  Copyright 2016 SmartThings
 *
