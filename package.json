@@ -27,9 +27,10 @@
     "rc": "*",
     "request": "*",
     "request-promise-native": "*",
-    "sails": "*",
+    "sails": "0.12",
     "sails-disk": "*",
-    "uppercamelcase": "*"
+    "uppercamelcase": "*",
+    "ws": "*"
   },
   "scripts": {
     "debug": "node debug app.js",
