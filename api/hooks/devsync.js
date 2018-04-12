@@ -9,8 +9,12 @@ module.exports = (sails) => {
           console.log('Error deleting obsolete device records')
           reject(err)
         }
-        console.log(`Deleted ${records.length} obsolete device records`)
-        resolve(records.length)
+        var numDeleted = 0
+        if (records !== undefined) {
+          numDeleted = records.length
+        }
+        console.log(`Deleted ${numDeleted} obsolete device records`)
+        resolve(numDeleted)
       })
     })
   }
@@ -40,8 +44,12 @@ module.exports = (sails) => {
             console.log('Error creating missing device records')
             reject(err)
           }
-          console.log(`Created ${records.length} missing device records`)
-          resolve(records.length)
+          var numCreated = 0
+          if (records !== undefined) {
+            numCreated = records.length
+          }
+          console.log(`Created ${numCreated} missing device records`)
+          resolve(numCreated)
         })
       })
     })
