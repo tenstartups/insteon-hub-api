@@ -8,8 +8,7 @@ FROM node:alpine
 
 # Install base packages.
 RUN \
-  apk --update add \
-    git \
+  apk --update add git && \
   rm -rf /var/cache/apk/*
 
 # Create app directory.
