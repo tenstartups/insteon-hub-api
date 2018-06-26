@@ -6,14 +6,19 @@ const ISY_SETTINGS = require('js-yaml')
                      .isy || {}
 
 function processEvent (isyDevice) {
-  console.log(`Processing event for ${isyDevice.deviceType} [${isyDevice.address}]`)
-  Device.findTyped({ type: isyDevice.deviceType, address: isyDevice.address })
-  .then(device => {
-    device.sendSmartThingsUpdate()
-  })
-  .catch(err => {
-    throw err
-  })
+  var type = isyDevice.deviceType
+  if (type === 'DimmableLight' || type === 'Fan' || type === 'Light' || type === 'Outlet' || type === 'Scene') {
+    console.log(`Processing event for ${isyDevice.deviceType} [${isyDevice.address}]`)
+    Device.findTyped({ type: isyDevice.deviceType, address: isyDevice.address })
+    .then(device => {
+      device.sendSmartThingsUpdate()
+    })
+    .catch(err => {
+      throw err
+    })
+  } else {
+    console.log(`Ignoring event for ${isyDevice.deviceType} [${isyDevice.address}]`)
+  }
 }
 
 module.exports = (sails) => {
