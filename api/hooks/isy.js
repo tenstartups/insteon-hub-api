@@ -11,7 +11,9 @@ function processEvent (isyDevice) {
     console.log(`Processing event for ${isyDevice.deviceType} [${isyDevice.address}]`)
     Device.findTyped({ type: isyDevice.deviceType, address: isyDevice.address })
     .then(device => {
-      device.sendSmartThingsUpdate()
+      if (device) {
+        device.sendSmartThingsUpdate()
+      }
     })
     .catch(err => {
       throw err
