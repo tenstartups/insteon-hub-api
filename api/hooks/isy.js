@@ -8,8 +8,8 @@ const ISY_SETTINGS = require('js-yaml')
 function processEvent (isyDevice) {
   var type = isyDevice.deviceType
   if (type === 'DimmableLight' || type === 'Fan' || type === 'Light' || type === 'Outlet' || type === 'Scene') {
-    console.log(`Processing event for ${isyDevice.deviceType} [${isyDevice.address}]`)
-    Device.findTyped({ type: isyDevice.deviceType, address: isyDevice.address })
+    console.log(`Processing event for ${type} [${isyDevice.address}]`)
+    Device.findTyped({ type: type, address: isyDevice.address })
     .then(device => {
       if (device) {
         device.sendSmartThingsUpdate()
@@ -19,7 +19,7 @@ function processEvent (isyDevice) {
       throw err
     })
   } else {
-    console.log(`Ignoring event for ${isyDevice.deviceType} [${isyDevice.address}]`)
+    console.log(`Ignoring event for ${type} [${isyDevice.address}]`)
   }
 }
 
@@ -31,7 +31,10 @@ module.exports = (sails) => {
   function loadDevices () {
     var newDevices = {}
     connection.getDeviceList().forEach(device => {
-      newDevices[device.address] = device
+      var type = device.deviceType
+      if (type === 'DimmableLight' || type === 'Fan' || type === 'Light' || type === 'Outlet' || type === 'Scene') {
+        newDevices[device.address] = device
+      }
     })
     devices = newDevices
   }
