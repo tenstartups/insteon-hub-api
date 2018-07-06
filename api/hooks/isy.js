@@ -34,6 +34,8 @@ module.exports = (sails) => {
       var type = device.deviceType
       if (type === 'DimmableLight' || type === 'Fan' || type === 'Light' || type === 'Outlet' || type === 'Scene') {
         newDevices[device.address] = device
+      } else {
+        console.log(`Skipping ${type} device [${device.address}]`)
       }
     })
     devices = newDevices
