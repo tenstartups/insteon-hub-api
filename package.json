@@ -5,9 +5,9 @@
   "description": "SmartThings integration bridge server for an ISY994i home automation controller",
   "keywords": [],
   "dependencies": {
-    "decamelize": "^2.0.0",
-    "ejs": "^2.5.8",
-    "grunt": "^1.0.2",
+    "decamelize": "*",
+    "ejs": "*",
+    "grunt": "*",
     "grunt-contrib-clean": "*",
     "grunt-contrib-coffee": "*",
     "grunt-contrib-concat": "*",
@@ -21,16 +21,16 @@
     "grunt-sync": "*",
     "include-all": "*",
     "isy-js": "github:tenstartups/isy-js#master",
-    "js-yaml": "^3.11.0",
+    "js-yaml": "*",
     "node-ssdp": "*",
     "queue": "*",
-    "rc": "^1.2.6",
-    "request": "^2.85.0",
+    "rc": "*",
+    "request": "*",
     "request-promise-native": "*",
     "sails": "0.12.13",
     "sails-disk": "0.10.10",
     "uppercamelcase": "*",
-    "ws": "^5.1.1"
+    "ws": "*"
   },
   "scripts": {
     "debug": "node debug app.js",
